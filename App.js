@@ -2,13 +2,13 @@ import React from 'react'
 import { View, Text, TextInput } from 'react-native'
 import Welcome from './src/Page/Wellcome'
 import Login from './src/Page/Login'
-import Register from './src/Page/Register/Register'
+import HomeScreen from './src/Page/HomeScreen'
+
 const App = () => {
 
   return (
     <View>
-      {/* <Login/> */}
-      <Register/>
+      <HomeScreen/>
     </View>
   )
 }
