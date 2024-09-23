@@ -1,183 +1,165 @@
-import React from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, FlatList, ScrollView } from "react-native";
-import homeStyle from "./style";
+    import React, { useState, useRef, useEffect } from "react";
+    import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
+    import HomeStyle from "./style";
 
-const DATA = [
-    {
-        id: 1,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 2,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 3,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 4,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 5,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 6,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 7,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 8,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 9,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-    {
-        id: 10,
-        name: "Bắp cải trắng",
-        price: "19.000",
-        image: require("../../assets/home/bapcai.png"),
-        quantity: 1
-    },
-]
-const HomeScreen = () => {
-    return (
-        <View style={homeStyle.container}>
-            <View style={homeStyle.header}>
-                <View style={homeStyle.itemTop}>
-                    <View style={homeStyle.itemTop1}>
-                        <Image style={homeStyle.cart} source={require("../../assets/home/cart.png")} />
-                        <Image style={homeStyle.notifi} source={require("../../assets/home/notifi.png")} />
+    const HomeScreen = () => {
+        const [search, setSearch] = useState("");
+        const scrollViewRef = useRef(null);
+        const [currentIndex, setCurrentIndex] = useState(0);
+        const [selectedCategory, setSelectedCategory] = useState(0);
+        const screenWidth = Dimensions.get('window').width;
+
+        const banners = [
+            require('../../../src/assets/banner/baner1.jpg'),
+            require('../../../src/assets/banner/baner2.jpg'),
+            require('../../../src/assets/banner/baner3.jpg'),
+        ];
+
+        const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
+
+        const products = [
+            {
+                id: '1',
+                title: 'Bắp cải trắng',
+                price: '19.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image1.png'),
+            },
+            {
+                id: '2',
+                title: 'Chanh không hạt',
+                price: '9.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image2.png'),
+            },
+            {
+                id: '3',
+                title: 'Khoai tây',
+                price: '30.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image3.png'),
+            },
+            {
+                id: '4',
+                title: 'Sườn non',
+                price: '45.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image4.png'),
+            },
+            {
+                id: '5',
+                title: 'Thịt đùi',
+                price: '30.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image5.png'),
+            },
+            {
+                id: '6',
+                title: 'Rau bó sôi',
+                price: '9.000',
+                weight: '1 kg',
+                image: require('../../../src/assets/image/image6.png'),
+            },
+        ];
+
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
+            }, 3000);
+            return () => clearInterval(interval);
+        }, []);
+
+        useEffect(() => {
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
+            }
+        }, [currentIndex]);
+
+        const renderProductItem = ({ item }) => (
+            <View style={HomeStyle.productContainer}>
+                <Image source={item.image} style={HomeStyle.productImage} />
+                <View style={HomeStyle.productDetails}>
+                    <Text style={HomeStyle.productTitle}>{item.title}</Text>
+                    <Text style={HomeStyle.productWeight}>{item.weight}</Text>
+                    <View style={HomeStyle.priceall}>
+                        <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
+                        <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
                     </View>
                 </View>
-
-                <View>
-                    <Text style={homeStyle.text}>Chào, <Text style={homeStyle.name}>Bé Phát <Image style={homeStyle.heart} source={require("../../assets/home/cucai.png")} /></Text></Text>
-                    <Text style={homeStyle.text1}>Hôm nay bạn muốn mua gì?</Text>
-                </View>
-                <View style={homeStyle.viewSearch}>
-                    <Image style={homeStyle.iconSearch} source={require("../../assets/home/search.png")} />
-                    <TextInput
-                        style={homeStyle.textInput}
-                        placeholder="Nhập tên sản phẩm cần tìm..."
-                    />
-                </View>
             </View>
+        );
 
-            <View style={homeStyle.TabTop}>
-                <View style={homeStyle.iconTabTop}>
-                    <Image style={homeStyle.heart1} source={require("../../assets/home/frush.png")} />
-                    <Image style={homeStyle.heart1} source={require("../../assets/home/vegetable.png")} />
-                    <Image style={homeStyle.heart1} source={require("../../assets/home/meet.png")} />
-                    <Image style={homeStyle.heart1} source={require("../../assets/home/fish.png")} />
-                </View>
-            </View>
-
-            <View style={homeStyle.View}>
-                <View style={homeStyle.view}>
-                    <View style={homeStyle.viewFlashSale}>
-                        <Text style={homeStyle.textFlashSale}>FLASH SALE</Text>
-                        <Text style={homeStyle.textAll}>Tất cả <Image style={homeStyle.arrow} source={require("../../assets/home/arrowright.png")} /></Text>
+        return (
+            <View>
+            <ScrollView style={HomeStyle.container}>
+                <View style={HomeStyle.header}>
+                    <Image style={HomeStyle.avatar} source={require('../../../src/assets/avatar.png')} />
+                    <View style={HomeStyle.searchall}>
+                        <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
+                        <TextInput
+                            placeholder="Tìm kiếm"
+                            onChangeText={setSearch}
+                            style={HomeStyle.input}
+                        />
                     </View>
-                    <FlatList
-                        style={homeStyle.viewProduct}
-                        data={DATA}
-                        horizontal={true}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={homeStyle.product}>
-                                <View style={homeStyle.viewImage}>
-                                    <Image source={item.image} style={homeStyle.image} />
-                                </View>
-                                <Text style={homeStyle.nameProduct}>{item.name}</Text>
-                                <View style={homeStyle.priceView}>
-                                    <Text style={homeStyle.price}>{item.price} đ</Text>
-                                    <Text style={homeStyle.price}>{item.quantity}</Text>
-                                </View>
-                                <View style={homeStyle.viewAdd}>
-                                    <View style={homeStyle.viewIcon}>
-                                        <Image source={require("../../assets/home/dash.png")} style={homeStyle.icon} />
-                                        <Text style={homeStyle.quantity}>{item.quantity}</Text>
-                                        <Image source={require("../../assets/home/add.png")} style={homeStyle.icon} />
-                                    </View>
-                                    <TouchableOpacity style={homeStyle.buttonAdd}>
-                                        <Text style={homeStyle.textAdd}>Thêm vào giỏ hàng</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
+                    <Image style={HomeStyle.bell} source={require('../../../src/assets/Bell.png')} />
                 </View>
-            </View>
 
-            <View style={homeStyle.ViewFlaslit2}>
-                <View style={homeStyle.viewFL2}>
-                <FlatList
-                    style={homeStyle.viewProduct}
-                    data={DATA}
-                    numColumns={2}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity style={homeStyle.product}>
-                            <View style={homeStyle.viewImage}>
-                                <Image source={item.image} style={homeStyle.image} />
-                            </View>
-                            <Text style={homeStyle.nameProduct}>{item.name}</Text>
-                            <View style={homeStyle.priceView}>
-                                <Text style={homeStyle.price}>{item.price} đ</Text>
-                                <Text style={homeStyle.price}>{item.quantity}</Text>
-                            </View>
-                            <View style={homeStyle.viewAdd}>
-                                <View style={homeStyle.viewIcon}>
-                                    <Image source={require("../../assets/home/dash.png")} style={homeStyle.icon} />
-                                    <Text style={homeStyle.quantity}>{item.quantity}</Text>
-                                    <Image source={require("../../assets/home/add.png")} style={homeStyle.icon} />
-                                </View>
-                                <TouchableOpacity style={homeStyle.buttonAdd}>
-                                    <Text style={homeStyle.textAdd}>Thêm vào giỏ hàng</Text>
-                                </TouchableOpacity>
-                            </View>
+                <ScrollView
+                    ref={scrollViewRef}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    style={HomeStyle.bannerContainer}>
+
+                    {banners.map((image, index) => (
+                        <Image key={index} source={image} style={{ width: screenWidth, height: 130, marginTop: 10 }} />
+                    ))}
+                </ScrollView>
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={HomeStyle.categoryContainer}>
+
+                    {categories.map((category, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={[HomeStyle.categoryButton, selectedCategory === index && HomeStyle.selectedCategoryButton]}
+                            onPress={() => setSelectedCategory(index)}
+                        >
+                            <Text style={{
+                                fontSize: selectedCategory === index ? 20 : 18,
+                                fontWeight: selectedCategory === index ? 'bold' : 'normal',
+                                textDecorationLine: selectedCategory === index ? 'underline' : 'none',
+                                marginHorizontal: 5,
+                                marginTop: 7
+                            }}>
+                                {category}
+                            </Text>
                         </TouchableOpacity>
-                    )}
-                />
-                </View>
-            </View>
-        </View>
-    );
-};
-export default HomeScreen
+                    ))}
+                </ScrollView>
 
+                <FlatList
+                    data={products}
+                    renderItem={renderProductItem}
+                    keyExtractor={item => item.id}
+                    numColumns={2}
+                    contentContainerStyle={HomeStyle.productList}
+                    scrollEnabled={false} // Ngăn FlatList cuộn
+                />
+            </ScrollView>
+
+            <View style={HomeStyle.footer}>
+                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/homee.png')} />
+                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Desk_alt.png')} />
+                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Basket_fill.png')} />
+                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Bell.png')} />
+                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/User_alt.png')} />
+                </View>
+        </View>
+        );
+    };
+
+    export default HomeScreen;
