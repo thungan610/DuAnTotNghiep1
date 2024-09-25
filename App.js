@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput, SafeAreaView } from 'react-native'
 import Profile from './src/Page/Profile'
+import EditProfile from './src/Page/Profile/EditProfile'
 const App = () => {
 
   return (
@@ -8,7 +9,8 @@ const App = () => {
     <View>
       {/* <Login/> */}
       {/* <Register/> */}
-      <Profile/>
+      {/* <Profile/> */}
+      <EditProfile/>
     </View>
     </SafeAreaView>
   )
