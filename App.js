@@ -1,7 +1,6 @@
 import React from 'react'
 import { View, Text, TextInput, SafeAreaView } from 'react-native'
-import Profile from './src/Page/Profile'
-import EditProfile from './src/Page/Profile/EditProfile'
+import NotifiScreen from './src/Page/NotifiScreen'
 const App = () => {
 
   return (
@@ -10,7 +9,8 @@ const App = () => {
       {/* <Login/> */}
       {/* <Register/> */}
       {/* <Profile/> */}
-      <EditProfile/>
+      {/* <EditProfile/> */}
+      <NotifiScreen/>
     </View>
     </SafeAreaView>
   )

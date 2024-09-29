@@ -50,8 +50,8 @@ const EditProfile = StyleSheet.create({
     },
     iconCamera:{
         position: 'absolute',
-        bottom: 0,
-        right: 165
+        bottom: "0%",
+        right: "46%"
     }
 })
 export default EditProfile
