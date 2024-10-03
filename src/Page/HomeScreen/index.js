@@ -150,14 +150,6 @@
                     scrollEnabled={false} // Ngăn FlatList cuộn
                 />
             </ScrollView>
-
-            <View style={HomeStyle.footer}>
-                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/homee.png')} />
-                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Desk_alt.png')} />
-                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Basket_fill.png')} />
-                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/Bell.png')} />
-                    <Image style={HomeStyle.iconft} source={require('../../../src/assets/User_alt.png')} />
-                </View>
         </View>
         );
     };
