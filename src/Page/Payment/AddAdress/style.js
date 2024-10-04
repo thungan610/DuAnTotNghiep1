@@ -61,9 +61,11 @@ const AddAdressStyle = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         marginTop: 20,
-        marginBottom: 20
+        marginBottom: 20,
+        width: '100%',
     },
     buttonText:{
+        
         color: 'white',
         textAlign: 'center',
         fontFamily: 'Poppins',
