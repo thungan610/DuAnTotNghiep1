@@ -14,11 +14,11 @@ const notifiStyle = StyleSheet.create({
     },
     iconBack: {
         width: 34,
-        height: 35,
+        height: 34,
         tintColor: "black",
     },
     tieude: {
-        fontSize: 20,
+        fontSize: 24,
         color: "black",
         fontWeight: "bold",
         fontFamily: "Poppins"
