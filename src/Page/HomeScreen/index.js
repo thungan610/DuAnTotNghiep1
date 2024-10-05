@@ -1,96 +1,64 @@
-    import React, { useState, useRef, useEffect } from "react";
-    import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
-    import HomeStyle from "./style";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
+import HomeStyle from "./style";
 
-    const HomeScreen = ({navigation}) => {
-        const [search, setSearch] = useState("");
-        const scrollViewRef = useRef(null);
-        const [currentIndex, setCurrentIndex] = useState(0);
-        const [selectedCategory, setSelectedCategory] = useState(0);
-        const screenWidth = Dimensions.get('window').width;
+const HomeScreen = () => {
+    const [search, setSearch] = useState("");
+    const scrollViewRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    const screenWidth = Dimensions.get('window').width;
 
-        const banners = [
-            require('../../../src/assets/banner/baner1.jpg'),
-            require('../../../src/assets/banner/baner2.jpg'),
-            require('../../../src/assets/banner/baner3.jpg'),
-        ];
+    const banners = [
+        require('../../../src/assets/banner/baner1.jpg'),
+        require('../../../src/assets/banner/baner2.jpg'),
+        require('../../../src/assets/banner/baner3.jpg'),
+    ];
 
-        const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
+    const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
-        const products = [
-            {
-                id: '1',
-                title: 'Bắp cải trắng',
-                price: '19.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image1.png'),
-            },
-            {
-                id: '2',
-                title: 'Chanh không hạt',
-                price: '9.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image2.png'),
-            },
-            {
-                id: '3',
-                title: 'Khoai tây',
-                price: '30.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image3.png'),
-            },
-            {
-                id: '4',
-                title: 'Sườn non',
-                price: '45.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image4.png'),
-            },
-            {
-                id: '5',
-                title: 'Thịt đùi',
-                price: '30.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image5.png'),
-            },
-            {
-                id: '6',
-                title: 'Rau bó sôi',
-                price: '9.000',
-                weight: '1 kg',
-                image: require('../../../src/assets/image/image6.png'),
-            },
-        ];
+    const products = [
+        { id: '1', title: 'Bắp cải trắng', price: '19.000', weight: '1 kg', image: require('../../../src/assets/image/image1.png') },
+        { id: '2', title: 'Chanh không hạt', price: '9.000', weight: '1 kg', image: require('../../../src/assets/image/image2.png') },
+        { id: '3', title: 'Khoai tây', price: '30.000', weight: '1 kg', image: require('../../../src/assets/image/image3.png') },
+        { id: '4', title: 'Sườn non', price: '45.000', weight: '1 kg', image: require('../../../src/assets/image/image4.png') },
+        { id: '5', title: 'Thịt đùi', price: '30.000', weight: '1 kg', image: require('../../../src/assets/image/image5.png') },
+        { id: '6', title: 'Rau bó sôi', price: '9.000', weight: '1 kg', image: require('../../../src/assets/image/image6.png') },
+    ];
 
-        useEffect(() => {
-            const interval = setInterval(() => {
-                setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
-            }, 3000);
-            return () => clearInterval(interval);
-        }, []);
+    const filteredProducts = products.filter(product =>
+        product.title.toLowerCase().includes(search.toLowerCase())
+    );
 
-        useEffect(() => {
-            if (scrollViewRef.current) {
-                scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
-            }
-        }, [currentIndex]);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
 
-        const renderProductItem = ({ item }) => (
-            <View style={HomeStyle.productContainer}>
-                <Image source={item.image} style={HomeStyle.productImage} />
-                <View style={HomeStyle.productDetails}>
-                    <Text style={HomeStyle.productTitle}>{item.title}</Text>
-                    <Text style={HomeStyle.productWeight}>{item.weight}</Text>
-                    <View style={HomeStyle.priceall}>
-                        <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
-                        <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
-                    </View>
+    useEffect(() => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
+        }
+    }, [currentIndex]);
+
+    const renderProductItem = ({ item }) => (
+        <View style={HomeStyle.productContainer}>
+            <Image source={item.image} style={HomeStyle.productImage} />
+            <View style={HomeStyle.productDetails}>
+                <Text style={HomeStyle.productTitle}>{item.title}</Text>
+                <Text style={HomeStyle.productWeight}>{item.weight}</Text>
+                <View style={HomeStyle.priceall}>
+                    <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
+                    <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
                 </View>
             </View>
-        );
+        </View>
+    );
 
-        return (
-            <View>
+    return (
+        <View>
             <ScrollView style={HomeStyle.container}>
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/avatar.png')} />
@@ -98,11 +66,18 @@
                         <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         <TextInput
                             placeholder="Tìm kiếm"
+                            value={search}
                             onChangeText={setSearch}
                             style={HomeStyle.input}
                         />
                     </View>
-                    <Image style={HomeStyle.bell} source={require('../../../src/assets/Bell.png')} />
+                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+                        <Image style={{
+                            tintColor: 'black',
+                            width: 34,
+                            height: 34,
+                        }} source={require('../../../src/assets/Bell.png')} />
+                    </TouchableOpacity>
                 </View>
 
                 <ScrollView
@@ -111,7 +86,6 @@
                     pagingEnabled
                     showsHorizontalScrollIndicator={false}
                     style={HomeStyle.bannerContainer}>
-
                     {banners.map((image, index) => (
                         <Image key={index} source={image} style={{ width: screenWidth, height: 130, marginTop: 10 }} />
                     ))}
@@ -121,7 +95,6 @@
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={HomeStyle.categoryContainer}>
-
                     {categories.map((category, index) => (
                         <TouchableOpacity
                             key={index}
@@ -142,16 +115,16 @@
                 </ScrollView>
 
                 <FlatList
-                    data={products}
+                    data={filteredProducts}
                     renderItem={renderProductItem}
                     keyExtractor={item => item.id}
                     numColumns={2}
                     contentContainerStyle={HomeStyle.productList}
-                    scrollEnabled={false} // Ngăn FlatList cuộn
+                    scrollEnabled={false}
                 />
             </ScrollView>
         </View>
-        );
-    };
+    );
+};
 
-    export default HomeScreen;
+export default HomeScreen;
