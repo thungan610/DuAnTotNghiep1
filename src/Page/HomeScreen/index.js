@@ -2,7 +2,7 @@
     import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
     import HomeStyle from "./style";
 
-    const HomeScreen = () => {
+    const HomeScreen = ({navigation}) => {
         const [search, setSearch] = useState("");
         const scrollViewRef = useRef(null);
         const [currentIndex, setCurrentIndex] = useState(0);
