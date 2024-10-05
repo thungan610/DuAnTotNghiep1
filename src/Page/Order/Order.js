@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 
-const Wait_confirmed = () => {
+const Order = () => {
   const [selectedTabs, setSelectedTabs] = useState(0);
   const { width, height } = Dimensions.get('window');
 
@@ -141,4 +141,4 @@ const WaitconfirmedStyle = StyleSheet.create({
   },
 });
 
-export default Wait_confirmed;
+export default Order;
