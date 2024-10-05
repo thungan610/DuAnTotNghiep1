@@ -1,0 +1,115 @@
+import React from "react";
+import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
+import PaymentStyle from "./style";
+import AddAdressStyle from "../AddAdress/style";
+const Payment = () => {
+    return (
+        <View style={PaymentStyle.container}>
+            <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
+                <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <Text style={AddAdressStyle.title}>Thanh toán</Text>
+                <Text />
+            </View>
+            <View style={[PaymentStyle.body, PaymentStyle.paddingHorizontal,PaymentStyle.paddingBottom]}>
+                <Image style={PaymentStyle.imgmap} source={require("../../../assets/notifi/map.png")} />
+                <View>
+                    <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
+                    <Text style={PaymentStyle.txtLH}>Bé phát, <Text style={PaymentStyle.txtLH}>0329 999 999</Text></Text>
+                    <Text style={PaymentStyle.txtLH}>Tân thới nhất, quận 12, Hồ Chí Minh</Text>
+                </View>
+                <TouchableOpacity style={PaymentStyle.BtnExpandRight}>
+                    <Image style={PaymentStyle.imgexpand} source={require("../../../assets/notifi/expand_right.png")} />
+                </TouchableOpacity>
+            </View>
+            <Text style={PaymentStyle.Line} />
+            <View style={[PaymentStyle.body, PaymentStyle.Padding]}>
+                <View style={PaymentStyle.Viewimg}>
+                    <Image style={PaymentStyle.img} source={require("../../../assets/image/image1.png")} />
+                </View>
+                <View>
+                    <Text style={PaymentStyle.txtDC}>Bắp cải trắng</Text>
+                    <Text style={PaymentStyle.txtLH}>Rau củ</Text>
+                    <Text />
+                    <View style={PaymentStyle.ViewPrice}>
+                        <Image source={require("../../../assets/notifi/Dollar.png")} />
+                        <Text style={PaymentStyle.txtPrice}>19.000đ</Text>
+                    </View>
+                </View>
+                <View>
+                    <Text style={PaymentStyle.txtLH}>SL: 1</Text>
+                </View>
+            </View>
+            <TouchableOpacity style={PaymentStyle.BtnTranfer}>
+                <Text style={PaymentStyle.txtDC}>Phương thức vận chuyển (Nhấp để chọn)</Text>
+                <View style={PaymentStyle.ViewTranfer}>
+                    <Text style={PaymentStyle.txtPrice}>Nhanh</Text>
+                    <Text style={PaymentStyle.txtPrice}>10.000đ</Text>
+                </View>
+                <Text style={PaymentStyle.txtLH}>Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn</Text>
+            </TouchableOpacity>
+
+            <View style={PaymentStyle.ViewBodyContainer}>
+                <View style={PaymentStyle.ViewBody}>
+                    <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
+                    <TextInput style={PaymentStyle.input} placeholder="Để lại ghi chú" />
+                </View>
+                <Text style={PaymentStyle.Line} />
+                <View style={PaymentStyle.ViewBody}>
+                    <Text style={PaymentStyle.txtDC}>Tổng tiền sản phẩm:</Text>
+                    <Text style={PaymentStyle.txtPrice}>19.000đ</Text>
+                </View>
+                <Text style={PaymentStyle.Line} />
+                <View style={PaymentStyle.ViewBody}>
+                    <Text style={PaymentStyle.txtDC}>Phương thúc thanh toán:</Text>
+                    <TouchableOpacity style={PaymentStyle.btnThem}>
+                        <Text style={PaymentStyle.txtDC}>Khi nhận hàng</Text>
+                        <Image source={require("../../../assets/notifi/expand_right.png")} />
+                    </TouchableOpacity>
+                </View>
+                <Text style={PaymentStyle.Line} />
+                <View style={PaymentStyle.ViewBody}>
+                    <Text style={PaymentStyle.txtDC}>Chọn khuyến mãi:</Text>
+                    <TouchableOpacity style={PaymentStyle.btnThem}>
+                        <Text style={PaymentStyle.txtDC}>Nhấp vào để chọn</Text>
+                        <Image source={require("../../../assets/notifi/expand_right.png")} />
+                    </TouchableOpacity>
+                </View>
+                <Text style={PaymentStyle.Line} />
+                <View>
+                    <Text style={[PaymentStyle.txtDC, PaymentStyle.paddingHorizontal]}>Chi tiết thanh toán</Text>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>0đ</Text>
+                    </View>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>19.000đ</Text>
+                    </View>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>10.000đ</Text>
+                    </View>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
+                        <Text style={PaymentStyle.txtDC}>29.000đ</Text>
+                    </View>
+                </View>
+                <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
+                <View style={PaymentStyle.ViewFooter}>
+                    <View>
+                    <Text style={PaymentStyle.txtDC1}>Tổng thanh toán:</Text>
+                    <Text style={PaymentStyle.txtDC2}>29.000đ</Text>
+                    </View>
+                    <TouchableOpacity style={PaymentStyle.btnSubmit}>
+                        <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+
+        </View>
+    )
+
+}
+
+export default Payment

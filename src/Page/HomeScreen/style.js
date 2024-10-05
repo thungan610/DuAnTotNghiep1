@@ -77,18 +77,5 @@ const HomeStyle = StyleSheet.create({
     price:{
         marginRight: 5
     },
-    footer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 70, // Chiều cao có thể điều chỉnh
-        backgroundColor: '#A1E8F5',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        borderTopWidth: 1,
-        borderTopColor: '#A1E8F5',
-    },
 });
 export default HomeStyle
