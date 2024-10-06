@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
+import { useNavigation } from '@react-navigation/native'; 
 import HomeStyle from "./style";
 
 const HomeScreen = (prop) => {
@@ -8,6 +9,8 @@ const HomeScreen = (prop) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState(0);
     const screenWidth = Dimensions.get('window').width;
+
+    const navigation = useNavigation();
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -63,7 +66,9 @@ const HomeScreen = (prop) => {
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/avatar.png')} />
                     <View style={HomeStyle.searchall}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
+                        </TouchableOpacity>
                         <TextInput
                             placeholder="Tìm kiếm"
                             value={search}
@@ -71,14 +76,17 @@ const HomeScreen = (prop) => {
                             style={HomeStyle.input}
                         />
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-                        <Image style={{
-                            tintColor: 'black',
-                            width: 34,
-                            height: 34,
-                        }} source={require('../../../src/assets/Bell.png')} />
-                    </TouchableOpacity>
-                </View>
+        
+                {/* Thêm chức năng chuyển màn hình */}
+                <TouchableOpacity onPress={() => navigation.navigate('NewNotifi')}>
+                    <Image style={{
+                        tintColor: 'black',
+                        width: 34,
+                        height: 34,
+                    }} source={require('../../../src/assets/Bell.png')} />
+                </TouchableOpacity>
+
+                </View >
 
                 <ScrollView
                     ref={scrollViewRef}
@@ -122,8 +130,8 @@ const HomeScreen = (prop) => {
                     contentContainerStyle={HomeStyle.productList}
                     scrollEnabled={false}
                 />
-            </ScrollView>
-        </View>
+            </ScrollView >
+        </View >
     );
 };
 

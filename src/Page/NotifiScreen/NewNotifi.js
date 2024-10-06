@@ -1,23 +1,25 @@
-import { View, Text, StyleSheet,Image } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
 
-const NewNotifi = () => {
+const NewNotifi = ({ navigation }) => {
     return (
         <View style={NewnotifiStyle.container}>
             <View style={NewnotifiStyle.header}>
-                <Image style={NewnotifiStyle.iconBack} source={require("../../assets/notifi/backright.png")} />
-                <Text style={NewnotifiStyle.tieude}>Thông báo</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <Image style={NewnotifiStyle.iconBack} source={require("../../assets/notifi/backright.png")} />
+                </TouchableOpacity>
+                <Text style={NewnotifiStyle.tieude}>Thông báo</Text>
                 <Text />
             </View>
 
-            <View style={NewnotifiStyle.body}>
+            <View style={NewnotifiStyle.body}>  
                 <Text style={NewnotifiStyle.chu}>Hiện chưa có thông báo!!!!</Text>
             </View>
         </View>
-    )
-}
-export default NewNotifi;
+    );
+};
 
+export default NewNotifi;
 
 const NewnotifiStyle = StyleSheet.create({
     container: {
@@ -36,21 +38,19 @@ const NewnotifiStyle = StyleSheet.create({
         height: 35,
         tintColor: "black",
     },
-    tieude:{
+    tieude: {
         fontSize: 20,
         color: "black",
         fontWeight: "bold",
         fontFamily: "Poppins"
     },
-    body:{
-        alignItems:'center',
-        justifyContent:'center',
-        height:'100%'
+    body: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%'
     },
-    chu:{
-        color:'#8B8B8B',
-        fontSize:20
+    chu: {
+        color: '#8B8B8B',
+        fontSize: 20
     }
 });
-    
-
