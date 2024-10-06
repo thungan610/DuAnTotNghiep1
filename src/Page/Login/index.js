@@ -49,6 +49,7 @@ const Login = (prop) => {
                         </View>
 
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
+                        
                         <View style={LoginStyle.anhinput}>
                             <Image style={LoginStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
                             <TextInput 
