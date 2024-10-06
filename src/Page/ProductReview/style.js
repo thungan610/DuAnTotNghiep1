@@ -90,7 +90,6 @@ const ProductReviewStyle = StyleSheet.create({
       backgroundColor: '#EDEAEA',
       height: 150, // Chiều cao của ô nhập
       borderColor: '#ccc',
-      borderWidth: 1,
       borderRadius: 5,
       padding: 10,
       textAlignVertical: 'top', // Đặt văn bản ở đầu ô
