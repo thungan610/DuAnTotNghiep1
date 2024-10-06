@@ -167,5 +167,12 @@ buttonfb: {
     color:'#8B8B8B',
     fontSize:15
   },
+  input: {
+    flex: 1,
+    fontSize: 16,
+  },
+  containereye: {
+    marginLeft: 10,
+  },
 });
 export default LoginStyle

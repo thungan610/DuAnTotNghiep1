@@ -1,14 +1,16 @@
 import React from 'react'
-import { View, Text, TextInput } from 'react-native'
-import Welcome from './src/Page/Wellcome'
-import Login from './src/Page/Login'
+import { View } from 'react-native'
+import BottomNav from './router/BottomNav'
 import HomeScreen from './src/Page/HomeScreen'
+import { NavigationContainer } from '@react-navigation/native'
 
 const App = () => {
 
   return (
     <View>
-      <HomeScreen/>
+      <NavigationContainer>
+        <BottomNav/>
+      </NavigationContainer>
     </View>
   )
 }

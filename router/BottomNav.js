@@ -1,11 +1,12 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet } from "react-native";
-import Home from "../src/page/HomeScreen";
-import Search from "../src/page/Search";
-import Profile from "../src/page/Profile";
-import NotifiScreen from "../src/page/NotifiScreen";
+import { View, Text, Image, StyleSheet } from 'react-native'
+import React from 'react'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import HomeScreen from '../src/Page/HomeScreen'
+import Order from '../src/Page/Order/Order'
+import Cart from '../src/Page/Cart/Cart'
+import NotifiScreen from '../src/Page/NotifiScreen'
+import Profile from '../src/Page/Profile'
+
 const Tab = createBottomTabNavigator()
 
 const BottomNav = () => {
@@ -15,40 +16,58 @@ const BottomNav = () => {
                 headerShown: false,
                 tabBarStyle: {
                     height: 60,
-                    paddingBottom: 10
+                    paddingBottom: 5,
+                    backgroundColor: '#37C5DF',
+                    
+
                 }
             }}
-            >
+        >
             <Tab.Screen
-            options={{
-                tabBarIcon: ({ focused }) => <Image style={styles.iconBefore} source={focused ? require("../src/assets/iconHome.png") : require("../src/assets/iconHome.png")} />
-            }}
-            name="Home" component={Home} />
+                options={{
+                    tabBarIcon: ({ focused }) => <Image style={styles.iconHome} source={focused ? require('./icon/SubtractSau.png') : require('./icon/SubtractSau.png')} />,
+                    tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
+                }}
+
+                name="HomeScreen" component={HomeScreen} />
             <Tab.Screen
-            options={{
-                tabBarIcon: ({ focused }) => <Image style={styles.iconBefore} source={focused ? require("../src/assets/iconSearch.png") : require("../src/assets/iconSearch.png")} />
-            }}
-            name="Search" component={Search} />
+                options={{
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Desk.png') : require('./icon/Desk.png')} />,
+                    tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
+                }}
+                name="Order" component={Order} />
             <Tab.Screen
-            options={{
-                tabBarIcon: ({ focused }) => <Image style={styles.iconBefore} source={focused ? require("../src/assets/iconNotifi.png") : require("../src/assets/iconNotifi.png")} />
-            }}
-            name="Notifi" component={NotifiScreen} />
+                options={{
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BasketSau.png')} />,
+                    tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
+                }}
+                name="Cart" component={Cart} />
             <Tab.Screen
-            options={{
-                tabBarIcon: ({ focused }) => <Image style={styles.iconBefore} source={focused ? require("../src/assets/iconProfile.png") : require("../src/assets/iconProfile.png")} />
-            }}
-            name="Profile" component={Profile} />
+                options={{
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,
+                    tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
+                }}
+                name="NotifiScreen" component={NotifiScreen} />
+            <Tab.Screen
+                options={{
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/User.png')} />,
+                    tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
+                }}
+                name="Profile" component={Profile} />
         </Tab.Navigator>
     )
 }
 
 const styles = StyleSheet.create({
-  
-    iconBefore: {
-        width: 25,
-        height: 25,
-        tintColor: "black",
+    icon: {
+        width: 35,
+        height: 35
+    },
+    label: {
+        fontSize: 60,
+        color: "#fff",
+        marginBottom: -15,
+        marginTop: -65
     }
 })
 
