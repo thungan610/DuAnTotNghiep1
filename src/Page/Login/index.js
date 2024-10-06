@@ -1,11 +1,19 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import LoginStyle from './style'
 import ButtonUser from '../../components/multiComponents/ButtonUser';
 
 
-const Login = () => {
+const Login = (prop) => {
+    
+    const BtnLogin = () => {
+        Alert.alert("Đăng nhập thành công")
+        prop.navigation.navigate('BottomNav')
+    }
+    const ClickRegister = () => {
+        prop.navigation.navigate('Register')
+    }
     const radioButtons = useMemo(() => ([
         {
             id: '1', // acts as primary key, should be unique and non-empty string
@@ -56,7 +64,7 @@ const Login = () => {
                 </View>
 
                 <View style={LoginStyle.button}>
-                    <TouchableOpacity style={LoginStyle.dn}>
+                    <TouchableOpacity onPress={BtnLogin} style={LoginStyle.dn}>
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
@@ -76,7 +84,7 @@ const Login = () => {
 
                 <View style={LoginStyle.footer}>
                     <Text style={LoginStyle.footerdau}>Bạn chưa có tài khoản?</Text>
-                    <Text style={LoginStyle.footerduoi}> Đăng ký</Text>
+                    <Text onPress={ClickRegister} style={LoginStyle.footerduoi}> Đăng ký</Text>
                 </View>
             </View>
         </View >
