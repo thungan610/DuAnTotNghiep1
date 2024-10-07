@@ -7,7 +7,7 @@ const App = () => {
     <NavigationContainer>
         <MainStack />
     </NavigationContainer>
-  );
+  )  
 };
 
 export default App;
