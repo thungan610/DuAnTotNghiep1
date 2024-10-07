@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"; // Thêm useEffect
+import React, { useEffect } from "react"; 
 import { View, Image } from "react-native";
 import wellcomeStyle from "./style";
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +8,7 @@ const Wellcome = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigation.navigate('Login'); // Chuyển đến màn hình Login sau 3 giây
+            navigation.navigate('HomeScreen'); // Chuyển đến màn hình Login sau 3 giây
         }, 3000);
 
         return () => clearTimeout(timer); // Dọn dẹp timer khi component bị hủy
