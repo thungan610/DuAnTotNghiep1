@@ -32,8 +32,7 @@ const ForgotPasswordStyle = StyleSheet.create({
       tieudedn:{
         fontSize: 26,
         fontWeight:'bold',
-        color:'#27AAE1',
-        textAlign:'center'
+        color:'#27AAE1'
       },
       inputall:{
         marginTop: 10,
@@ -60,6 +59,14 @@ const ForgotPasswordStyle = StyleSheet.create({
         width: 24,
         height: 24,
         marginRight: 3, // Khoảng cách giữa icon và input
+      },
+      input: {
+        width: '90%',
+        paddingVertical: 14,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 7,
+        marginBottom: 10,
       },
       button:{
         marginLeft:15,
