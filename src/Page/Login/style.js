@@ -42,7 +42,7 @@ const LoginStyle = StyleSheet.create({
   tieudeinput:{
     fontSize: 16,
     color:'black',
-    marginBottom:10
+    marginBottom:10,
   },
   inputall:{
     marginTop: 10,
@@ -102,7 +102,7 @@ const LoginStyle = StyleSheet.create({
   button:{
     marginLeft:15,
     marginRight: 15,
-    marginTop: 100
+    marginTop: 40
   },
   dn:{
     borderRadius:10,
@@ -157,7 +157,7 @@ buttonfb: {
     flexDirection:'row',
     justifyContent:'center',
     alignItems:'center',
-    marginTop:7
+    marginTop:8
   },
   footerduoi:{
     color:'#2CA9C0',
