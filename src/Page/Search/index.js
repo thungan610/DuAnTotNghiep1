@@ -1,11 +1,11 @@
-import React from "react";
+// import React from "react";
 
-const Search = () => {
-    return (
-        <View>
-            <Text>Search</Text>
-        </View>
-    );
-};
+// const Search = () => {
+//     return (
+//         <View>
+//             <Text>Search</Text>
+//         </View>
+//     );
+// };
 
-export default Search;
+// export default Search;
