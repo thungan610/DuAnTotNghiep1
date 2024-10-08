@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
-
-const AddProduct = () => {
+import PayMethodStyle from '../Payment/PayMethod/style';
+const AddProduct = (prop) => {
+    const { navigation } = prop;
+    const HandTT = () => {
+        navigation.navigate('NextPayment')
+    }
     const [cartItems, setCartItems] = useState([
         { id: '1', name: 'Bắp cải trắng', category: 'Rau củ', price: 19000, quantity: 1, selected: false, image: require('../../../src/assets/image/image1.png') },
         { id: '2', name: 'Sườn non', category: 'Thịt', price: 45000, quantity: 1, selected: false, image: require('../../../src/assets/image/image4.png') },
@@ -83,6 +87,17 @@ const AddProduct = () => {
                 keyExtractor={item => item.id}
                 contentContainerStyle={AddProductStyle.list}
             />
+            <View>
+                <View style={AddProductStyle.total}>
+                    <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
+                    <Text style={AddProductStyle.totalPrice}>{cartItems.reduce((total, item) => total + item.quantity * item.price, 0).toLocaleString()}đ</Text>
+                </View>
+                <View>
+                    <TouchableOpacity onPress={HandTT} style={PayMethodStyle.BtnSuss}>
+                        <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     );
 };
@@ -90,10 +105,9 @@ const AddProduct = () => {
 
 const AddProductStyle = StyleSheet.create({
     container: {
-        paddingTop: 20,
-        position: 'relative',
         width: '100%',
         height: '100%',
+        backgroundColor: 'white',
         padding: 20
     },
     header: {
@@ -121,14 +135,14 @@ const AddProductStyle = StyleSheet.create({
         borderRadius: 8,
         padding: 15,
     },
-    borderImage:{
-        width:72,
-        height:72,
-        borderRadius:10,
+    borderImage: {
+        width: 72,
+        height: 72,
+        borderRadius: 10,
         borderColor: '#73D6E9',
-        backgroundColor:'#73D6E9',
-        justifyContent:'center',
-        alignItems:'center'
+        backgroundColor: '#73D6E9',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     image: {
         width: 56,
@@ -179,6 +193,17 @@ const AddProductStyle = StyleSheet.create({
         height: 18,
         marginRight: 10,
     },
+    total:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+    },
+    totalPrice:{
+        fontSize:24,
+        fontWeight:'bold',
+        color:'black',
+        marginBottom:10
+    }
 });
 
 export default AddProduct;

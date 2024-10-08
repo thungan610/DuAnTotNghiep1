@@ -10,22 +10,25 @@ const transferOptions = [
     { label: "Hoả tốc", price: "20.000đ", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
 ];
 
-const AddTranfer = () => {
+const AddTranfer = (prop) => {
     const [selectedIndex, setSelectedIndex] = useState(null); // State to track selected button index
-
-    // Handle button press
+    const BackRight = () => {
+        prop.navigation.goBack()
+    }
     const handlePress = (index) => {
-        setSelectedIndex(index); // Set the selected index
+        setSelectedIndex(index);
     };
 
     return (
         <View style={AddTranferStyle.container}>
             <View style={[AddAdressStyle.header, { padding: 20 }]}>
-                <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <TouchableOpacity onPress={BackRight}>
+                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                </TouchableOpacity>
                 <Text style={AddAdressStyle.title}>Phương thức vận chuyển</Text>
                 <Text />
             </View>
-            {transferOptions.map((option, index) => ( // Map through options to create buttons
+            {transferOptions.map((option, index) => (
                 <View style={AddTranferStyle.body} key={index}>
                     <TouchableOpacity
                         style={[
@@ -45,7 +48,7 @@ const AddTranfer = () => {
                 </View>
             ))}
             <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>
-                <TouchableOpacity style={PayMethodStyle.BtnSuss}>
+                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>

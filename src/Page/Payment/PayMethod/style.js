@@ -51,15 +51,14 @@ const PayMethodStyle = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#fff',
-        marginTop: 10
     },
     BtnSuss:{
         backgroundColor: '#27AAE1',
         width: '100%',
-        justifyContent:'center',
-        alignItems:'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 15,
-        padding: 10
+        padding: 15
     }
 })
 

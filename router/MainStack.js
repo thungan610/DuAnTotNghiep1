@@ -3,12 +3,16 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
 import Login from "../src/Page/Login";
 import BottomNav from "./BottomNav";
-import ResetPassword from "../src/Page/ForgotPassword/ResetPassword.js";
 import Register from "../src/Page/Register/Register";
-import HomeScreen from "../src/Page/HomeScreen/index.js";
-import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
-import NewCart from "../src/Page/Cart/NewCart.js";
-import ForgotPassword from "../src/Page/ForgotPassword/index.js";
+import AddProduct from "../src/Page/Cart/AddProduct.js";
+import NextPayment from "../src/Page/Payment/Next/index.js";
+import AddAdress from "../src/Page/Payment/AddAdress";
+import SubmitTrue from "../src/Page/Payment/SubmitTrue";
+import Payment from "../src/Page/Payment/Payment";
+import PayMethod from "../src/Page/Payment/PayMethod/index.js";
+import Voucher from "../src/Page/Payment/Voucher/index.js";
+import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
+import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 const Stack = createNativeStackNavigator()
 const MainStack = () => {
     return (
@@ -22,6 +26,15 @@ const MainStack = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="BottomNav" component={BottomNav} />
+            <Stack.Screen name="AddProduct" component={AddProduct} />
+            <Stack.Screen name="NextPayment" component={NextPayment} />
+            <Stack.Screen name="AddAdress" component={AddAdress} />
+            <Stack.Screen name="SubmitTrue" component={SubmitTrue} />
+            <Stack.Screen name="Payment" component={Payment} />
+            <Stack.Screen name="PayMethod" component={PayMethod} />
+            <Stack.Screen name="Voucher" component={Voucher} />
+            <Stack.Screen name="AddTranfer" component={AddTranfer} />
+            <Stack.Screen name="PaySusses" component={PaySusses} />
         </Stack.Navigator>
     );
 };

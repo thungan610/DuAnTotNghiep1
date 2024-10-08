@@ -6,6 +6,7 @@ import Order from '../src/Page/Order/Order'
 import Cart from '../src/Page/Cart/Cart'
 import NotifiScreen from '../src/Page/NotifiScreen'
 import Profile from '../src/Page/Profile'
+import AddProduct from '../src/Page/Cart/AddProduct'
 
 const Tab = createBottomTabNavigator()
 
@@ -41,7 +42,7 @@ const BottomNav = () => {
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BasketSau.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="Cart" component={Cart} />
+                name="AddProduct" component={AddProduct} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,

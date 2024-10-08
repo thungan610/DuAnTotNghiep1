@@ -2,11 +2,30 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
 import PaymentStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
-const Payment = () => {
+import AddTranfer from "../AddTranfer";
+const Payment = (prop) => {
+    const { navigation } = prop
+    const BackRight = () => {
+        navigation.goBack()
+    }
+    const HandMethod = () => {
+        navigation.navigate('PayMethod')
+    }
+    const HandVoucher = () => {
+        navigation.navigate('Voucher')
+    }
+    const HandTransfer = () => {
+        navigation.navigate('AddTranfer')
+    }
+    const HandPaySuccess = () => {
+        navigation.navigate('PaySusses')
+    }
     return (
         <View style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
-                <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <TouchableOpacity onPress={BackRight}>
+                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                </TouchableOpacity>
                 <Text style={AddAdressStyle.title}>Thanh toán</Text>
                 <Text />
             </View>
@@ -39,7 +58,7 @@ const Payment = () => {
                     <Text style={PaymentStyle.txtLH}>SL: 1</Text>
                 </View>
             </View>
-            <TouchableOpacity style={PaymentStyle.BtnTranfer}>
+            <TouchableOpacity onPress={HandTransfer} style={PaymentStyle.BtnTranfer}>
                 <Text style={PaymentStyle.txtDC}>Phương thức vận chuyển (Nhấp để chọn)</Text>
                 <View style={PaymentStyle.ViewTranfer}>
                     <Text style={PaymentStyle.txtPrice}>Nhanh</Text>
@@ -61,7 +80,7 @@ const Payment = () => {
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Phương thúc thanh toán:</Text>
-                    <TouchableOpacity style={PaymentStyle.btnThem}>
+                    <TouchableOpacity onPress={HandMethod} style={PaymentStyle.btnThem}>
                         <Text style={PaymentStyle.txtDC}>Khi nhận hàng</Text>
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
@@ -69,7 +88,7 @@ const Payment = () => {
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Chọn khuyến mãi:</Text>
-                    <TouchableOpacity style={PaymentStyle.btnThem}>
+                    <TouchableOpacity onPress={HandVoucher} style={PaymentStyle.btnThem}>
                         <Text style={PaymentStyle.txtDC}>Nhấp vào để chọn</Text>
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
@@ -100,7 +119,7 @@ const Payment = () => {
                     <Text style={PaymentStyle.txtDC1}>Tổng thanh toán:</Text>
                     <Text style={PaymentStyle.txtDC2}>29.000đ</Text>
                     </View>
-                    <TouchableOpacity style={PaymentStyle.btnSubmit}>
+                    <TouchableOpacity onPress={HandPaySuccess} style={PaymentStyle.btnSubmit}>
                         <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>

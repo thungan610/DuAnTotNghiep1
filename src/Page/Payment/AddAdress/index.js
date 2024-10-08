@@ -2,12 +2,21 @@ import React from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import AddAdressStyle from "./style";
 
-const AddAdress = () => {
+const AddAdress = (prop) => {
+    const { navigation } = prop
+    const BackRight = () => {
+        navigation.goBack()
+    }
+    const HandSubmitTrue = () => {
+        navigation.navigate('SubmitTrue')
+    }
     return (
         <View style={AddAdressStyle.container}>
             <View style={AddAdressStyle.header}>
-                <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
-                <Text style={AddAdressStyle.title}>Thêm địa chỉ mới</Text>
+                <TouchableOpacity onPress={BackRight}>
+                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                </TouchableOpacity>
+                <Text  style={AddAdressStyle.title}>Thêm địa chỉ mới</Text>
                 <Text/>
             </View>
             <View>
@@ -27,7 +36,7 @@ const AddAdress = () => {
                 </View>
             </View>
             <View style={AddAdressStyle.footer}>
-                <TouchableOpacity style={AddAdressStyle.button}>
+                <TouchableOpacity onPress={HandSubmitTrue} style={AddAdressStyle.button}>
                     <Text style={AddAdressStyle.buttonText}>LƯU</Text>
                 </TouchableOpacity>
             </View>
