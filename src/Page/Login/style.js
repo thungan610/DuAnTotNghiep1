@@ -102,7 +102,7 @@ const LoginStyle = StyleSheet.create({
   button:{
     marginLeft:15,
     marginRight: 15,
-    marginTop: 100
+    marginTop: 70
   },
   dn:{
     borderRadius:10,
