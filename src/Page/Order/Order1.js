@@ -10,24 +10,21 @@ const Order1 = () => {
   const orders = [
     {
       id: 1,
-      name: 'Sườn non',
+      name: 'Bắp cải trắng',
       quantity: 1,
-      price: 45000,
+      price: 29000,
       status: 'Đang vận chuyển',
-      image: require('../../../src/assets/image/image1.png'),
+      image: require('../../../src/assets/image/image1.png')
     },
     {
-      id: 2,
+      id: 1,
       name: 'Khoai tây',
       quantity: 1,
-      price: 13000,
+      price: 29000,
       status: 'Đang vận chuyển',
-      image: require('../../../src/assets/image/image1.png'),
+      image: require('../../../src/assets/image/image1.png')
     },
   ];
-
-  // Calculate total price
-  const totalPrice = orders.reduce((acc, order) => acc + order.price, 0);
 
   return (
     <View style={WaitconfirmedStyle.container}>
@@ -55,7 +52,7 @@ const Order1 = () => {
               marginTop: 7,
               color: 'black',
               textAlign: 'center',
-              marginRight: 12,
+              marginRight: 12
             }}>
               {tab}
             </Text>
@@ -73,16 +70,11 @@ const Order1 = () => {
             <View style={WaitconfirmedStyle.orderInfo}>
               <Text style={WaitconfirmedStyle.orderName}>{order.name}</Text>
               <Text style={WaitconfirmedStyle.orderQuantity}>SL: {order.quantity}</Text>
-              <Text style={WaitconfirmedStyle.orderPrice}>{order.price.toLocaleString('vi-VN')}đ</Text>
+              <Text style={WaitconfirmedStyle.orderPrice}>Tổng tiền: {order.price.toLocaleString('vi-VN')}đ</Text>
               <Text style={WaitconfirmedStyle.orderStatus}>{order.status}</Text>
             </View>
           </View>
         ))}
-
-        {/* Total Price Section */}
-        <View style={WaitconfirmedStyle.totalContainer}>
-          <Text style={WaitconfirmedStyle.totalText}>Tổng tiền: {totalPrice.toLocaleString('vi-VN')}đ</Text>
-        </View>
       </ScrollView>
     </View>
   );
@@ -94,8 +86,8 @@ const WaitconfirmedStyle = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '68%',
+    justifyContent: "space-between",
+    width: '68%'
   },
   backright: {
     width: 28,
@@ -106,7 +98,7 @@ const WaitconfirmedStyle = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     color: 'black',
-    alignContent: 'center',
+    alignContent: 'center'
   },
   orderCard: {
     marginTop: 14,
@@ -130,20 +122,21 @@ const WaitconfirmedStyle = StyleSheet.create({
     height: 60,
     marginRight: 16,
     borderRadius: 8,
-    marginLeft: 14,
+    marginLeft: 14
   },
   orderInfo: {
     marginLeft: 16,
-    flex: 1,
+    flex:1
   },
   orderName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'black'
   },
   orderQuantity: {
     fontSize: 14,
     color: '#555',
+    color: 'black'
   },
   orderPrice: {
     fontSize: 14,
@@ -152,21 +145,7 @@ const WaitconfirmedStyle = StyleSheet.create({
   orderStatus: {
     fontSize: 14,
     color: '#4CAF50',
-    alignSelf: 'flex-end', // Align right
-  },
-  totalContainer: {
-    marginTop: 14,
-    padding: 10,
-    borderColor: '#BBAFAF',
-    borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: 'white',
-    alignItems: 'flex-end', // Align to the right
-  },
-  totalText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black',
+    alignSelf: 'flex-end', // Căn phải (đi chung vs flex)
   },
 });
 
