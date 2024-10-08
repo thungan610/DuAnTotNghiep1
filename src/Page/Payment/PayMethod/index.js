@@ -3,14 +3,21 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import PayMethodStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 
-const PayMethod = () => {
+const PayMethod = (prop) => {
+    const { navigation } = prop
+
+    const BackRight = () => {
+        navigation.goBack()
+    }
     const [selectedMethod, setSelectedMethod] = useState(null); //Để xử lý trạng thái chọn hoặc không
 
     return (
         <View style={PayMethodStyle.container}>
             <View style={PayMethodStyle.container1}>
                 <View style={AddAdressStyle.header}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    <TouchableOpacity onPress={BackRight}>
+                        <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    </TouchableOpacity>
                     <Text style={AddAdressStyle.title}>Phương thức thanh toán</Text>
                     <Text />
                 </View>
