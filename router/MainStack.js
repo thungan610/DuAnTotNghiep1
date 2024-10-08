@@ -19,12 +19,7 @@ const MainStack = () => {
             initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
-            <Stack.Screen name="HomeCreen" component={HomeScreen} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="ResetPass" component={ResetPassword} />
-            <Stack.Screen name="Forgot" component={ForgotPassword} />
-            <Stack.Screen name="NewNotifi" component={NewNotifi} />
-            <Stack.Screen name="NewCart" component={NewCart} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="BottomNav" component={BottomNav} />
         </Stack.Navigator>
