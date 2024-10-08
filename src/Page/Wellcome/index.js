@@ -3,12 +3,12 @@ import { View, Image } from "react-native";
 import wellcomeStyle from "./style";
 import { useNavigation } from '@react-navigation/native';
 
-const Wellcome = () => {
+const Wellcome = (prop) => {
     const navigation = useNavigation();
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigation.navigate('HomeScreen'); // Chuyển đến màn hình Login sau 3 giây
+            navigation.navigate('BottomNav'); // Chuyển đến màn hình Login sau 3 giây
         }, 3000);
 
         return () => clearTimeout(timer); // Dọn dẹp timer khi component bị hủy
