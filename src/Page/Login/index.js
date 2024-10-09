@@ -12,6 +12,7 @@ const Login = (prop) => {
     const [loginError, setLoginError] = useState('');
 
     const BtnLogin = () => {
+        prop.navigation.navigate('AddProduct')
         let hasError = false;
 
         setEmailError('');
@@ -47,9 +48,8 @@ const Login = (prop) => {
             }
 
             Alert.alert("Đăng nhập thành công");
-            prop.navigation.navigate('BottomNav');
         }
-    };
+    }; 
 
     // Kiểm tra email hợp lệ
     const validateEmail = (email) => {

@@ -2,10 +2,29 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import PayMethodStyle from '../Payment/PayMethod/style';
 const AddProduct = (prop) => {
-    const { navigation } = prop;
+    const {navigation} = prop;  
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const HandTT = () => {
-        navigation.navigate('Login_required')
-    }
+       handleLogin();
+    };
+    const handleLogin = async () => {
+        const loginSuccessful = true;
+
+        if (loginSuccessful) {
+            setIsLoggedIn(true);
+            navigation.navigate('NextPayment'); 
+        } else {
+            Alert.alert("Đăng nhập không thành công");
+        }
+    };
+    const confirmPayment = () => {
+        if (!isLoggedIn) {
+            navigation.navigate('Login_required'); 
+        } else {
+            navigation.navigate('NextPayment');
+        }
+    };
+
     const [cartItems, setCartItems] = useState([
         { id: '1', name: 'Bắp cải trắng', category: 'Rau củ', price: 19000, quantity: 1, selected: false, image: require('../../../src/assets/image/image1.png') },
         { id: '2', name: 'Sườn non', category: 'Thịt', price: 45000, quantity: 1, selected: false, image: require('../../../src/assets/image/image4.png') },
