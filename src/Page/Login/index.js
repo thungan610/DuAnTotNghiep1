@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import LoginStyle from './style';
 
-const Login = (prop) => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
