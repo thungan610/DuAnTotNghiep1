@@ -102,7 +102,7 @@ const LoginStyle = StyleSheet.create({
   button:{
     marginLeft:15,
     marginRight: 15,
-    marginTop: 100
+    marginTop: 70
   },
   dn:{
     borderRadius:10,
@@ -166,6 +166,13 @@ buttonfb: {
   footerdau:{
     color:'#8B8B8B',
     fontSize:15
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+  },
+  containereye: {
+    marginLeft: 10,
   },
 });
 export default LoginStyle

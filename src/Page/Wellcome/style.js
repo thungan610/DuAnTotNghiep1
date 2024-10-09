@@ -15,15 +15,24 @@ const WelcomeStyle = StyleSheet.create({
         top:0,
         left: 0
     },
-    anhgiua: {
-        height: 410,
-        width: 395,
-        // marginTop: 150
+    phukien1: {
+        position: "absolute",
+        top: 50,
+        left:0
     },
-    gocduoi:{
-        position:"absolute",
-        right: 0,
-        bottom: 0
-    }
+    phukien2: {
+        position: "absolute",
+        top: 100,
+        right:0
+    },
+    anhgiua: {
+        height: 280,
+        width: 280,
+    },   
+    anhgiua: {
+        height: 280,
+        width: 280,
+    },
+    
 })
 export default WelcomeStyle;

@@ -1,17 +1,13 @@
-import React from 'react'
-import { View, Text, TextInput } from 'react-native'
-import Welcome from './src/Page/Wellcome'
-import Login from './src/Page/Login'
-import HomeScreen from './src/Page/HomeScreen'
-
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MainStack from './router/MainStack';
 const App = () => {
-
   return (
-    <View>
-      <HomeScreen/>
-    </View>
-  )
-}
-
+    <NavigationContainer>
+        <MainStack />
+    </NavigationContainer>
+  )  
+};
 
 export default App;

@@ -1,10 +1,23 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Wellcome from "../src/page/Wellcome";
-import Login from "../src/page/Login";
-import SignUp from "../src/page/SignUp";
+import Wellcome from "../src/Page/Wellcome";
+import Login from "../src/Page/Login";
 import BottomNav from "./BottomNav";
+import Register from "../src/Page/Register/Register";
+import AddProduct from "../src/Page/Cart/AddProduct.js";
+import NextPayment from "../src/Page/Payment/Next/index.js";
+import AddAdress from "../src/Page/Payment/AddAdress";
+import SubmitTrue from "../src/Page/Payment/SubmitTrue";
+import Payment from "../src/Page/Payment/Payment";
+import PayMethod from "../src/Page/Payment/PayMethod/index.js";
+import Voucher from "../src/Page/Payment/Voucher/index.js";
+import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
+import PaySusses from "../src/Page/Payment/PaySusses/index.js";
+import Login_required from "../src/Page/Login/Login_required/index.js";
+import ForgotPassword from "../src/Page/ForgotPassword/index.js";
+import ResetPassword from "../src/Page/ForgotPassword/ResetPassword.js/index.js";
+import SMS from "../src/Page/SMS/index.js";
+import Registration_successful from "../src/Page/SMS/Registration_successful.js";
 const Stack = createNativeStackNavigator()
 const MainStack = () => {
     return (
@@ -12,12 +25,26 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="BottomNav"
+            initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="BottomNav" component={BottomNav} />
+            <Stack.Screen name="AddProduct" component={AddProduct} />
+            <Stack.Screen name="NextPayment" component={NextPayment} />
+            <Stack.Screen name="AddAdress" component={AddAdress} />
+            <Stack.Screen name="SubmitTrue" component={SubmitTrue} />
+            <Stack.Screen name="Payment" component={Payment} />
+            <Stack.Screen name="PayMethod" component={PayMethod} />
+            <Stack.Screen name="Voucher" component={Voucher} />
+            <Stack.Screen name="AddTranfer" component={AddTranfer} />
+            <Stack.Screen name="PaySusses" component={PaySusses} />
+            <Stack.Screen name="Login_required" component={Login_required} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
+            <Stack.Screen name="SMS" component={SMS} />
+            <Stack.Screen name="Registration_successful" component={Registration_successful} />
         </Stack.Navigator>
     );
 };
