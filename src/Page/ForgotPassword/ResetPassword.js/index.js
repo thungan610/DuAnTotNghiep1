@@ -2,12 +2,13 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'reac
 import React, { useState } from 'react'
 import ResetPasswordStyle from './style'
 
-const ResetPassword = () => {
+const ResetPassword = (prop) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
 
     const BtnResetPass = () => {
@@ -103,12 +104,12 @@ const ResetPassword = () => {
                                     setConfirmPasswordError('');
                                 }}
                                 style={[ResetPasswordStyle.input, confirmPasswordError ? { color: 'red' } : {}]}
-                                secureTextEntry={!isPasswordVisible}
+                                secureTextEntry={!isConfirmPasswordVisible} // Sử dụng trạng thái riêng
                             />
-                            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                            <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
                                 <Image
                                     style={ResetPasswordStyle.eye}
-                                    source={isPasswordVisible
+                                    source={isConfirmPasswordVisible
                                         ? require("../../../../src/assets/eye.png")
                                         : require("../../../../src/assets/eye-closed.png")
                                     }

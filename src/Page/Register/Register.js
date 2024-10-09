@@ -1,4 +1,4 @@
-import { Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { RadioGroup } from 'react-native-radio-buttons-group'
 import RegisterStyle from './style'
@@ -19,6 +19,8 @@ const Register = (prop) => {
     }
 
     const BtnRegister = () => {
+        prop.navigation.navigate('SMS');
+
         let hasError = false;
 
         setFullNameError('');
@@ -65,9 +67,6 @@ const Register = (prop) => {
         if (hasError) {
             return;
         }
-
-        Alert.alert("Đăng ký thành công");
-        prop.navigation.navigate('Login');
     };
 
     // Kiểm tra email hợp lệ
@@ -193,7 +192,6 @@ const Register = (prop) => {
                                 radioButtons={radioButtons}
                                 onPress={setSelectedId}
                                 selectedId={selectedId} />
-                            <Text style={RegisterStyle.fogotPass}>Quên mật khẩu?</Text>
                         </View>
                     </View>
 
