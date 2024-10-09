@@ -53,8 +53,8 @@ const AddAdressStyle = StyleSheet.create({
         marginLeft: 20
     },
     footer:{
-        flex: 1,
-        marginTop: 90
+        // flex: 1,
+        marginTop: 70
     },
     button:{
         backgroundColor: "#27AAE1",
