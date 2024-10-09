@@ -209,7 +209,7 @@ const Register = (prop) => {
 
                     <View style={RegisterStyle.footer}>
                         <Text style={RegisterStyle.ftText}>Bạn đã có tài khoản?</Text>
-                        <Text onPress={NextLogin} style={RegisterStyle.end}>Đăng Nhập</Text>
+                        <Text onPress={NextLogin} style={RegisterStyle.end}> Đăng Nhập</Text>
                     </View>
                 </View>
             </ScrollView>

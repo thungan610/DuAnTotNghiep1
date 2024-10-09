@@ -13,6 +13,7 @@ import PayMethod from "../src/Page/Payment/PayMethod/index.js";
 import Voucher from "../src/Page/Payment/Voucher/index.js";
 import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
 import PaySusses from "../src/Page/Payment/PaySusses/index.js";
+import Login_required from "../src/Page/Login/Login_required/index.js";
 const Stack = createNativeStackNavigator()
 const MainStack = () => {
     return (
@@ -35,6 +36,7 @@ const MainStack = () => {
             <Stack.Screen name="Voucher" component={Voucher} />
             <Stack.Screen name="AddTranfer" component={AddTranfer} />
             <Stack.Screen name="PaySusses" component={PaySusses} />
+            <Stack.Screen name="Login_required" component={Login_required} />
         </Stack.Navigator>
     );
 };

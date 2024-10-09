@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import PayMethodStyle from '../Payment/PayMethod/style';
 const AddProduct = (prop) => {
     const { navigation } = prop;
     const HandTT = () => {
-        navigation.navigate('NextPayment')
+        navigation.navigate('Login_required')
     }
     const [cartItems, setCartItems] = useState([
         { id: '1', name: 'Bắp cải trắng', category: 'Rau củ', price: 19000, quantity: 1, selected: false, image: require('../../../src/assets/image/image1.png') },
         { id: '2', name: 'Sườn non', category: 'Thịt', price: 45000, quantity: 1, selected: false, image: require('../../../src/assets/image/image4.png') },
         { id: '3', name: 'Khoai tây', category: 'Rau củ', price: 30000, quantity: 1, selected: false, image: require('../../../src/assets/image/image3.png') },
     ]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [itemsToDelete, setItemsToDelete] = useState([]);
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
@@ -22,12 +24,18 @@ const AddProduct = (prop) => {
 
     const removeSelectedItems = () => {
         setCartItems(prevItems => prevItems.filter(item => !item.selected));
+        setModalVisible(false);
     };
 
-    // Xóa tất cả sản phẩm trong giỏ hàng
-    const clearCart = () => {
-        setCartItems([]);
-    };
+    const confirmDelete = () => {
+        const selectedItems = cartItems.filter(item => item.selected);
+        setItemsToDelete(selectedItems);
+        setModalVisible(true);
+    }
+
+    const totalAmount = cartItems
+        .filter(item => item.selected)
+        .reduce((total, item) => total + item.quantity * item.price, 0);
 
     // Tăng hoặc giảm số lượng
     const updateQuantity = (id, action) => {
@@ -41,7 +49,7 @@ const AddProduct = (prop) => {
                     return { ...item, quantity: newQuantity };
                 }
                 return item;
-            }).filter(Boolean) // Xóa các phần tử null
+            }).filter(Boolean) // Xóa các phần tử 
         );
     };
 
@@ -77,7 +85,7 @@ const AddProduct = (prop) => {
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
                 <Text style={AddProductStyle.title}>Giỏ hàng</Text>
-                <TouchableOpacity style={AddProductStyle.iconTrash} onPress={removeSelectedItems}>
+                <TouchableOpacity style={AddProductStyle.iconTrash} onPress={confirmDelete}>
                     <Image source={require("../../../src/assets/Trash.png")} />
                 </TouchableOpacity>
             </View>
@@ -88,16 +96,42 @@ const AddProduct = (prop) => {
                 contentContainerStyle={AddProductStyle.list}
             />
             <View>
-                <View style={AddProductStyle.total}>
-                    <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
-                    <Text style={AddProductStyle.totalPrice}>{cartItems.reduce((total, item) => total + item.quantity * item.price, 0).toLocaleString()}đ</Text>
-                </View>
-                <View>
-                    <TouchableOpacity onPress={HandTT} style={PayMethodStyle.BtnSuss}>
-                        <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
-                    </TouchableOpacity>
-                </View>
+                {totalAmount > 0 && (
+                    <View>
+                        <View style={AddProductStyle.total}>
+                            <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
+                            <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}đ</Text>
+                        </View>
+                        <TouchableOpacity onPress={HandTT} style={PayMethodStyle.BtnSuss}>
+                            <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
+            <Modal
+                transparent={true}
+                animationType="slide"
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={AddProductStyle.modalContainer}>
+                    <View style={AddProductStyle.modalContent}>
+                    <Image
+                            source={require("../../../src/assets/error.png")}
+                            style={{height:40, width:40}}
+                        />
+                        <Text style={AddProductStyle.modalTitle}>Xác nhận xóa sản phẩm</Text>
+                        <View style={AddProductStyle.modalButtons}>
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={AddProductStyle.cancelButton}>
+                                <Text style={AddProductStyle.buttonText}>Quay lại</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={removeSelectedItems} style={AddProductStyle.confirmButton}>
+                                <Text style={AddProductStyle.buttonText}>Xóa</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -193,17 +227,64 @@ const AddProductStyle = StyleSheet.create({
         height: 18,
         marginRight: 10,
     },
-    total:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
+    total: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    totalPrice:{
-        fontSize:24,
-        fontWeight:'bold',
-        color:'black',
-        marginBottom:10
-    }
+    totalPrice: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'black',
+        marginBottom: 10
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginTop: 20,
+    },
+    cancelButton: {
+        backgroundColor: '#75D379',
+        padding: 10,
+        borderRadius: 5,
+        flex: 1,
+        marginRight: 5,
+    },
+    confirmButton: {
+        backgroundColor: '#FF7B7B',
+        padding: 10,
+        borderRadius: 5,
+        flex: 1,
+        marginLeft: 5,
+    },
+    buttonText: {
+        color: 'white',
+        textAlign: 'center',
+    },
 });
 
 export default AddProduct;
