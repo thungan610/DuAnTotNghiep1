@@ -14,6 +14,10 @@ import Voucher from "../src/Page/Payment/Voucher/index.js";
 import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
 import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 import Login_required from "../src/Page/Login/Login_required/index.js";
+import ForgotPassword from "../src/Page/ForgotPassword/index.js";
+import ResetPassword from "../src/Page/ForgotPassword/ResetPassword.js/index.js";
+import SMS from "../src/Page/SMS/index.js";
+import Registration_successful from "../src/Page/SMS/Registration_successful.js";
 const Stack = createNativeStackNavigator()
 const MainStack = () => {
     return (
@@ -37,6 +41,10 @@ const MainStack = () => {
             <Stack.Screen name="AddTranfer" component={AddTranfer} />
             <Stack.Screen name="PaySusses" component={PaySusses} />
             <Stack.Screen name="Login_required" component={Login_required} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
+            <Stack.Screen name="SMS" component={SMS} />
+            <Stack.Screen name="Registration_successful" component={Registration_successful} />
         </Stack.Navigator>
     );
 };
