@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
-import Login from "../src/Page/Login";
-import BottomNav from "./BottomNav";
+import Login from "../src/Page/Login/index.js";
+import BottomNav from "./BottomNav.js";
 import Register from "../src/Page/Register/Register";
 import AddProduct from "../src/Page/Cart/AddProduct.js";
 import HomeScreen from "../src/Page/HomeScreen/index.js";
@@ -30,7 +30,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="ProductCancel"
+            initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
