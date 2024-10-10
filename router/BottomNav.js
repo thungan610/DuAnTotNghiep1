@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import {Text, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '../src/Page/HomeScreen'
@@ -18,8 +18,6 @@ const BottomNav = () => {
                     height: 60,
                     paddingBottom: 5,
                     backgroundColor: '#37C5DF',
-                    
-
                 }
             }}
         >
@@ -50,7 +48,7 @@ const BottomNav = () => {
                 name="NotifiScreen" component={NotifiScreen} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/User.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/User.png') : require('./icon/User.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="Profile" component={ProfileDetail} />
