@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 
-const NewNotifi = ({ navigation }) => {
+const NewNotifi = (prop) => {
     return (
         <View style={NewnotifiStyle.container}>
             <View style={NewnotifiStyle.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
                     <Image style={NewnotifiStyle.iconBack} source={require("../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={NewnotifiStyle.tieude}>Thông báo</Text>

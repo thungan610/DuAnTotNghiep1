@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import React, { useState } from 'react';
 
-const SearchScreen = () => {
+const SearchScreen = (prop) => {
   const [searchText, setSearchText] = useState('');
   const [recentSearches, setRecentSearches] = useState(['Bắp cải trắng', 'Chanh không hạt', 'Khoai tây']);
   const products = [
@@ -16,7 +16,6 @@ const SearchScreen = () => {
 
   const handleSearch = (text) => {
     setSearchText(text);
-    // Thêm logic tìm kiếm tại đây
   };
 
   const renderProduct = ({ item }) => (
@@ -29,7 +28,6 @@ const SearchScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -37,13 +35,13 @@ const SearchScreen = () => {
           value={searchText}
           onChangeText={handleSearch}
         />
-        {/* Dấu "x" để xóa nội dung tìm kiếm */}
+
         {searchText.length > 0 && (
           <TouchableOpacity onPress={() => setSearchText('')} style={styles.clearButton}>
             <Text style={styles.clearText}>×</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={() => setSearchText('')}>
+        <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
           <Text style={styles.cancelText}>Hủy</Text>
         </TouchableOpacity>
       </View>
@@ -61,11 +59,10 @@ const SearchScreen = () => {
         ))}
         <TouchableOpacity style={styles.viewMoreContainer}>
           <Text style={styles.viewMoreText}>Xem thêm</Text>
-          <Image source={require('../../assets/chevron-left.png')} style={styles.chevrondown} />
+          <Image source={require('../../assets/chevron-left.png')} style={{ transform: [{ rotate: '270deg' }],}} />
         </TouchableOpacity>
       </View>
 
-      {/* Product Grid */}
       <FlatList
         data={products}
         renderItem={renderProduct}
