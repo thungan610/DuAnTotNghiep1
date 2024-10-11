@@ -1,20 +1,14 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View,Text,Image,TouchableOpacity,} from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
-import BottomNav from '../../../router/BottomNav';
 
-const ProfileDetail = () => {
+const ProfileDetail = (prop) => {
   return (
     <View style={{
-      position:'relative',
-       width:'100%', 
-       height:'100%',
-      }}>
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    }}>
       <View style={profileStyle.header}>
         <View style={profileStyle.headercontainer}>
           <TouchableOpacity>
@@ -36,7 +30,7 @@ const ProfileDetail = () => {
           </View>
 
           <View style={profileStyle.iconheader}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('AddProduct')}>
               <Image
                 style={profileStyle.pro5logo1}
                 source={require('../../../src/assets/basket.png')}
@@ -142,7 +136,6 @@ const ProfileDetail = () => {
           </View>
         </View>
       </View>
-      {/* <BottomNav style={{}}/> */}
     </View>
   );
 };

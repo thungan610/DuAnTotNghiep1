@@ -3,9 +3,9 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '../src/Page/HomeScreen'
 import Order from '../src/Page/Order/Order'
-import NotifiScreen from '../src/Page/NotifiScreen'
 import ProfileDetail from '../src/Page/Profile/ProfileDetail' 
 import AddProduct from '../src/Page/Cart/AddProduct'
+import NewNotifi from '../src/Page/NotifiScreen/NewNotifi'
 
 const Tab = createBottomTabNavigator()
 
@@ -45,7 +45,7 @@ const BottomNav = () => {
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="NotifiScreen" component={NotifiScreen} />
+                name="NotifiScreen" component={NewNotifi} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/User.png') : require('./icon/User.png')} />,

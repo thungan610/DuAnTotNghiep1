@@ -23,8 +23,10 @@ import ProductCancel from "../src/Page/ProductCancel/index.js";
 import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
 import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
 import Search from "../src/Page/Search/Search.js";
-import Profile from "../src/Page/Profile/ProfileDetail.js";
 import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
+import Order from "../src/Page/Order/Order.js";
+import Processing1 from "../src/Page/Order/Processing1.js";
+import Cart from "../src/Page/Cart/Cart.js";
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -59,6 +61,9 @@ const MainStack = () => {
             <Stack.Screen name="NewNotifi" component={NewNotifi} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
+            <Stack.Screen name="Order" component={Order} />
+            <Stack.Screen name="Processing1" component={Processing1} />
+            <Stack.Screen name="Cart" component={Cart} />
         </Stack.Navigator>
     );
 };
