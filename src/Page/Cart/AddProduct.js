@@ -96,8 +96,12 @@ const AddProduct = ({ navigation }) => {
     };
 
     const confirmDelete = () => {
-        setItemsToDelete(cartItems.filter(item => item.selected));
-        setModalVisible(true);
+        if (cartItems.length === 0) {
+            Alert.alert("Thông báo", "Không có sản phẩm để xóa");
+        } else {
+            setItemsToDelete(cartItems.filter(item => item.selected));
+            setModalVisible(true);
+        }
     };
 
     const totalAmount = cartItems

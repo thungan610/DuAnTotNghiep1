@@ -1,7 +1,17 @@
-import {View,Text,Image,TouchableOpacity,} from 'react-native';
+import { View, Text, Image, TouchableOpacity, } from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
 
+const ProfileDetail = (prop) => {
+  const BtnProductReview = () => {
+    propnavigation.navigate('ProductReview');
+  };
+  const BtnInsertPro5 = () => {
+    prop.navigation.navigate('InsertPro5');
+  };
+  const BtnTabAddress = () => {
+    prop.navigation.navigate('TabAddress');
+  };
   return (
     <View style={{
       position: 'relative',
@@ -20,17 +30,32 @@ import profileStyle from './ProfileDetailstyle';
           <View style={profileStyle.undercontainer}>
             <Text style={profileStyle.username}>Bé Phát</Text>
             <TouchableOpacity onPress={BtnInsertPro5}>
-            <View style={profileStyle.mid}>
-              <Text style={profileStyle.pro5small}>Hồ sơ</Text>
-              <Image
-                style={profileStyle.vecto}
-                source={require('../../../src/assets/vecto1.png')}
-              />
-            </View>
+              <View style={profileStyle.mid}>
+                <Text style={profileStyle.pro5small}>Hồ sơ</Text>
+                <Image
+                  style={profileStyle.vecto}
+                  source={require('../../../src/assets/vecto1.png')}
+                />
+              </View>
             </TouchableOpacity>
           </View>
 
-          
+        </View>
+
+        <View style={profileStyle.iconheader}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('AddProduct')}>
+            <Image
+              style={profileStyle.pro5logo1}
+              source={require('../../../src/assets/basket.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              style={profileStyle.pro5logo2}
+              source={require('../../../src/assets/chat.png')}
+            />
+          </TouchableOpacity>
+
         </View>
       </View>
       <View style={profileStyle.body}>
@@ -66,33 +91,33 @@ import profileStyle from './ProfileDetailstyle';
             />
             <Text style={profileStyle.loadtext3}>Đã hủy</Text>
           </View>
-       <TouchableOpacity onPress={BtnProductReview}>
-       <View style={profileStyle.load4}>
-            <Image
-              style={profileStyle.loadimg}
-              source={require('../../../src/assets/star.png')}
-            />
-           
-           <Text style={profileStyle.loadtext4}>Đánh giá</Text>
-          
-          </View>
-       </TouchableOpacity>
+          <TouchableOpacity onPress={BtnProductReview}>
+            <View style={profileStyle.load4}>
+              <Image
+                style={profileStyle.loadimg}
+                source={require('../../../src/assets/star.png')}
+              />
+
+              <Text style={profileStyle.loadtext4}>Đánh giá</Text>
+
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={profileStyle.thirdbody}>
           <Text style={profileStyle.account}>Tài khoản</Text>
-        <TouchableOpacity onPress={BtnTabAddress}>
-        <View>
-            <View style={profileStyle.insideAccount}>
-              <Text style={profileStyle.textTab}>Địa chỉ</Text>
-              <Image
-                style={profileStyle.vecto3}
-                source={require('../../../src/assets/vecto1.png')}
-              />
-            </View>
+          <TouchableOpacity onPress={BtnTabAddress}>
+            <View>
+              <View style={profileStyle.insideAccount}>
+                <Text style={profileStyle.textTab}>Địa chỉ</Text>
+                <Image
+                  style={profileStyle.vecto3}
+                  source={require('../../../src/assets/vecto1.png')}
+                />
+              </View>
 
-            <View style={profileStyle.boder} />
-          </View>
-        </TouchableOpacity>
+              <View style={profileStyle.boder} />
+            </View>
+          </TouchableOpacity>
           <View>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Phương thức thanh toán</Text>

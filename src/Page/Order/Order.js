@@ -124,13 +124,10 @@ const Order = (prop) => {
       </View>
     </View>
   );
-  
+
   return (
     <View style={WaitconfirmedStyle.container}>
       <View style={WaitconfirmedStyle.header}>
-        <TouchableOpacity onPresson={() => prop.navigation.navigate('BottomNav')}>
-        <Image  style={WaitconfirmedStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
-        </TouchableOpacity>
         <Text style={WaitconfirmedStyle.title}>Đơn hàng</Text>
       </View>
 
@@ -172,13 +169,8 @@ const WaitconfirmedStyle = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: "space-between",
-    width: '68%'
-  },
-  backright: {
-    width: 28,
-    height: 28,
+    alignItems:'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,
@@ -253,24 +245,24 @@ const WaitconfirmedStyle = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     marginRight: 5,
-    borderWidth:1,
-    width:80,
-    height:34,
-    borderColor:'#BBAFAF',
-    justifyContent:'center',
-    alignItems:'center'
+    borderWidth: 1,
+    width: 80,
+    height: 34,
+    borderColor: '#BBAFAF',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   buttonhuy: {
     backgroundColor: 'white',
     padding: 5,
-    borderWidth:1,
+    borderWidth: 1,
     borderRadius: 5,
     marginRight: 5,
-    width:80,
-    height:34,
-    borderColor:'#FF7400',
-     justifyContent:'center',
-    alignItems:'center'
+    width: 80,
+    height: 34,
+    borderColor: '#FF7400',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   buttonTextnhan: {
     color: 'black',
