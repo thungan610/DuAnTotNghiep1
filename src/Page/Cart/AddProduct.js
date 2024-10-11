@@ -5,8 +5,13 @@ const AddProduct = (prop) => {
     const {navigation} = prop;  
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const HandTT = () => {
-       handleLogin();
+        if (!isLoggedIn) {
+            navigation.navigate('Login_required'); 
+        } else {
+            handleLogin(); // hoặc có thể là chuyển sang màn hình thanh toán
+        }
     };
+
     const handleLogin = async () => {
         const loginSuccessful = true;
 

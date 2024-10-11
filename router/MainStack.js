@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
-import Login from "../src/Page/Login";
-import BottomNav from "./BottomNav";
+import Login from "../src/Page/Login/index.js";
+import BottomNav from "./BottomNav.js";
 import Register from "../src/Page/Register/Register";
 import AddProduct from "../src/Page/Cart/AddProduct.js";
 import HomeScreen from "../src/Page/HomeScreen/index.js";
@@ -21,13 +21,6 @@ import SMS from "../src/Page/SMS/index.js";
 import Registration_successful from "../src/Page/SMS/Registration_successful.js";
 import ProductCancel from "../src/Page/ProductCancel/index.js";
 import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
-import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
-import InsertAddress from "../src/Page/Profile/InsertAddress.js";
-import InsertPro5 from "../src/Page/Profile/InsertPro5.js";
-import TabAddress from "../src/Page/Profile/TabAddress.js";
-import ProductReview from "../src/Page/ProductReview/index.js";
-
-
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -36,7 +29,6 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="ProfileDetail"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -59,14 +51,6 @@ const MainStack = () => {
             <Stack.Screen name="Registration_successful" component={Registration_successful} />
             <Stack.Screen name="ProductCancel" component={ProductCancel} />
             <Stack.Screen name="CancelTrue" component={CancelTrue} />
-            <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
-            <Stack.Screen name="ProductReview" component={ProductReview} />
-            <Stack.Screen name="InsertPro5" component={InsertPro5} />
-            <Stack.Screen name="TabAddress" component={TabAddress} />
-            <Stack.Screen name="InsertAddress" component={InsertAddress} />
-
-
-
         </Stack.Navigator>
     );
 };

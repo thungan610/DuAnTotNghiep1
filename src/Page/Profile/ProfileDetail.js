@@ -2,16 +2,10 @@ import {
   View,
   Text,
   Image,
-  useState,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
-import { useNavigation } from '@react-navigation/native';
-import ProductReview from '../ProductReview';
-import InsertPro5 from './InsertPro5';
-
 
 const ProfileDetail = () => {
   const navigation = useNavigation(); 
@@ -25,7 +19,11 @@ const ProfileDetail = () => {
     navigation.navigate('TabAddress'); 
   };
   return (
-    <View style={profileStyle.app}>
+    <View style={{
+      position:'relative',
+       width:'100%', 
+       height:'100%',
+      }}>
       <View style={profileStyle.header}>
         <View style={profileStyle.headercontainer}>
           <TouchableOpacity>
@@ -148,6 +146,7 @@ const ProfileDetail = () => {
           </View>
         </View>
       </View>
+      {/* <BottomNav style={{}}/> */}
     </View>
   );
 };

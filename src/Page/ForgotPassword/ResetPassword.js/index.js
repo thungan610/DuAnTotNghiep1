@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text,Alert, Image, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import ResetPasswordStyle from './style'
 
@@ -17,22 +17,22 @@ const ResetPassword = (prop) => {
         setPasswordError('');
         setConfirmPasswordError('');
 
-        if (password === '') {
-            setPasswordError("Vui lòng nhập mật khẩu");
+        const passwordValidationError = validatePassword(password);
+        if (passwordValidationError) {
+            setPasswordError(passwordValidationError);
             setPassword('');
-            hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
-            setPassword('');
+            setConfirmPassword('');
             hasError = true;
         }
 
         if (confirmPassword === '') {
             setConfirmPasswordError("Vui lòng nhập lại mật khẩu");
+            setPassword('');
             setConfirmPassword('');
             hasError = true;
         } else if (confirmPassword !== password) {
-            setConfirmPasswordError("Vui longf nhập mật khẩu!");
+            setConfirmPasswordError("Mật khẩu không khớp!");
+            setPassword('');
             setConfirmPassword('');
             hasError = true;
         }
@@ -40,11 +40,28 @@ const ResetPassword = (prop) => {
         if (hasError) {
             return;
         }
-
         Alert.alert("Đổi mật khẩu thành công");
         prop.navigation.navigate('Login');
     };
 
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            return "Mật khẩu phải có ít nhất 8 ký tự.";
+        }
+        if (!/[A-Z]/.test(password)) {
+            return "Mật khẩu phải có ít nhất một chữ cái in hoa.";
+        }
+        if (!/[a-z]/.test(password)) {
+            return "Mật khẩu phải có ít nhất một chữ cái thường.";
+        }
+        if (!/\d/.test(password)) {
+            return "Mật khẩu phải có ít nhất một số.";
+        }
+        if (!/[!@#$%^&*]/.test(password)) {
+            return "Mật khẩu phải có ít nhất một ký tự đặc biệt.";
+        }
+        return '';
+    };
 
     return (
         <View style={ResetPasswordStyle.container}>
