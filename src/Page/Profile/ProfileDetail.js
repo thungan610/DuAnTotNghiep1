@@ -6,9 +6,18 @@ import {
 } from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
-import BottomNav from '../../../router/BottomNav';
 
 const ProfileDetail = () => {
+  const navigation = useNavigation(); 
+  const BtnProductReview = () => {
+    navigation.navigate('ProductReview'); 
+  };
+  const BtnInsertPro5 = () => {
+    navigation.navigate('InsertPro5'); 
+  };
+  const BtnTabAddress = () => {
+    navigation.navigate('TabAddress'); 
+  };
   return (
     <View style={{
       position:'relative',
@@ -26,6 +35,7 @@ const ProfileDetail = () => {
 
           <View style={profileStyle.undercontainer}>
             <Text style={profileStyle.username}>Bé Phát</Text>
+            <TouchableOpacity onPress={BtnInsertPro5}>
             <View style={profileStyle.mid}>
               <Text style={profileStyle.pro5small}>Hồ sơ</Text>
               <Image
@@ -33,22 +43,10 @@ const ProfileDetail = () => {
                 source={require('../../../src/assets/vecto1.png')}
               />
             </View>
+            </TouchableOpacity>
           </View>
 
-          <View style={profileStyle.iconheader}>
-            <TouchableOpacity>
-              <Image
-                style={profileStyle.pro5logo1}
-                source={require('../../../src/assets/basket.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image
-                style={profileStyle.pro5logo2}
-                source={require('../../../src/assets/chat.png')}
-              />
-            </TouchableOpacity>
-          </View>
+          
         </View>
       </View>
       <View style={profileStyle.body}>
@@ -84,17 +82,22 @@ const ProfileDetail = () => {
             />
             <Text style={profileStyle.loadtext3}>Đã hủy</Text>
           </View>
-          <View style={profileStyle.load4}>
+       <TouchableOpacity onPress={BtnProductReview}>
+       <View style={profileStyle.load4}>
             <Image
               style={profileStyle.loadimg}
               source={require('../../../src/assets/star.png')}
             />
-            <Text style={profileStyle.loadtext4}>Đánh giá</Text>
+           
+           <Text style={profileStyle.loadtext4}>Đánh giá</Text>
+          
           </View>
+       </TouchableOpacity>
         </View>
         <View style={profileStyle.thirdbody}>
           <Text style={profileStyle.account}>Tài khoản</Text>
-          <View>
+        <TouchableOpacity onPress={BtnTabAddress}>
+        <View>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Địa chỉ</Text>
               <Image
@@ -105,6 +108,7 @@ const ProfileDetail = () => {
 
             <View style={profileStyle.boder} />
           </View>
+        </TouchableOpacity>
           <View>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Phương thức thanh toán</Text>
