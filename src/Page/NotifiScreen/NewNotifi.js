@@ -71,7 +71,7 @@ const NewnotifiStyle = StyleSheet.create({
         tintColor: "black",
     },
     tieude: {
-        fontSize: 20,
+        fontSize: 24,
         color: "black",
         fontWeight: "bold",
         fontFamily: "Poppins"

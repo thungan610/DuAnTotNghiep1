@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
+import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList, Keyboard } from "react-native";
 import HomeStyle from "./style";
 
 const HomeScreen = (prop) => {
@@ -17,7 +17,7 @@ const HomeScreen = (prop) => {
                 setHasNewNotification(true); // Có thông báo mới
             }, 1000); // Sau 5 giây có thông báo mới
         };
-    
+
         checkNotification();
     }, []);
 
@@ -29,7 +29,6 @@ const HomeScreen = (prop) => {
 
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
-    // Cấu trúc dữ liệu sản phẩm theo danh mục
     const productsByCategory = {
         "Tất cả": [
             { id: '1', title: 'Bắp cải trắng', price: '19.000', weight: '1 kg', image: require('../../../src/assets/image/image1.png') },
@@ -97,6 +96,7 @@ const HomeScreen = (prop) => {
             { id: '5', title: 'Pepsi lon', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc5.jpg') },
             { id: '6', title: 'Revie', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc6.jpg') },
         ],
+        
     };
 
     const filteredProducts = productsByCategory[categories[selectedCategory]] || [];
@@ -139,12 +139,14 @@ const HomeScreen = (prop) => {
                         <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
                             <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         </TouchableOpacity>
-                        <TextInput
-                            placeholder="Tìm kiếm"
-                            value={search}
-                            onChangeText={setSearch}
+                        <TouchableOpacity
+                            onPress={() => {
+                                prop.navigation.navigate('Search'); 
+                            }}
                             style={HomeStyle.input}
-                        />
+                        >
+                            <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
+                        </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity onPress={() => {
