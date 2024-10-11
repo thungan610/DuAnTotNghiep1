@@ -1,29 +1,13 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View,Text,Image,TouchableOpacity,} from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
 
-const ProfileDetail = () => {
-  const navigation = useNavigation(); 
-  const BtnProductReview = () => {
-    navigation.navigate('ProductReview'); 
-  };
-  const BtnInsertPro5 = () => {
-    navigation.navigate('InsertPro5'); 
-  };
-  const BtnTabAddress = () => {
-    navigation.navigate('TabAddress'); 
-  };
   return (
     <View style={{
-      position:'relative',
-       width:'100%', 
-       height:'100%',
-      }}>
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    }}>
       <View style={profileStyle.header}>
         <View style={profileStyle.headercontainer}>
           <TouchableOpacity>
@@ -146,7 +130,6 @@ const ProfileDetail = () => {
           </View>
         </View>
       </View>
-      {/* <BottomNav style={{}}/> */}
     </View>
   );
 };

@@ -51,6 +51,7 @@ const MainStack = () => {
             <Stack.Screen name="Registration_successful" component={Registration_successful} />
             <Stack.Screen name="ProductCancel" component={ProductCancel} />
             <Stack.Screen name="CancelTrue" component={CancelTrue} />
+
         </Stack.Navigator>
     );
 };

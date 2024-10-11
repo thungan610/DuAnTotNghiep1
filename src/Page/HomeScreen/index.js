@@ -7,7 +7,19 @@ const HomeScreen = (prop) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState(0);
+    const [hasNewNotification, setHasNewNotification] = useState(true);
     const screenWidth = Dimensions.get('window').width;
+
+    useEffect(() => {
+        // Giả lập nhận thông báo mới từ server
+        const checkNotification = () => {
+            setTimeout(() => {
+                setHasNewNotification(true); // Có thông báo mới
+            }, 1000); // Sau 5 giây có thông báo mới
+        };
+    
+        checkNotification();
+    }, []);
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -135,12 +147,27 @@ const HomeScreen = (prop) => {
                         />
                     </View>
 
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('NewNotifi')}>
-                        <Image style={{
-                            tintColor: 'black',
-                            width: 34,
-                            height: 34,
-                        }} source={require('../../../src/assets/Bell.png')} />
+                    <TouchableOpacity onPress={() => {
+                        prop.navigation.navigate('NewNotifi');
+                        setHasNewNotification(false);
+                    }}>
+                        <View style={{ position: 'relative' }}>
+                            <Image
+                                style={{ tintColor: 'black', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Bell.png')}
+                            />
+                            {hasNewNotification && (
+                                <View style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 0,
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: 6,
+                                    backgroundColor: 'red',
+                                }} />
+                            )}
+                        </View>
                     </TouchableOpacity>
                 </View>
 
