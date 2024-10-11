@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
+import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList, Keyboard } from "react-native";
 import HomeStyle from "./style";
 
 
@@ -8,7 +8,19 @@ const HomeScreen = (prop) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState(0);
+    const [hasNewNotification, setHasNewNotification] = useState(true);
     const screenWidth = Dimensions.get('window').width;
+
+    useEffect(() => {
+        // Giả lập nhận thông báo mới từ server
+        const checkNotification = () => {
+            setTimeout(() => {
+                setHasNewNotification(true); // Có thông báo mới
+            }, 1000); // Sau 5 giây có thông báo mới
+        };
+
+        checkNotification();
+    }, []);
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -18,7 +30,6 @@ const HomeScreen = (prop) => {
 
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
-    // Cấu trúc dữ liệu sản phẩm theo danh mục
     const productsByCategory = {
         "Tất cả": [
             { id: '1', title: 'Bắp cải trắng', price: '19.000', weight: '1 kg', image: require('../../../src/assets/image/image1.png') },
@@ -86,6 +97,7 @@ const HomeScreen = (prop) => {
             { id: '5', title: 'Pepsi lon', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc5.jpg') },
             { id: '6', title: 'Revie', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc6.jpg') },
         ],
+        
     };
 
     const filteredProducts = productsByCategory[categories[selectedCategory]] || [];
@@ -128,20 +140,37 @@ const HomeScreen = (prop) => {
                         <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
                             <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         </TouchableOpacity>
-                        <TextInput
-                            placeholder="Tìm kiếm"
-                            value={search}
-                            onChangeText={setSearch}
+                        <TouchableOpacity
+                            onPress={() => {
+                                prop.navigation.navigate('Search'); 
+                            }}
                             style={HomeStyle.input}
-                        />
+                        >
+                            <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
+                        </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('NewNotifi')}>
-                        <Image style={{
-                            tintColor: 'black',
-                            width: 34,
-                            height: 34,
-                        }} source={require('../../../src/assets/Bell.png')} />
+                    <TouchableOpacity onPress={() => {
+                        prop.navigation.navigate('NewNotifi');
+                        setHasNewNotification(false);
+                    }}>
+                        <View style={{ position: 'relative' }}>
+                            <Image
+                                style={{ tintColor: 'black', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Bell.png')}
+                            />
+                            {hasNewNotification && (
+                                <View style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 0,
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: 6,
+                                    backgroundColor: 'red',
+                                }} />
+                            )}
+                        </View>
                     </TouchableOpacity>
                 </View>
 
