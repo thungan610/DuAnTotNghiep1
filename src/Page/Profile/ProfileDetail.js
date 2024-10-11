@@ -21,7 +21,12 @@ const ProfileDetail = (prop) => {
     navigation.navigate('Voucher');
   }
   return (
-    <View style={{
+    <View style={{position:'relative',
+      width:'100%', 
+      height:'100%',
+      backgroundColor:'#fff',
+     }}>
+
       <View style={profileStyle.header}>
         <View style={profileStyle.headercontainer}>
           <TouchableOpacity>
