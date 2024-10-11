@@ -1,8 +1,14 @@
 import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
 import React from 'react';
 import TabAddressStyle from './TabAdressStyle';
+import { useNavigation } from '@react-navigation/native';
+
 
 const TabAddress = () => {
+  const navigation = useNavigation();
+  const BtnInsertAddress = () => {
+    navigation.navigate('InsertAddress');
+  }
   const data = [
     {
       id: '1',
@@ -34,7 +40,7 @@ const TabAddress = () => {
         <Text style={TabAddressStyle.address}>{item.address}</Text>
       </View>
       <View style={TabAddressStyle.iconsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={BtnInsertAddress}>
           <Image
             style={TabAddressStyle.icon}
             source={require('../../../src/assets/edit.png')}
