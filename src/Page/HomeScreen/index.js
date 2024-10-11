@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList, Keyboard } from "react-native";
 import HomeStyle from "./style";
 
+
 const HomeScreen = (prop) => {
     const [search, setSearch] = useState("");
     const scrollViewRef = useRef(null);

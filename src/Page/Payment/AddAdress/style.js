@@ -59,7 +59,7 @@ const AddAdressStyle = StyleSheet.create({
     button:{
         backgroundColor: "#27AAE1",
         borderRadius: 10,
-        padding: 10,
+        padding: 15,
         marginTop: 20,
         marginBottom: 20,
         width: '100%',

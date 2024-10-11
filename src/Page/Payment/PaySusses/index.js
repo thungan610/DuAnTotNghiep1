@@ -5,14 +5,14 @@ import PayMethodStyle from "../PayMethod/style"
 const PaySusses = (prop) => {
     const { navigation } = prop
     const HandNav = () => {
-        navigation.navigate('HomeScreen')
+        navigation.navigate('BottomNav')
     }
     return (
         <View style={PaySussesStyle.container}>
             <View style={PaySussesStyle.body}>
                 <Image source={require('../../../assets/notifi/PaySusses.png')} />
                 <TouchableOpacity>
-                    <Text style={PaySussesStyle.text}>Thanh toàn thanh công</Text>
+                    <Text style={PaySussesStyle.text}>Thanh toán thanh công</Text>
                 </TouchableOpacity>
             </View>
             <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>

@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from 'react-native';
 import StarRating from 'react-native-star-rating-widget';
 import ProductReviewStyle from './style';
+import { useNavigation } from '@react-navigation/native';
 
 const ProductReview = ({ maxStars = 5 }) => {
+  const navigation = useNavigation();
+  const BackRight = () => {
+    navigation.goBack()
+}
     const [rating, setRating] = useState(0);
     const[description, setDescription] = useState('');
     const handleStarPress = (index) => {
@@ -13,9 +18,11 @@ const ProductReview = ({ maxStars = 5 }) => {
   return (
     <View >
       <View style={ProductReviewStyle.header}>
+      <TouchableOpacity onPress={BackRight}>
       <Image 
         style={ProductReviewStyle.image}
         source={require('../../../src/assets/chevron-left.png')} />
+      </TouchableOpacity>
         <Text style={ProductReviewStyle.headerText}>Đánh giá sản phẩm</Text>
       </View>
       <View style={ProductReviewStyle.nameProduct}>

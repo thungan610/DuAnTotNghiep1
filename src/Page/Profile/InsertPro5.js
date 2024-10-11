@@ -1,8 +1,16 @@
 import {View, Text, Image, FlatList, TouchableOpacity} from 'react-native';
 import React from 'react';
 import InsertPro5Styles from './InsertPro5Styles';
+import { useNavigation } from '@react-navigation/native';
 
 const InsertPro5 = () => {
+  const navigation = useNavigation();
+  const BackRight = () => {
+    navigation.goBack()
+}
+const BtnLogin = () => {
+  navigation.navigate('Login')
+}
   const data = [
     {
       id: '1', // Thêm id cho mỗi phần tử
@@ -17,12 +25,14 @@ const InsertPro5 = () => {
   ];
 
   const renderPro5 = ({item}) => (
-    <View>
+    <View style={{backgroundColor: '#fff', height:'100%, width:100% '}}>
       <View style={InsertPro5Styles.headers}>
-        <Image
-          style={InsertPro5Styles.iconback}
+       <TouchableOpacity onPress={BackRight}>
+       <Image
+          style={InsertPro5Styles.iconback} 
           source={require('../../../src/assets/back.png')}
         />
+       </TouchableOpacity>
         <Text style={InsertPro5Styles.textH}>Sửa hồ sơ</Text>
       </View>
       <View style={InsertPro5Styles.imgPro5Container}>
@@ -67,14 +77,14 @@ const InsertPro5 = () => {
         </View>
       </View>
 
-      <TouchableOpacity style={InsertPro5Styles.btnLogout}>
+      <TouchableOpacity onPress={BtnLogin} style={InsertPro5Styles.btnLogout}>
         <Text style={InsertPro5Styles.btnLogoutText}>ĐĂNG XUẤT</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View>
+    <View style={{backgroundColor: '#fff', height:'100%', width:'100% '}}>
       <FlatList
         data={data}
         keyExtractor={item => item.id} // Đảm bảo rằng keyExtractor sử dụng 'id'
