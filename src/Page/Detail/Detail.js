@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styles from './style';
-export default Detail = () => {
-
+import { Navigate } from 'react-router-dom';
+export default Detail = (prop) => { 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const images = [

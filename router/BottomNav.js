@@ -23,7 +23,7 @@ const BottomNav = () => {
         >
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.iconHome} source={focused ? require('./icon/SubtractSau.png') : require('./icon/SubtractSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.iconHome} source={focused ? require('./icon/Home.png') : require('./icon/HomeSau.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
 
@@ -36,19 +36,19 @@ const BottomNav = () => {
                 name="Order" component={Order} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BasketSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BatKetSau.png') : require('./icon/Batket.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="AddProduct" component={AddProduct} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BellSau.png') : require('./icon/Bell.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="NotifiScreen" component={NotifiScreen} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/User.png') : require('./icon/User.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/UserSau.png') : require('./icon/User.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="Profile" component={ProfileDetail} />
@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
         color: "#fff",
         marginBottom: -15,
         marginTop: -65
+    },
+    iconHome: {
+        width: 35,
+        height: 35
     }
 })
 
