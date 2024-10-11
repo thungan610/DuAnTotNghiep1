@@ -9,6 +9,7 @@ const TabAddressStyle = StyleSheet.create({
     marginHorizontal: 10,
     backgroundColor: '#F5F5F5',
     borderRadius: 5,
+
   },
   infoContainer: {
     flex: 1,

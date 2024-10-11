@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import profileStyle from './ProfileDetailstyle';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileDetail = () => {
   const navigation = useNavigation(); 
@@ -18,11 +19,19 @@ const ProfileDetail = () => {
   const BtnTabAddress = () => {
     navigation.navigate('TabAddress'); 
   };
+  const BtnPayMethod = () => {
+    navigation.navigate('PayMethod');
+    
+  }
+  const BtnVoucher = () => {
+    navigation.navigate('Voucher');
+  }
   return (
     <View style={{
       position:'relative',
        width:'100%', 
        height:'100%',
+       backgroundColor:'#fff',
       }}>
       <View style={profileStyle.header}>
         <View style={profileStyle.headercontainer}>
@@ -110,6 +119,7 @@ const ProfileDetail = () => {
           </View>
         </TouchableOpacity>
           <View>
+            <TouchableOpacity onPress={BtnPayMethod}>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Phương thức thanh toán</Text>
               <Image
@@ -117,6 +127,7 @@ const ProfileDetail = () => {
                 source={require('../../../src/assets/vecto1.png')}
               />
             </View>
+            </TouchableOpacity>
 
             <View style={profileStyle.boder} />
             <Text style={profileStyle.account2}>Hỗ trợ</Text>
@@ -133,6 +144,7 @@ const ProfileDetail = () => {
             </View>
             <Text style={profileStyle.account2}>Tiện ích</Text>
             <View>
+              <TouchableOpacity onPress={BtnVoucher}>
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Voucher của bạn</Text>
                 <Image
@@ -140,6 +152,7 @@ const ProfileDetail = () => {
                   source={require('../../../src/assets/vecto1.png')}
                 />
               </View>
+              </TouchableOpacity>
 
               <View style={profileStyle.boder} />
             </View>

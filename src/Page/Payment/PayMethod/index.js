@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import PayMethodStyle from "./style";
+import { useNavigation } from '@react-navigation/native';
 import AddAdressStyle from "../AddAdress/style";
 
-const PayMethod = (prop) => {
-    const { navigation } = prop
+const PayMethod = () => {
+   const navigation = useNavigation();
 
     const BackRight = () => {
         navigation.goBack()
@@ -59,8 +60,8 @@ const PayMethod = (prop) => {
                 </View>
 
             </View>
-            <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>
-                <TouchableOpacity style={PayMethodStyle.BtnSuss}>
+            <View style={[PayMethodStyle.ViewSuss]}>
+                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>

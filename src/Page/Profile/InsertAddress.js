@@ -8,8 +8,13 @@ import {
 } from 'react-native';
 import React from 'react';
 import InsertAddressStyles from './InsertAddressStyles';
+import { useNavigation } from '@react-navigation/native';
 
 const InsertAddress = () => {
+  const navigation = useNavigation();
+  const BackRight = () => {
+    navigation.goBack()
+}
   const data = [
     {
       id: '1',
@@ -44,10 +49,12 @@ const InsertAddress = () => {
   return (
     <View>
       <View style={InsertAddressStyles.headers}>
+        <TouchableOpacity onPress={BackRight}>
         <Image
           style={InsertAddressStyles.iconback}
           source={require('../../../src/assets/back.png')}
         />
+        </TouchableOpacity>
         <Text style={InsertAddressStyles.textH}>Sửa địa chỉ</Text>
       </View>
       <View>

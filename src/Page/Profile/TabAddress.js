@@ -9,6 +9,12 @@ const TabAddress = () => {
   const BtnInsertAddress = () => {
     navigation.navigate('InsertAddress');
   }
+  const BackRight = () => {
+    navigation.goBack()
+}
+const BtnAddAdress = () => {
+  navigation.navigate('AddAdress');
+}
   const data = [
     {
       id: '1',
@@ -27,7 +33,8 @@ const TabAddress = () => {
   ];
 
   const renderAddressItem = ({item}) => (
-    <View style={TabAddressStyle.addressContainer}>
+   <View>
+     <View style={TabAddressStyle.addressContainer}>
       <Image
         style={TabAddressStyle.icon}
         source={require('../../../src/assets/address.png')}
@@ -54,15 +61,18 @@ const TabAddress = () => {
         </TouchableOpacity>
       </View>
     </View>
+   </View>
   );
 
   return (
-    <View>
+    <View style={{backgroundColor: 'white', height:'100%'}}>
       <View style={TabAddressStyle.headers}>
+        <TouchableOpacity onPress={BackRight}>
         <Image
           style={TabAddressStyle.iconback}
           source={require('../../../src/assets/back.png')}
         />
+        </TouchableOpacity>
         <Text style={TabAddressStyle.textH}>Địa chỉ</Text>
       </View>
       <View style={TabAddressStyle.flatlist}>
@@ -72,16 +82,17 @@ const TabAddress = () => {
           renderItem={renderAddressItem}
         />
       </View>
-
+      <TouchableOpacity onPress={BtnAddAdress}>
       <View style={TabAddressStyle.addAdress} >
-        <TouchableOpacity>
+        
           <Image
             style={TabAddressStyle.iconback}
             source={require('../../../src/assets/addNew.png')}
           />
-        </TouchableOpacity>
+        
         <Text style={TabAddressStyle.textA}>Địa chỉ nhận hàng</Text>
       </View>
+      </TouchableOpacity>
     </View>
   );
 };
