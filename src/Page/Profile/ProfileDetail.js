@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ProfileDetail = (prop) => {
   const BtnProductReview = () => {
-    propnavigation.navigate('ProductReview');
+    prop.navigation.navigate('ProductReview');
   };
   const BtnInsertPro5 = () => {
     prop.navigation.navigate('InsertPro5');
@@ -14,11 +14,14 @@ const ProfileDetail = (prop) => {
     prop.navigation.navigate('TabAddress');
   };
   const BtnPayMethod = () => {
-    navigation.navigate('PayMethod');
+    prop.navigation.navigate('PayMethod');
     
   }
   const BtnVoucher = () => {
-    navigation.navigate('Voucher');
+    prop.navigation.navigate('Voucher');
+  }
+  const BtnBotChat = () => {
+    prop.navigation.navigate('BotChat');
   }
   return (
     <View style={{position:'relative',
@@ -51,21 +54,6 @@ const ProfileDetail = (prop) => {
 
         </View>
 
-        <View style={profileStyle.iconheader}>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('AddProduct')}>
-            <Image
-              style={profileStyle.pro5logo1}
-              source={require('../../../src/assets/basket.png')}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={profileStyle.pro5logo2}
-              source={require('../../../src/assets/chat.png')}
-            />
-          </TouchableOpacity>
-
-        </View>
       </View>
       <View style={profileStyle.body}>
         <View style={profileStyle.firstbody}>
@@ -141,13 +129,15 @@ const ProfileDetail = (prop) => {
             <View style={profileStyle.boder} />
             <Text style={profileStyle.account2}>Hỗ trợ</Text>
             <View>
-              <View style={profileStyle.insideAccount}>
+             <TouchableOpacity onPress={BtnBotChat}>
+             <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Trung tâm trợ giúp</Text>
                 <Image
                   style={profileStyle.vecto5}
                   source={require('../../../src/assets/vecto1.png')}
                 />
               </View>
+             </TouchableOpacity>
 
               <View style={profileStyle.boder} />
             </View>
