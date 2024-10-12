@@ -65,6 +65,11 @@ const InsertAddress = () => {
           renderItem={renderAddressItem}
         />
       </View>
+      <View style={InsertAddressStyles.footer}>
+                <TouchableOpacity onPress={BackRight} style={InsertAddressStyles.button}>
+                    <Text style={InsertAddressStyles.buttonText}>LƯU</Text>
+                </TouchableOpacity>
+            </View>
     </View>
   );
 };

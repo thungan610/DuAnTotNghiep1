@@ -65,9 +65,29 @@ const InsertAddressStyles = StyleSheet.create({
   titleInfo:{
     color: 'black',
     fontSize: 20,
-    marginTop: 40,
+    marginTop:10,
     marginLeft: 40,
-  }
+  },
+  footer:{
+    // flex: 1,
+    marginTop: 100,
+    padding:10,
+},
+button:{
+  backgroundColor: "#27AAE1",
+  borderRadius: 10,
+  padding: 15,
+  marginTop: 20,
+  width: '100%',
+
+},
+buttonText:{    
+  color: 'white',
+  textAlign: 'center',
+  fontFamily: 'Poppins',
+  fontWeight: 'bold',
+  fontSize: 16
+},
 
 });
 export default InsertAddressStyles;
