@@ -22,11 +22,17 @@ import Registration_successful from "../src/Page/SMS/Registration_successful.js"
 import ProductCancel from "../src/Page/ProductCancel/index.js";
 import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
 import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
+import InsertPro5 from "../src/Page/Profile/InsertPro5.js";
+import InsertAddress from "../src/Page/Profile/InsertAddress.js";
+import TabAddress from "../src/Page/Profile/TabAddress.js";
+import ProductReview from "../src/Page/ProductReview/index.js";
 import Search from "../src/Page/Search/Search.js";
 import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
 import Order from "../src/Page/Order/Order.js";
 import Processing1 from "../src/Page/Order/Processing1.js";
 import Cart from "../src/Page/Cart/Cart.js";
+import Delivering from "../src/Page/Order/Delivering.js";
+import Canceled from "../src/Page/Order/Canceled.js";
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -35,7 +41,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="InsertPro5"
+            initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -65,10 +71,11 @@ const MainStack = () => {
             <Stack.Screen name="ProductReview" component={ProductReview} />
             <Stack.Screen name="NewNotifi" component={NewNotifi} />
             <Stack.Screen name="Search" component={Search} />
-            <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
             <Stack.Screen name="Order" component={Order} />
             <Stack.Screen name="Processing1" component={Processing1} />
             <Stack.Screen name="Cart" component={Cart} />
+            <Stack.Screen name="Delivering" component={Delivering} />
+            <Stack.Screen name="Canceled" component={Canceled} />
 
         </Stack.Navigator>
     );

@@ -1,10 +1,8 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import ProductCancelStyle from './style';
-import { useNavigation } from '@react-navigation/native';
 
-const ProductCancel = () => {
-  const navigation = useNavigation(); // Giữ lại cách này
+const ProductCancel = (prop) => {
   const [description, setDescription] = useState('');
   const orders = [
     {
@@ -18,7 +16,7 @@ const ProductCancel = () => {
   ];
 
   const BtnCancel = () => {
-    navigation.navigate('CancelTrue'); // Sử dụng navigation để điều hướng
+    prop.navigation.navigate('CancelTrue');
   };
 
   return (
@@ -57,7 +55,7 @@ const ProductCancel = () => {
         </View>
 
         <View style={ProductCancelStyle.buttonContainer}>
-          <TouchableOpacity style={ProductCancelStyle.button}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Processing1')} style={ProductCancelStyle.button}>
             <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>

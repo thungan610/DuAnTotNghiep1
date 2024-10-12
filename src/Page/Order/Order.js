@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 const Order = (prop) => {
   const [selectedTabs, setSelectedTabs] = useState(0);
-  const { width, height } = Dimensions.get('window');
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
@@ -76,66 +75,86 @@ const Order = (prop) => {
 
   const currentOrders = orders[tabs[selectedTabs]] || [];
 
-  // Hàm để xác định màu sắc dựa trên status
   const getStatusColor = (status) => {
     switch (status) {
       case 'Đang vận chuyển':
-        return '#4CAF50'; // Màu cho "Đang giao"
+        return '#4CAF50'; 
       case 'Đã hủy':
-        return '#FF3434'; // Màu cho "Đã hủy"
+        return '#FF3434'; 
       default:
-        return '#FF7400'; // Mặc định
+        return '#FF7400'; 
     }
   };
 
   const renderOrderCard = ({ item }) => (
-    <View style={WaitconfirmedStyle.orderCard}>
-      <View style={{
-        justifyContent: 'center',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}>
-        <View style={WaitconfirmedStyle.borderimage}>
-          <Image source={item.image} style={WaitconfirmedStyle.image} />
-        </View>
-        {item.status === 'Đã nhận' && (
-          <Text style={WaitconfirmedStyle.completedText}>Hoàn thành</Text>
-        )}
-      </View>
-      <View style={WaitconfirmedStyle.orderInfo}>
-        <Text style={WaitconfirmedStyle.orderName}>{item.name}</Text>
-        <Text style={WaitconfirmedStyle.orderQuantity}>SL: {item.quantity}</Text>
-        <Text style={WaitconfirmedStyle.orderPrice}>Tổng tiền: {item.price.toLocaleString('vi-VN')}đ</Text>
-        {/* Hiển thị status cho các tab khác ngoài "Đã nhận" */}
-        {tabs[selectedTabs] !== 'Đã nhận' && (
-          <Text style={[WaitconfirmedStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
-        )}
-        {/* Hiển thị các button chỉ cho tab "Đã nhận" */}
-        {tabs[selectedTabs] === 'Đã nhận' && (
-          <View style={WaitconfirmedStyle.buttonContainer}>
-            <TouchableOpacity style={WaitconfirmedStyle.buttonnhan}>
-              <Text style={WaitconfirmedStyle.buttonTextnhan}>Mua lại</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={WaitconfirmedStyle.buttonhuy}>
-              <Text style={WaitconfirmedStyle.buttonTexthuy}>Đánh giá</Text>
-            </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        switch (tabs[selectedTabs]) {
+          case 'Chờ xác nhận':
+            prop.navigation.navigate('Processing1', { order: item });
+            break;
+          case 'Đang giao':
+            prop.navigation.navigate('Delivering', { order: item });
+            break;
+          case 'Đã nhận':
+            break;
+          case 'Đã hủy':
+            prop.navigation.navigate('Canceled', { order: item });
+            break;
+          default:
+            break;
+        }
+      }}
+    >
+      <View style={OrderStyle.orderCard}>
+        <View style={{
+          justifyContent: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+          <View style={OrderStyle.borderimage}>
+            <Image source={item.image} style={OrderStyle.image} />
           </View>
-        )}
+          {item.status === 'Đã nhận' && (
+            <Text style={OrderStyle.completedText}>Hoàn thành</Text>
+          )}
+        </View>
+        <View style={OrderStyle.orderInfo}>
+          <Text style={OrderStyle.orderName}>{item.name}</Text>
+          <Text style={OrderStyle.orderQuantity}>SL: {item.quantity}</Text>
+          <Text style={OrderStyle.orderPrice}>Tổng tiền: {item.price.toLocaleString('vi-VN')}đ</Text>
+
+          {tabs[selectedTabs] !== 'Đã nhận' && (
+            <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
+          )}
+          
+          {tabs[selectedTabs] === 'Đã nhận' && (
+            
+            <View style={OrderStyle.buttonContainer}>
+              <TouchableOpacity style={OrderStyle.buttonnhan}>
+                <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={OrderStyle.buttonhuy}>
+                <Text style={OrderStyle.buttonTexthuy}>Đánh giá</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
-    <View style={WaitconfirmedStyle.container}>
-      <View style={WaitconfirmedStyle.header}>
-        <Text style={WaitconfirmedStyle.title}>Đơn hàng</Text>
+    <View style={OrderStyle.container}>
+      <View style={OrderStyle.header}>
+        <Text style={OrderStyle.title}>Đơn hàng</Text>
       </View>
 
-      <View style={WaitconfirmedStyle.tabsContainer}>
+      <View style={OrderStyle.tabsContainer}>
         {tabs.map((tab, index) => (
           <TouchableOpacity
             key={index}
-            style={[WaitconfirmedStyle.tabsButton, selectedTabs === index && WaitconfirmedStyle.selectedTabsButton]}
+            style={[OrderStyle.tabsButton, selectedTabs === index && OrderStyle.selectedTabsButton]}
             onPress={() => setSelectedTabs(index)}
           >
             <Text style={{
@@ -158,18 +177,18 @@ const Order = (prop) => {
         data={currentOrders}
         renderItem={renderOrderCard}
         keyExtractor={item => item.id.toString()}
-        style={WaitconfirmedStyle.orderContainer}
+        style={OrderStyle.orderContainer}
       />
     </View>
   );
 };
 
-const WaitconfirmedStyle = StyleSheet.create({
+const OrderStyle = StyleSheet.create({
   container: {
     padding: 20,
   },
   header: {
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: "center",
   },
   title: {
