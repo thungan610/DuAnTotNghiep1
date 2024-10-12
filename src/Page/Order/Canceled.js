@@ -1,95 +1,57 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Alert, Button } from 'react-native';
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 
 
-const Canceled = () => {
-    const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
-
-    const [selectedTabs, setSelectedTabs] = useState(0);
-    const { width, height } = Dimensions.get('window');
-
-    const handleCancelOrder = () => {
-        Alert.alert("Hủy đơn", "Bạn có chắc muốn mua lại?", [
-            { text: "Không", style: "cancel" },
-            { text: "Đồng ý", onPress: () => console.log("Đã mua lại") },
-        ]);
-    };
-
-
+const Canceled = (prop) => {
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headertop}>
-                <Image style={styles.backright} source={require('../../../src/assets/notifi/backright.png')} />
-                <Text style={styles.title}>Đơn hàng</Text>
+        <View style={CanceledStyle.container}>
+            <View style={CanceledStyle.headertop}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('Order')}>
+                    <Image style={CanceledStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
+                </TouchableOpacity>
+                <Text style={CanceledStyle.title}>Đơn hàng</Text>
             </View>
 
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.TabsContainer}
-            >
-                {tabs.map((tab, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[styles.tabsButton, selectedTabs === index && styles.selectedTabsButton]}
-                        onPress={() => setSelectedTabs(index)}
-                    >
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: selectedTabs === index ? 'bold' : 'normal',
-                            textDecorationLine: selectedTabs === index ? 'underline' : 'none',
-                            marginHorizontal: 8,
-                            marginTop: 7,
-                            color: 'black',
-                            textAlign: 'center',
-                            marginRight: 12
-                        }}>
-                            {tab}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
+            <View style={CanceledStyle.body}>
 
-            <View style={styles.body}>
-
-                <View style={styles.banner}>
-                    <Text style={styles.bannerText}>Đơn hàng đã hủy</Text>
+                <View style={CanceledStyle.banner}>
+                    <Text style={CanceledStyle.bannerText}>Đơn hàng đã hủy</Text>
                 </View>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={styles.subText}>Ngày 19/9/2024, Nhanh</Text>
+                <View style={CanceledStyle.header}>
+                    <Text style={CanceledStyle.headerText}>Thông tin vận chuyển</Text>
+                    <Text style={CanceledStyle.subText}>Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
-                <View style={styles.address}>
-                    <Text style={styles.label}>Địa chỉ:</Text>
+                <View style={CanceledStyle.address}>
+                    <Text style={CanceledStyle.label}>Địa chỉ:</Text>
                     <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
                     <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
                 </View>
 
-                <View style={styles.product}>
+                <View style={CanceledStyle.product}>
                     <Image
-                        source={require('../../assets/image/image1.png')} // Replace with your image URL
-                        style={styles.productImage}
+                        source={require('../../assets/image/image1.png')}
+                        style={CanceledStyle.productImage}
                     />
-                    <View style={styles.productInfo}>
-                        <Text style={styles.productName}>Bắp cải trắng</Text>
-                        <Text style={styles.category}>Rau củ</Text>
-                        <Text style={styles.price}>$ 19.000đ</Text>
+                    <View style={CanceledStyle.productInfo}>
+                        <Text style={CanceledStyle.productName}>Bắp cải trắng</Text>
+                        <Text style={CanceledStyle.category}>Rau củ</Text>
+                        <Text style={CanceledStyle.price}>$ 19.000đ</Text>
                     </View>
                 </View>
 
-                <View style={styles.paymentInfo}>
-                    <Text style={styles.label}>Chi tiết thanh toán</Text>
+                <View style={CanceledStyle.paymentInfo}>
+                    <Text style={CanceledStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
                     <Text>Tổng tiền sản phẩm: 19.000</Text>
                     <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={styles.total}>Tổng thanh toán: 29.000</Text>
+                    <Text style={CanceledStyle.total}>Tổng thanh toán: 29.000</Text>
                 </View>
 
-                <TouchableOpacity style={styles.cancelButton} onPress={handleCancelOrder}>
-                    <Text style={styles.cancelButtonText}>Mua lại</Text>
+                <TouchableOpacity style={CanceledStyle.cancelButton}>
+                    <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>
             </View>
 
@@ -100,22 +62,14 @@ const Canceled = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    // button: {
-    //     fontSize: 14,
-    //     color: '#FF7400',
-    //     alignSelf: 'flex-end',
-    //     padding: 10,
-        
-
-    // },
+const CanceledStyle = StyleSheet.create({
     banner: {
         padding: 10,
         backgroundColor: '#FF3434',
-        height:45,
+        height: 45,
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,
-        
+
     },
     bannerText: {
         fontSize: 18,
@@ -131,7 +85,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 10,
         alignSelf: 'flex-end',
-        width:80
+        width: 80
     },
     cancelButtonText: {
         color: '#FF6600',
@@ -190,15 +144,15 @@ const styles = StyleSheet.create({
     product: {
         flexDirection: 'row',
         marginVertical: 10,
-        paddingLeft:10
+        paddingLeft: 10
     },
     productImage: {
         width: 60,
         height: 60,
         marginRight: 10,
-        borderWidth:1,
-        borderRadius:5,
-        backgroundColor:'#37C5DF'
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundColor: '#37C5DF'
     },
     productInfo: {
         justifyContent: 'center',
