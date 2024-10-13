@@ -7,88 +7,31 @@ const Login = (prop) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [loginError, setLoginError] = useState('');
     const [selectedId, setSelectedId] = useState();
 
 
-    const BtnLogin = () => {
-        let hasError = false;
+    const BtnLogin = async () => {
+        try {
+            // Gọi API đăng ký
+            const response = await axios.post('URL_API_CỦA_BẠN', {
+                email: email,
+                password: password,
+            });
 
-        // Reset lỗi
-        setEmailError('');
-        setPasswordError('');
-        setLoginError('');
-
-        // Kiểm tra email
-        if (email === '') {
-            setEmailError("Vui lòng nhập Email");
-            hasError = true;
-        } else if (!validateEmail(email)) {
-            setEmailError("Email không hợp lệ!");
-            hasError = true;
-        }
-
-        // Kiểm tra mật khẩu
-        if (password === '') {
-            setPasswordError("Vui lòng nhập mật khẩu");
-            hasError = true;
-        } else {
-            const passwordValidationError = validatePassword(password);
-            if (passwordValidationError) {
-                setPasswordError(passwordValidationError);
-                hasError = true;
+            if (response.data) {
+                Alert.alert("Thông báo", "Đăng nhập thành công!");
+                setTimeout(() => {
+                    prop.navigation.navigate('SMS');
+                }, 1000);
             }
-        }
-
-        if (hasError) {
-            setEmail('');
-            setPassword('');
-            return;
-        }
-
-        // Kiểm tra đăng nhập
-        if (email !== "cphat774@gmail.com" || password !== "Ngocphat123@") {
-            setLoginError("Email hoặc mật khẩu không đúng!");
-            setEmail('');
-            setPassword('');
-            return;
-        }
-
-        if (!hasError) {
-            Alert.alert("Thông báo", "Đăng nhập thành công!");
-            setTimeout(() => {
-                prop.navigation.navigate('AddProduct');
-            }, 1000);
+        } catch (error) {
+            Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng nhập thất bại!");
         }
     };
 
-    const validateEmail = (email) => {
-        // Biểu thức chính quy để kiểm tra định dạng email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-    // Cập nhật hàm kiểm tra mật khẩu
-    const validatePassword = (password) => {
-        if (password.length < 8) {
-            return 'Phải có ít nhất 8 ký tự.';
-        }
-        if (!/\d/.test(password)) {
-            return 'Phải chứa ít nhất một số.';
-        }
-        if (!/[!@#$%^&*]/.test(password)) {
-            return 'Phải chứa ít nhất một ký tự đặc biệt.';
-        }
-        if (!/[A-Z]/.test(password)) {
-            return 'Phải chứa ít nhất một chữ cái in hoa.';
-        }
-        return '';
-    };
     const handlePasswordChange = (text) => {
         setPassword(text);
-        setPasswordError('');
-        setLoginError('');
+        setEmail(text)
     };
 
     const ClickForgotPass = () => {
@@ -124,10 +67,8 @@ const Login = (prop) => {
                                 placeholderTextColor={emailError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setEmail(text);
-                                    setEmailError('');
-                                    setLoginError('');
+                                    setPassword(text);
                                 }}
-                                style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
                         </View>
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
@@ -137,7 +78,7 @@ const Login = (prop) => {
                                 value={password}
                                 placeholder={passwordError || "Nhập mật khẩu"}
                                 placeholderTextColor={passwordError ? 'red' : '#999'}
-                                onChangeText={handlePasswordChange} 
+                                onChangeText={handlePasswordChange}
                                 style={[LoginStyle.input, passwordError ? { color: 'red' } : {}]}
                                 secureTextEntry={!isPasswordVisible}
                             />
