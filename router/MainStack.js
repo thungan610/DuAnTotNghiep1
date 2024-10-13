@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
 import Login from "../src/Page/Login/index.js";
-import BottomNav from "./BottomNav.js";
+import BottomNav from "../router/BottomNav.js";
 import Register from "../src/Page/Register/Register";
 import AddProduct from "../src/Page/Cart/AddProduct.js";
 import HomeScreen from "../src/Page/HomeScreen/index.js";
@@ -33,6 +33,7 @@ import Processing1 from "../src/Page/Order/Processing1.js";
 import Cart from "../src/Page/Cart/Cart.js";
 import Delivering from "../src/Page/Order/Delivering.js";
 import Canceled from "../src/Page/Order/Canceled.js";
+import BotChat from "../src/Page/BotChat/index.js";
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -42,7 +43,8 @@ const MainStack = () => {
                 headerShown: false
             }}
             initialRouteName="Wellcome"
-        >
+            >
+
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
@@ -76,8 +78,9 @@ const MainStack = () => {
             <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="Delivering" component={Delivering} />
             <Stack.Screen name="Canceled" component={Canceled} />
+            <Stack.Screen name="BotChat" component={BotChat} />
 
-        </Stack.Navigator>
+        </Stack.Navigator >
     );
 };
 export default MainStack

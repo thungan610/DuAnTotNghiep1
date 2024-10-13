@@ -134,7 +134,7 @@ const Order = (prop) => {
               <TouchableOpacity style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={OrderStyle.buttonhuy}>
+              <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={OrderStyle.buttonhuy}>
                 <Text style={OrderStyle.buttonTexthuy}>Đánh giá</Text>
               </TouchableOpacity>
             </View>

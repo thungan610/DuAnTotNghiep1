@@ -11,6 +11,7 @@ const ProductReview = ({ maxStars = 5 }) => {
 }
     const [rating, setRating] = useState(0);
     const[description, setDescription] = useState('');
+
     const handleStarPress = (index) => {
       setRating(index + 1);
     };

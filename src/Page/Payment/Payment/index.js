@@ -20,6 +20,9 @@ const Payment = (prop) => {
     const HandPaySuccess = () => {
         navigation.navigate('PaySusses')
     }
+    const BtnTabAddress = () => {
+        navigation.navigate('TabAddress')
+    }
     return (
         <View style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
@@ -36,7 +39,7 @@ const Payment = (prop) => {
                     <Text style={PaymentStyle.txtLH}>Bé phát, <Text style={PaymentStyle.txtLH}>0329 999 999</Text></Text>
                     <Text style={PaymentStyle.txtLH}>Tân thới nhất, quận 12, Hồ Chí Minh</Text>
                 </View>
-                <TouchableOpacity style={PaymentStyle.BtnExpandRight}>
+                <TouchableOpacity onPress={BtnTabAddress} style={PaymentStyle.BtnExpandRight}>
                     <Image style={PaymentStyle.imgexpand} source={require("../../../assets/notifi/expand_right.png")} />
                 </TouchableOpacity>
             </View>
