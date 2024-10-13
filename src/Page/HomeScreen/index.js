@@ -1,26 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList, Keyboard } from "react-native";
+import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
 import HomeStyle from "./style";
 
 
 const HomeScreen = (prop) => {
-    const [search, setSearch] = useState("");
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState(0);
-    const [hasNewNotification, setHasNewNotification] = useState(true);
+    const [search] = useState('');
     const screenWidth = Dimensions.get('window').width;
-
-    useEffect(() => {
-        // Giả lập nhận thông báo mới từ server
-        const checkNotification = () => {
-            setTimeout(() => {
-                setHasNewNotification(true); // Có thông báo mới
-            }, 1000); // Sau 5 giây có thông báo mới
-        };
-
-        checkNotification();
-    }, []);
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -97,7 +85,7 @@ const HomeScreen = (prop) => {
             { id: '5', title: 'Pepsi lon', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc5.jpg') },
             { id: '6', title: 'Revie', price: '12.000', weight: '320ml', image: require('../../../src/assets/image/nuoc6.jpg') },
         ],
-        
+
     };
 
     const filteredProducts = productsByCategory[categories[selectedCategory]] || [];
@@ -133,43 +121,38 @@ const HomeScreen = (prop) => {
         <View>
             <ScrollView style={HomeStyle.container}>
                 <View style={HomeStyle.header}>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('Profile')}>
-                        <Image style={HomeStyle.avatar} source={require('../../../src/assets/avatar.png')} />
-                    </TouchableOpacity>
+                    <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
                         <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
                             <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
-                                prop.navigation.navigate('Search'); 
-                            }}
-                            style={HomeStyle.input}
-                        >
+                                prop.navigation.navigate('Search');
+                            }}>
                             <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
                         </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity onPress={() => {
-                        prop.navigation.navigate('NewNotifi');
-                        setHasNewNotification(false);
+                        prop.navigation.navigate('BotChat');
                     }}>
                         <View style={{ position: 'relative' }}>
                             <Image
-                                style={{ tintColor: 'black', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Bell.png')}
+                                style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Chat.png')}
                             />
-                            {hasNewNotification && (
-                                <View style={{
-                                    position: 'absolute',
-                                    right: 0,
-                                    top: 0,
-                                    width: 12,
-                                    height: 12,
-                                    borderRadius: 6,
-                                    backgroundColor: 'red',
-                                }} />
-                            )}
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => {
+                        prop.navigation.navigate('TabAddress');
+                    }}>
+                        <View style={{ position: 'relative' }}>
+                            <Image
+                                style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Map.png')}
+                            />
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -200,7 +183,8 @@ const HomeScreen = (prop) => {
                                 fontWeight: selectedCategory === index ? 'bold' : 'normal',
                                 textDecorationLine: selectedCategory === index ? 'underline' : 'none',
                                 marginHorizontal: 5,
-                                marginTop: 7
+                                marginTop: 7,
+                                color: selectedCategory === index ? 'black' : '#8B8B8B',
                             }}>
                                 {category}
                             </Text>
@@ -213,7 +197,6 @@ const HomeScreen = (prop) => {
                     renderItem={renderProductItem}
                     keyExtractor={item => item.id}
                     numColumns={2}
-                    contentContainerStyle={HomeStyle.productList}
                     scrollEnabled={false}
                 />
             </ScrollView >

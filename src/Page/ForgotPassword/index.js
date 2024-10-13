@@ -4,30 +4,9 @@ import ForgotPasswordStyle from './style'
 
 const ForgotPassword = (prop) => {
   const [email, setEmail] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  const validatePhone = (phone) => {
-    const re = /^[0-9]{10,11}$/; // Kiểm tra số điện thoại có 10-11 chữ số
-    return re.test(phone);
-  };
 
   const BtnContinue = () => {
-    setErrorMessage('');
-
-    if (email === '') {
-      setErrorMessage("Vui lòng nhập email hoặc số điện thoại");
-      setEmail('');
-    } else if (!validateEmail(email) && !validatePhone(email)) {
-      setErrorMessage("Email hoặc số điện thoại không hợp lệ");
-      setEmail('');
-    } else {
       prop.navigation.navigate('ResetPassword');
-    }
   };
 
   return (
@@ -57,7 +36,6 @@ const ForgotPassword = (prop) => {
                 placeholderTextColor={errorMessage ? 'red' : '#999'}
                 onChangeText={(text) => {
                   setEmail(text);
-                  setErrorMessage('');
                 }}
                 style={[
                   ForgotPasswordStyle.input,

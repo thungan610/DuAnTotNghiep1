@@ -5,62 +5,29 @@ import ResetPasswordStyle from './style'
 const ResetPassword = (prop) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
 
     const BtnResetPass = () => {
-        let hasError = false;
-
-        setPasswordError('');
-        setConfirmPasswordError('');
+       
 
         const passwordValidationError = validatePassword(password);
         if (passwordValidationError) {
-            setPasswordError(passwordValidationError);
             setPassword('');
             setConfirmPassword('');
-            hasError = true;
         }
-
         if (confirmPassword === '') {
-            setConfirmPasswordError("Vui lòng nhập lại mật khẩu");
             setPassword('');
             setConfirmPassword('');
             hasError = true;
         } else if (confirmPassword !== password) {
-            setConfirmPasswordError("Mật khẩu không khớp!");
             setPassword('');
             setConfirmPassword('');
             hasError = true;
         }
-
-        if (hasError) {
-            return;
-        }
         Alert.alert("Đổi mật khẩu thành công");
         prop.navigation.navigate('Login');
-    };
-
-    const validatePassword = (password) => {
-        if (password.length < 8) {
-            return "Mật khẩu phải có ít nhất 8 ký tự.";
-        }
-        if (!/[A-Z]/.test(password)) {
-            return "Mật khẩu phải có ít nhất một chữ cái in hoa.";
-        }
-        if (!/[a-z]/.test(password)) {
-            return "Mật khẩu phải có ít nhất một chữ cái thường.";
-        }
-        if (!/\d/.test(password)) {
-            return "Mật khẩu phải có ít nhất một số.";
-        }
-        if (!/[!@#$%^&*]/.test(password)) {
-            return "Mật khẩu phải có ít nhất một ký tự đặc biệt.";
-        }
-        return '';
     };
 
     return (
@@ -90,8 +57,6 @@ const ResetPassword = (prop) => {
                                 placeholderTextColor={passwordError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setPassword(text);
-                                    setPasswordError('');
-                                    setConfirmPasswordError('');
                                 }}
                                 style={[ResetPasswordStyle.input, passwordError ? { color: 'red' } : {}]}
                                 secureTextEntry={!isPasswordVisible}
@@ -118,7 +83,6 @@ const ResetPassword = (prop) => {
                                 placeholderTextColor={confirmPasswordError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setConfirmPassword(text);
-                                    setConfirmPasswordError('');
                                 }}
                                 style={[ResetPasswordStyle.input, confirmPasswordError ? { color: 'red' } : {}]}
                                 secureTextEntry={!isConfirmPasswordVisible} // Sử dụng trạng thái riêng

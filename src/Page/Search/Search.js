@@ -183,10 +183,11 @@ const SearchStyle = StyleSheet.create({
   },
   viewMoreText: {
     fontSize: 16,
-    color: '#8B8B8B',
+    color: '#F1F1F1',
   },
   productList: {  
     paddingBottom: 20,
+    backgroundColor:'#'
   },
   productContainer: {
     borderColor: '#2CA9C0',
