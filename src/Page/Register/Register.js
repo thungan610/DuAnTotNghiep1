@@ -2,7 +2,7 @@ import { Text, View, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvo
 import React, { useMemo, useState } from 'react'
 import { RadioGroup } from 'react-native-radio-buttons-group'
 import RegisterStyle from './style'
-
+import axios from 'axios'
 const Register = (prop) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [fullName, setFullName] = useState('');
@@ -19,7 +19,7 @@ const Register = (prop) => {
         prop.navigation.navigate('Login')
     }
 
-    const BtnRegister = () => {
+    const BtnRegister = async () => {
         let hasError = false;
 
         setFullNameError('');

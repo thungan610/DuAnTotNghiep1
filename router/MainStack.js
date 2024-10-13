@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
 import Login from "../src/Page/Login/index.js";
-import BottomNav from "./BottomNav.js";
+import BottomNav from "../router/BottomNav.js";
 import Register from "../src/Page/Register/Register";
 import AddProduct from "../src/Page/Cart/AddProduct.js";
 import HomeScreen from "../src/Page/HomeScreen/index.js";
@@ -31,7 +31,6 @@ import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
 import Order from "../src/Page/Order/Order.js";
 import Processing1 from "../src/Page/Order/Processing1.js";
 import Cart from "../src/Page/Cart/Cart.js";
-
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -73,7 +72,7 @@ const MainStack = () => {
             <Stack.Screen name="Processing1" component={Processing1} />
             <Stack.Screen name="Cart" component={Cart} />
 
-        </Stack.Navigator>
+        </Stack.Navigator >
     );
 };
 export default MainStack

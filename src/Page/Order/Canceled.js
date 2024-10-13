@@ -50,7 +50,7 @@ const Canceled = (prop) => {
                     <Text style={CanceledStyle.total}>Tổng thanh toán: 29.000</Text>
                 </View>
 
-                <TouchableOpacity style={CanceledStyle.cancelButton}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('Cart')} style={CanceledStyle.cancelButton}>
                     <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>
             </View>
