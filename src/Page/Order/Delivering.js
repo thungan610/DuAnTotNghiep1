@@ -1,14 +1,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-
 const Delivering = (prop) => {
 
     return (
         <View style={DeliveringStyle.container}>
             <View style={DeliveringStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Order')}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
                     <Image style={DeliveringStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={DeliveringStyle.title}>Đơn hàng</Text>

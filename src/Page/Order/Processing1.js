@@ -8,7 +8,7 @@ const Processing1 = (prop) => {
     return (
         <View style={ProcessingStyle.container}>
             <View style={ProcessingStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Order')}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
                     <Image style={ProcessingStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={ProcessingStyle.title}>Đơn hàng</Text>

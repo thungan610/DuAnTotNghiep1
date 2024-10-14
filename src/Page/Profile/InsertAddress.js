@@ -8,12 +8,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import InsertAddressStyles from './InsertAddressStyles';
-import { useNavigation } from '@react-navigation/native';
 
-const InsertAddress = () => {
-  const navigation = useNavigation();
+const InsertAddress = (prop) => {
   const BackRight = () => {
-    navigation.goBack()
+    prop.navigation.goBack()
 }
   const data = [
     {

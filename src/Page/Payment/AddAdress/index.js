@@ -3,12 +3,11 @@ import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import AddAdressStyle from "./style";
 
 const AddAdress = (prop) => {
-    const { navigation } = prop
     const BackRight = () => {
-        navigation.goBack()
+        prop.navigation.navigate('ProfileDetail')
     }
     const HandSubmitTrue = () => {
-        navigation.navigate('SubmitTrue')
+        prop.navigation.navigate('SubmitTrue')
     }
     return (
         <View style={AddAdressStyle.container}>
@@ -35,6 +34,21 @@ const AddAdress = (prop) => {
                     <TextInput style={AddAdressStyle.input} placeholder="Nhập số nhà/hẻm chi tiết"/>
                 </View>
             </View>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('MapAdress')} style={{
+                flexDirection:'row',
+                alignItems:'center'
+            }}>
+                <Text style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontFamily: 'Poppins',
+                    marginTop: 20,
+                    marginLeft: 20
+                }}>Địa chỉ hiện tại: </Text>
+                <Image style={{marginTop: 20,
+                    marginLeft: 5}} 
+                source={require('../../../../src/assets/map.png')}/>
+            </TouchableOpacity>
             <View style={AddAdressStyle.footer}>
                 <TouchableOpacity onPress={HandSubmitTrue} style={AddAdressStyle.button}>
                     <Text style={AddAdressStyle.buttonText}>LƯU</Text>

@@ -1,7 +1,6 @@
 import { View, Text, Image, TouchableOpacity, } from 'react-native';
-import React from 'react';
+import {React} from 'react';
 import profileStyle from './ProfileDetailstyle';
-import { useNavigation } from '@react-navigation/native';
 
 const ProfileDetail = (prop) => {
   const BtnProductReview = () => {
@@ -50,7 +49,7 @@ const ProfileDetail = (prop) => {
                 />
               </View>
             </TouchableOpacity>
-          </View>
+          </View> 
 
         </View>
 
@@ -58,36 +57,36 @@ const ProfileDetail = (prop) => {
       <View style={profileStyle.body}>
         <View style={profileStyle.firstbody}>
           <Text style={profileStyle.titleB}>Đơn mua</Text>
-          <View style={profileStyle.firstbodyRightside}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 2})} style={profileStyle.firstbodyRightside}>
             <Text style={profileStyle.history}>Lịch sử mua hàng</Text>
             <Image
               style={profileStyle.vecto2}
               source={require('../../../src/assets/vecto1.png')}
             />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={profileStyle.secondbody}>
-          <View style={profileStyle.load}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 0})} style={profileStyle.load}>
             <Image
               style={profileStyle.loadimg}
               source={require('../../../src/assets/Load.png')}
             />
             <Text style={profileStyle.loadtext}>Chờ xác nhận</Text>
-          </View>
-          <View style={profileStyle.load2}>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 1})} style={profileStyle.load2}>
             <Image
               style={profileStyle.loadimg}
               source={require('../../../src/assets/car.png')}
             />
             <Text style={profileStyle.loadtext2}>Đang giao</Text>
-          </View>
-          <View style={profileStyle.load3}>
+          </TouchableOpacity >
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 3})} style={profileStyle.load3}>
             <Image
               style={profileStyle.loadimg}
               source={require('../../../src/assets/cancel.png')}
             />
             <Text style={profileStyle.loadtext3}>Đã hủy</Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={BtnProductReview}>
             <View style={profileStyle.load4}>
               <Image

@@ -151,7 +151,7 @@ const HomeScreen = (prop) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Map.png')}
+                                source={require('../../../src/assets/Pin_alt.png')}
                             />
                         </View>
                     </TouchableOpacity>

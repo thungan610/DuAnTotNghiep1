@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 const Order = (prop) => {
@@ -72,17 +72,24 @@ const Order = (prop) => {
       },
     ],
   };
+  useEffect(() => {
+    const { selectedTab } = prop.route.params || {};
+    if (selectedTab !== undefined) {
+      setSelectedTabs(selectedTab);
+    }
+  }, [prop.route.params]);
 
   const currentOrders = orders[tabs[selectedTabs]] || [];
+
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'Đang vận chuyển':
-        return '#4CAF50'; 
+        return '#4CAF50';
       case 'Đã hủy':
-        return '#FF3434'; 
+        return '#FF3434';
       default:
-        return '#FF7400'; 
+        return '#FF7400';
     }
   };
 
@@ -127,11 +134,11 @@ const Order = (prop) => {
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
           )}
-          
+
           {tabs[selectedTabs] === 'Đã nhận' && (
-            
+
             <View style={OrderStyle.buttonContainer}>
-              <TouchableOpacity style={OrderStyle.buttonnhan}>
+              <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={OrderStyle.buttonhuy}>

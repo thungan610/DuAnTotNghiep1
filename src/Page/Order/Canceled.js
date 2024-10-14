@@ -1,14 +1,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-
 const Canceled = (prop) => {
 
     return (
         <View style={CanceledStyle.container}>
             <View style={CanceledStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Order')}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
                     <Image style={CanceledStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={CanceledStyle.title}>Đơn hàng</Text>
@@ -50,7 +48,7 @@ const Canceled = (prop) => {
                     <Text style={CanceledStyle.total}>Tổng thanh toán: 29.000</Text>
                 </View>
 
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Cart')} style={CanceledStyle.cancelButton}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={CanceledStyle.cancelButton}>
                     <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>
             </View>

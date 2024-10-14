@@ -70,7 +70,7 @@ const InsertAddressStyles = StyleSheet.create({
   },
   footer:{
     // flex: 1,
-    marginTop: 100,
+    marginTop: 70,
     padding:10,
 },
 button:{
