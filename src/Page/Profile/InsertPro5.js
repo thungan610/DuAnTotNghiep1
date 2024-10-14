@@ -5,6 +5,7 @@ import InsertPro5Styles from './InsertPro5Styles';
 const InsertPro5 = () => {
   const data = [
     {
+      id: '1', // Thêm id cho mỗi phần tử
       image: require('../../../src/assets/pro5img.png'),
       name: 'Bé Phát',
       bio: 'Thích nấu ăn',
@@ -76,7 +77,7 @@ const InsertPro5 = () => {
     <View>
       <FlatList
         data={data}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id} // Đảm bảo rằng keyExtractor sử dụng 'id'
         renderItem={renderPro5}
       />
     </View>

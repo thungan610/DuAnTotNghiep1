@@ -26,6 +26,7 @@ const NewCartStyle = StyleSheet.create({
         width: '100%',
         position:'relative',
         padding: 20,
+        backgroundColor:'white'
     },
     header: {
         flexDirection: 'row',

@@ -21,10 +21,6 @@ import SMS from "../src/Page/SMS/index.js";
 import Registration_successful from "../src/Page/SMS/Registration_successful.js";
 import ProductCancel from "../src/Page/ProductCancel/index.js";
 import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
-import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
-import Search from "../src/Page/Search/Search.js";
-import Profile from "../src/Page/Profile/ProfileDetail.js";
-import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -33,7 +29,6 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -56,9 +51,7 @@ const MainStack = () => {
             <Stack.Screen name="Registration_successful" component={Registration_successful} />
             <Stack.Screen name="ProductCancel" component={ProductCancel} />
             <Stack.Screen name="CancelTrue" component={CancelTrue} />
-            <Stack.Screen name="NewNotifi" component={NewNotifi} />
-            <Stack.Screen name="Search" component={Search} />
-            <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
+
         </Stack.Navigator>
     );
 };

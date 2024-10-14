@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Alert, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native';
 
 
 
-const Processing1 = () => {
+const Processing1 = ({ route, prop }) => {
+    const { order } = route.params;
     const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
-
+    
     const [selectedTabs, setSelectedTabs] = useState(0);
     const { width, height } = Dimensions.get('window');
 
@@ -16,11 +17,9 @@ const Processing1 = () => {
         ]);
     };
 
-
-
     return (
         <View style={styles.container}>
-            <View style={styles.headertop}>
+            {/* <View style={styles.headertop}>
                 <Image style={styles.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 <Text style={styles.title}>Đơn hàng</Text>
             </View>
@@ -50,12 +49,12 @@ const Processing1 = () => {
                         </Text>
                     </TouchableOpacity>
                 ))}
-            </ScrollView>
+            </ScrollView> */}
 
             <View style={styles.body}>
 
                 <View style={styles.banner}>
-                    <Text style={styles.bannerText}>Đơn hàng đang xử lí</Text>
+                    <Text style={styles.bannerText}>Đơn hàng đang xử lý</Text>
                 </View>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Thông tin vận chuyển</Text>
@@ -70,7 +69,7 @@ const Processing1 = () => {
 
                 <View style={styles.product}>
                     <Image
-                        source={require('../../assets/image/image1.png')} // Replace with your image URL
+                        source={require('../../assets/image/image1.png')} 
                         style={styles.productImage}
                     />
                     <View style={styles.productInfo}>
@@ -92,10 +91,6 @@ const Processing1 = () => {
                     <Text style={styles.cancelButtonText}>Hủy đơn</Text>
                 </TouchableOpacity>
             </View>
-
-
-
-
         </View>
     );
 };
