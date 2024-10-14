@@ -23,32 +23,32 @@ const BottomNav = () => {
         >
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.iconHome} source={focused ? require('./icon/SubtractSau.png') : require('./icon/SubtractSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Home.png') : require('./icon/HomeSau.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
 
                 name="HomeScreen" component={HomeScreen} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Desk.png') : require('./icon/Desk.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/oderSau.png') : require('./icon/oder.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="Order" component={Order} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BasketSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BatketTruoc.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="AddProduct" component={AddProduct} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BellSau.png') : require('./icon/Bell.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="NotifiScreen" component={NewNotifi} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/User.png') : require('./icon/User.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/UserSau.png') : require('./icon/UserTruoc.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="Profile" component={ProfileDetail} />
@@ -59,14 +59,16 @@ const BottomNav = () => {
 const styles = StyleSheet.create({
     icon: {
         width: 35,
-        height: 35
+        height: 35,
+        tintColor: "#fff",
     },
     label: {
         fontSize: 60,
         color: "#fff",
         marginBottom: -15,
         marginTop: -65
-    }
+    },
+   
 })
 
 export default BottomNav
