@@ -1,19 +1,18 @@
 import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
 import React from 'react';
 import TabAddressStyle from './TabAdressStyle';
-import { useNavigation } from '@react-navigation/native';
 
 
-const TabAddress = () => {
-  const navigation = useNavigation();
+
+const TabAddress = (prop) => {
   const BtnInsertAddress = () => {
-    navigation.navigate('InsertAddress');
+    prop.navigation.navigate('InsertAddress');
   }
   const BackRight = () => {
-    navigation.goBack()
+    prop.navigation.goBack()
 }
 const BtnAddAdress = () => {
-  navigation.navigate('AddAdress');
+  prop.navigation.navigate('AddAdress');
 }
   const data = [
     {
@@ -75,13 +74,13 @@ const BtnAddAdress = () => {
         </TouchableOpacity>
         <Text style={TabAddressStyle.textH}>Địa chỉ</Text>
       </View>
-      <View style={TabAddressStyle.flatlist}>
+      <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={TabAddressStyle.flatlist}>
         <FlatList
           data={data}
           keyExtractor={item => item.id}
           renderItem={renderAddressItem}
         />
-      </View>
+      </TouchableOpacity>
       <TouchableOpacity onPress={BtnAddAdress}>
       <View style={TabAddressStyle.addAdress} >
         

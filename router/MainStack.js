@@ -9,7 +9,7 @@ import HomeScreen from "../src/Page/HomeScreen/index.js";
 import NextPayment from "../src/Page/Payment/Next/index.js";
 import AddAdress from "../src/Page/Payment/AddAdress";
 import SubmitTrue from "../src/Page/Payment/SubmitTrue";
-import Payment from "../src/Page/Payment/Payment";
+import Payment from "../src/Page/Payment/Payment/index.js";
 import PayMethod from "../src/Page/Payment/PayMethod/index.js";
 import Voucher from "../src/Page/Payment/Voucher/index.js";
 import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
@@ -34,6 +34,8 @@ import Cart from "../src/Page/Cart/Cart.js";
 import Delivering from "../src/Page/Order/Delivering.js";
 import Canceled from "../src/Page/Order/Canceled.js";
 import BotChat from "../src/Page/BotChat/index.js";
+import ZaloPay from "../src/Page/Payment/ZaloPay/index.js";
+import MapAdress from "../src/Page/Payment/AddAdress/MapAdress/map.js"
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -78,6 +80,8 @@ const MainStack = () => {
             <Stack.Screen name="Delivering" component={Delivering} />
             <Stack.Screen name="Canceled" component={Canceled} />
             <Stack.Screen name="BotChat" component={BotChat} />
+            <Stack.Screen name="ZaloPay" component={ZaloPay}/>
+            <Stack.Screen name="MapAdress" component={MapAdress}/>
 
         </Stack.Navigator >
     );

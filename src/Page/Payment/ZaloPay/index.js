@@ -4,6 +4,24 @@ import ZaloPayStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 import PayMethodStyle from "../PayMethod/style";
 const ZaloPay = () => {
+    const [orderURL, setOrderURL] = useState('');
+
+  const createOrder = async () => {
+    try {
+      const response = await fetch(' ', {  //Link API
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: 50000 }), 
+      });
+
+      const data = await response.json();
+      setOrderURL(data.orderURL);
+    } catch (error) {
+      console.error('Error creating order:', error);
+    }
+  };
     return (
         <View style={ZaloPayStyle.container}> 
              <View style={AddAdressStyle.header}>

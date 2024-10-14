@@ -69,7 +69,7 @@ const InsertPro5Styles = StyleSheet.create({
     alignItems: 'center',
     width: 300,
     marginLeft: 45,
-    marginTop: 130,
+    marginTop: 100,
 },
 });
 export default InsertPro5Styles;

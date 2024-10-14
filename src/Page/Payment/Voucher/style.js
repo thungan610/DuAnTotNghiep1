@@ -69,7 +69,7 @@ const VoucherStyle = StyleSheet.create({
         fontFamily: 'Poppins',
     },
     ViewSuss:{
-        marginTop: 380,
+        marginTop: 320,
         alignItems: 'center',
         justifyContent: 'flex-end',
 

@@ -23,8 +23,8 @@ const PaymentStyle = StyleSheet.create({
         alignItems:'center',
     },
     imgmap:{
-        width: 24,
-        height:24
+        width: 40,
+        height:40
     },
     txtDC:{
         fontSize:16,
