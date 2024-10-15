@@ -1,15 +1,22 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import NextPaymentStyle from "./style"
-const NextPayment = () => {
+const NextPayment = (prop) => {
+    const { navigation } = prop
+    const BackRight = () => {
+        navigation.goBack()
+    }
+    const HandAddAddress = () => {
+        navigation.navigate('AddAdress')
+    }
     return (
         <View style={NextPaymentStyle.container}>
-            <View>
+            <TouchableOpacity onPress={BackRight}>
                 <Image style={NextPaymentStyle.backright} source={require('../../../assets/notifi/backright.png')} />
-            </View>
+            </TouchableOpacity>
             <View style={NextPaymentStyle.body}>
                 <Text style={NextPaymentStyle.title}>Thêm địa chỉ nhận hàng để tiến hành thanh toán!!</Text>
-                <TouchableOpacity style={NextPaymentStyle.buttonContainer}>
+                <TouchableOpacity onPress={HandAddAddress} style={NextPaymentStyle.buttonContainer}>
                     <Text style={NextPaymentStyle.button}>TIẾP TỤC</Text>
                 </TouchableOpacity>
             </View>

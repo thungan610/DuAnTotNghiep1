@@ -1,91 +1,51 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Alert, Button } from 'react-native';
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-
-const Delivering = () => {
-    const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
-
-    const [selectedTabs, setSelectedTabs] = useState(0);
-    const { width, height } = Dimensions.get('window');
-
-    const handleCancelOrder = () => {
-        Alert.alert("Hủy đơn", "Bạn có chắc muốn hủy đơn hàng?", [
-            { text: "Không", style: "cancel" },
-            { text: "Đồng ý", onPress: () => console.log("Đã hủy đơn hàng") },
-        ]);
-    };
-
-
+const Delivering = (prop) => {
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headertop}>
-                <Image style={styles.backright} source={require('../../../src/assets/notifi/backright.png')} />
-                <Text style={styles.title}>Đơn hàng</Text>
+        <View style={DeliveringStyle.container}>
+            <View style={DeliveringStyle.headertop}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                    <Image style={DeliveringStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
+                </TouchableOpacity>
+                <Text style={DeliveringStyle.title}>Đơn hàng</Text>
             </View>
 
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.TabsContainer}
-            >
-                {tabs.map((tab, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[styles.tabsButton, selectedTabs === index && styles.selectedTabsButton]}
-                        onPress={() => setSelectedTabs(index)}
-                    >
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: selectedTabs === index ? 'bold' : 'normal',
-                            textDecorationLine: selectedTabs === index ? 'underline' : 'none',
-                            marginHorizontal: 8,
-                            marginTop: 7,
-                            color: 'black',
-                            textAlign: 'center',
-                            marginRight: 12
-                        }}>
-                            {tab}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
+            <View style={DeliveringStyle.body}>
 
-            <View style={styles.body}>
-
-                <View style={styles.banner}>
-                    <Text style={styles.bannerText}>Đơn hàng đang giao</Text>
+                <View style={DeliveringStyle.banner}>
+                    <Text style={DeliveringStyle.bannerText}>Đơn hàng đang giao</Text>
                 </View>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={styles.subText}>Ngày 19/9/2024, Nhanh</Text>
+                <View style={DeliveringStyle.header}>
+                    <Text style={DeliveringStyle.headerText}>Thông tin vận chuyển</Text>
+                    <Text style={DeliveringStyle.subText}>Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
-                <View style={styles.address}>
-                    <Text style={styles.label}>Địa chỉ:</Text>
+                <View style={DeliveringStyle.address}>
+                    <Text style={DeliveringStyle.label}>Địa chỉ:</Text>
                     <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
                     <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
                 </View>
 
-                <View style={styles.product}>
+                <View style={DeliveringStyle.product}>
                     <Image
-                        source={require('../../assets/image/image1.png')} // Replace with your image URL
-                        style={styles.productImage}
+                        source={require('../../assets/image/image1.png')}
+                        style={DeliveringStyle.productImage}
                     />
-                    <View style={styles.productInfo}>
-                        <Text style={styles.productName}>Bắp cải trắng</Text>
-                        <Text style={styles.category}>Rau củ</Text>
-                        <Text style={styles.price}>$ 19.000đ</Text>
+                    <View style={DeliveringStyle.productInfo}>
+                        <Text style={DeliveringStyle.productName}>Bắp cải trắng</Text>
+                        <Text style={DeliveringStyle.category}>Rau củ</Text>
+                        <Text style={DeliveringStyle.price}>$ 19.000đ</Text>
                     </View>
                 </View>
 
-                <View style={styles.paymentInfo}>
-                    <Text style={styles.label}>Chi tiết thanh toán</Text>
+                <View style={DeliveringStyle.paymentInfo}>
+                    <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
                     <Text>Tổng tiền sản phẩm: 19.000</Text>
                     <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={styles.total}>Tổng thanh toán: 29.000</Text>
+                    <Text style={DeliveringStyle.total}>Tổng thanh toán: 29.000</Text>
                 </View>
 
             </View>
@@ -97,22 +57,22 @@ const Delivering = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const DeliveringStyle = StyleSheet.create({
     // button: {
     //     fontSize: 14,
     //     color: '#FF7400',
     //     alignSelf: 'flex-end',
     //     padding: 10,
-        
+
 
     // },
     banner: {
         padding: 10,
         backgroundColor: '#4CAF50',
-        height:45,
+        height: 45,
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,
-        
+
     },
     bannerText: {
         fontSize: 18,
@@ -172,15 +132,15 @@ const styles = StyleSheet.create({
     product: {
         flexDirection: 'row',
         marginVertical: 10,
-        paddingLeft:10
+        paddingLeft: 10
     },
     productImage: {
         width: 60,
         height: 60,
         marginRight: 10,
-        borderWidth:1,
-        borderRadius:5,
-        backgroundColor:'#37C5DF'
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundColor: '#37C5DF'
     },
     productInfo: {
         justifyContent: 'center',

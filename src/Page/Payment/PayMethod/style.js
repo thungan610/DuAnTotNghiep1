@@ -5,6 +5,10 @@ const PayMethodStyle = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
+        position:'relative',
+        justifyContent: "center",
+        alignItems: 'center',
+        padding:10,
     },
     container1:{
         width: '100%',
@@ -43,23 +47,21 @@ const PayMethodStyle = StyleSheet.create({
        width: '100%',
        position:'absolute',
        bottom: 15,
-       left: 0,
-       right: 0,
+      
     },
     txtSuss:{
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#fff',
-        marginTop: 10
     },
     BtnSuss:{
         backgroundColor: '#27AAE1',
         width: '100%',
-        justifyContent:'center',
-        alignItems:'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 15,
-        padding: 10
+        padding: 15
     }
 })
 

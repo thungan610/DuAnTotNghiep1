@@ -7,58 +7,35 @@ const Login = (prop) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [loginError, setLoginError] = useState('');
+    const [selectedId, setSelectedId] = useState();
 
-    const BtnLogin = () => {
-        let hasError = false;
 
-        setEmailError('');
-        setPasswordError('');
-        setLoginError('');
+    const BtnLogin = async () => {
+        try {
+            // Gọi API đăng ký
+            const response = await axios.post('URL_API_CỦA_BẠN', {
+                email: email,
+                password: password,
+            });
 
-        if (email === '') {
-            setEmailError("Vui lòng nhập Email");
-            setEmail(''); 
-            hasError = true;
-        } else if (!validateEmail(email)) {
-            setEmailError("Email không hợp lệ!");
-            setEmail(''); 
-            hasError = true;
-        }
-        if (password === '') {
-            setPasswordError("Vui lòng nhập mật khẩu");
-            setPassword(''); 
-            hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
-            setPassword(''); 
-            hasError = true;
-        }
-
-        // Kiểm tra đăng nhập
-        if (!hasError) {
-            if (email !== "example@mail.com" || password !== "password") { 
-                setLoginError("Email hoặc mật khẩu không đúng!");
-                setEmail('');
-                setPassword(''); 
-                return;
+            if (response.data) {
+                Alert.alert("Thông báo", "Đăng nhập thành công!");
+                setTimeout(() => {
+                    prop.navigation.navigate('SMS');
+                }, 1000);
             }
-
-            Alert.alert("Đăng nhập thành công");
-            prop.navigation.navigate('BottomNav');
+        } catch (error) {
+            Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng nhập thất bại!");
         }
     };
 
-    // Kiểm tra email hợp lệ
-    const validateEmail = (email) => {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
+    const handlePasswordChange = (text) => {
+        setPassword(text);
+        setEmail(text)
     };
 
-    const ClickRegister = () => {
-        prop.navigation.navigate('Register');
+    const ClickForgotPass = () => {
+        prop.navigation.navigate('ForgotPassword');
     };
 
     const radioButtons = useMemo(() => ([{
@@ -68,8 +45,6 @@ const Login = (prop) => {
         color: '#37C5DF',
         selectedColor: '#2CA9C0',
     }]), []);
-
-    const [selectedId, setSelectedId] = useState();
 
     return (
         <View style={LoginStyle.container}>
@@ -92,13 +67,10 @@ const Login = (prop) => {
                                 placeholderTextColor={emailError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setEmail(text);
-                                    setEmailError(''); 
-                                    setLoginError(''); 
+                                    setPassword(text);
                                 }}
-                                style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
                         </View>
-
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
                         <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
                             <Image style={LoginStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
@@ -106,11 +78,7 @@ const Login = (prop) => {
                                 value={password}
                                 placeholder={passwordError || "Nhập mật khẩu"}
                                 placeholderTextColor={passwordError ? 'red' : '#999'}
-                                onChangeText={(text) => {
-                                    setPassword(text);
-                                    setPasswordError(''); 
-                                    setLoginError(''); 
-                                }}
+                                onChangeText={handlePasswordChange}
                                 style={[LoginStyle.input, passwordError ? { color: 'red' } : {}]}
                                 secureTextEntry={!isPasswordVisible}
                             />
@@ -125,39 +93,35 @@ const Login = (prop) => {
                         </View>
                     </View>
                 </View>
-
                 <View style={LoginStyle.nhotk}>
                     <RadioGroup
                         labelStyle={LoginStyle.radio}
                         containerStyle={{ alignItems: 'flex-start' }}
                         radioButtons={radioButtons}
-                        onPress={setSelectedId}
-                        selectedId={selectedId}
+                        onPress={setSelectedId} // Cần định nghĩa selectedId
+                        selectedId={selectedId} // Cần định nghĩa selectedId
                     />
-                    <Text style={LoginStyle.forgot}>Quên mật khẩu?</Text>
+                    <TouchableOpacity onPress={ClickForgotPass}>
+                        <Text style={LoginStyle.forgot}>Quên mật khẩu?</Text>
+                    </TouchableOpacity>
                 </View>
-
                 <View style={LoginStyle.button}>
                     <TouchableOpacity onPress={BtnLogin} style={LoginStyle.dn}>
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
-
                 <Text style={LoginStyle.or}>Hoặc</Text>
-
                 <View style={LoginStyle.buttonall}>
                     <TouchableOpacity style={LoginStyle.buttonfb}>
                         <Image style={LoginStyle.fb} source={require('../../../src/assets/fb.png')} />
                     </TouchableOpacity>
-
                     <TouchableOpacity style={LoginStyle.buttongg}>
                         <Image style={LoginStyle.gg} source={require("../../../src/assets/gg.png")} />
                     </TouchableOpacity>
                 </View>
-
                 <View style={LoginStyle.footer}>
                     <Text style={LoginStyle.footerdau}>Bạn chưa có tài khoản?</Text>
-                    <Text onPress={ClickRegister} style={LoginStyle.footerduoi}> Đăng ký</Text>
+                    <Text onPress={() => prop.navigation.navigate('Register')} style={LoginStyle.footerduoi}> Đăng ký</Text>
                 </View>
             </View>
         </View>

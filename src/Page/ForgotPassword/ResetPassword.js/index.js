@@ -1,49 +1,34 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text,Alert, Image, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import ResetPasswordStyle from './style'
 
-const ResetPassword = () => {
+const ResetPassword = (prop) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
 
     const BtnResetPass = () => {
-        let hasError = false;
+       
 
-        setPasswordError('');
-        setConfirmPasswordError('');
-
-        if (password === '') {
-            setPasswordError("Vui lòng nhập mật khẩu");
+        const passwordValidationError = validatePassword(password);
+        if (passwordValidationError) {
             setPassword('');
-            hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
-            setPassword('');
-            hasError = true;
+            setConfirmPassword('');
         }
-
         if (confirmPassword === '') {
-            setConfirmPasswordError("Vui lòng nhập lại mật khẩu");
+            setPassword('');
             setConfirmPassword('');
             hasError = true;
         } else if (confirmPassword !== password) {
-            setConfirmPasswordError("Vui longf nhập mật khẩu!");
+            setPassword('');
             setConfirmPassword('');
             hasError = true;
         }
-
-        if (hasError) {
-            return;
-        }
-
         Alert.alert("Đổi mật khẩu thành công");
         prop.navigation.navigate('Login');
     };
-
 
     return (
         <View style={ResetPasswordStyle.container}>
@@ -72,8 +57,6 @@ const ResetPassword = () => {
                                 placeholderTextColor={passwordError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setPassword(text);
-                                    setPasswordError('');
-                                    setConfirmPasswordError('');
                                 }}
                                 style={[ResetPasswordStyle.input, passwordError ? { color: 'red' } : {}]}
                                 secureTextEntry={!isPasswordVisible}
@@ -100,15 +83,14 @@ const ResetPassword = () => {
                                 placeholderTextColor={confirmPasswordError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setConfirmPassword(text);
-                                    setConfirmPasswordError('');
                                 }}
                                 style={[ResetPasswordStyle.input, confirmPasswordError ? { color: 'red' } : {}]}
-                                secureTextEntry={!isPasswordVisible}
+                                secureTextEntry={!isConfirmPasswordVisible} // Sử dụng trạng thái riêng
                             />
-                            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                            <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
                                 <Image
                                     style={ResetPasswordStyle.eye}
-                                    source={isPasswordVisible
+                                    source={isConfirmPasswordVisible
                                         ? require("../../../../src/assets/eye.png")
                                         : require("../../../../src/assets/eye-closed.png")
                                     }

@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import PayMethodStyle from "./style";
+import { useNavigation } from '@react-navigation/native';
 import AddAdressStyle from "../AddAdress/style";
 
 const PayMethod = () => {
+   const navigation = useNavigation();
+
+    const BackRight = () => {
+        navigation.goBack()
+    }
     const [selectedMethod, setSelectedMethod] = useState(null); //Để xử lý trạng thái chọn hoặc không
 
     return (
         <View style={PayMethodStyle.container}>
             <View style={PayMethodStyle.container1}>
                 <View style={AddAdressStyle.header}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    <TouchableOpacity onPress={BackRight}>
+                        <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    </TouchableOpacity>
                     <Text style={AddAdressStyle.title}>Phương thức thanh toán</Text>
                     <Text />
                 </View>
@@ -52,8 +60,8 @@ const PayMethod = () => {
                 </View>
 
             </View>
-            <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>
-                <TouchableOpacity style={PayMethodStyle.BtnSuss}>
+            <View style={[PayMethodStyle.ViewSuss]}>
+                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>

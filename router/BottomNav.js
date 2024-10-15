@@ -1,11 +1,11 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import {Text, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '../src/Page/HomeScreen'
 import Order from '../src/Page/Order/Order'
-import Cart from '../src/Page/Cart/Cart'
-import NotifiScreen from '../src/Page/NotifiScreen'
-import Profile from '../src/Page/Profile'
+import ProfileDetail from '../src/Page/Profile/ProfileDetail' 
+import AddProduct from '../src/Page/Cart/AddProduct'
+import NewNotifi from '../src/Page/NotifiScreen/NewNotifi'
 
 const Tab = createBottomTabNavigator()
 
@@ -18,42 +18,40 @@ const BottomNav = () => {
                     height: 60,
                     paddingBottom: 5,
                     backgroundColor: '#37C5DF',
-                    
-
                 }
             }}
         >
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.iconHome} source={focused ? require('./icon/SubtractSau.png') : require('./icon/SubtractSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Home.png') : require('./icon/HomeSau.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
 
                 name="HomeScreen" component={HomeScreen} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Desk.png') : require('./icon/Desk.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/oderSau.png') : require('./icon/oder.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
                 name="Order" component={Order} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BasketSau.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BatketTruoc.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="Cart" component={Cart} />
+                name="AddProduct" component={AddProduct} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/Bell.png') : require('./icon/Bell.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BellSau.png') : require('./icon/Bell.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="NotifiScreen" component={NotifiScreen} />
+                name="NotifiScreen" component={NewNotifi} />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/User.png')} />,
+                    tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/UserSau.png') : require('./icon/UserTruoc.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="Profile" component={Profile} />
+                name="Profile" component={ProfileDetail} />
         </Tab.Navigator>
     )
 }
@@ -61,14 +59,16 @@ const BottomNav = () => {
 const styles = StyleSheet.create({
     icon: {
         width: 35,
-        height: 35
+        height: 35,
+        tintColor: "#fff",
     },
     label: {
         fontSize: 60,
         color: "#fff",
         marginBottom: -15,
         marginTop: -65
-    }
+    },
+   
 })
 
 export default BottomNav
