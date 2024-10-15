@@ -1,5 +1,3 @@
-import { Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState, useEffect } from 'react'
 import RegisterStyle from './style'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
@@ -76,7 +74,8 @@ const Register = (prop) => {
             Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng ký thất bại!");
         }
 
-    };
+
+    // };
 
     const handleRememberAccount = () => {
         setRememberAccount(!rememberAccount); // Đảo ngược trạng thái nhớ tài khoản
