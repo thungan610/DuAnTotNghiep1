@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-nat
 import React, { useMemo, useState } from 'react';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import LoginStyle from './style';
+import axios from 'axios';
 
 const Login = (prop) => {
     const [email, setEmail] = useState('');
@@ -59,12 +60,11 @@ const Login = (prop) => {
                     </View>
                     <View style={LoginStyle.inputall}>
                         <Text style={LoginStyle.tieudeinput}>Địa chỉ email</Text>
-                        <View style={[LoginStyle.anhinput, emailError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+                        <View style={[LoginStyle.anhinput]}>
                             <Image style={LoginStyle.message} source={require("../../../src/assets/Message.png")} />
                             <TextInput
                                 value={email}
-                                placeholder={emailError || "Nhập email"}
-                                placeholderTextColor={emailError ? 'red' : '#999'}
+                                placeholder={"Nhập email"}
                                 onChangeText={(text) => {
                                     setEmail(text);
                                     setPassword(text);
@@ -72,14 +72,13 @@ const Login = (prop) => {
                             />
                         </View>
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
-                        <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+                        <View style={[LoginStyle.anhinput]}>
                             <Image style={LoginStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
                             <TextInput
                                 value={password}
-                                placeholder={passwordError || "Nhập mật khẩu"}
-                                placeholderTextColor={passwordError ? 'red' : '#999'}
+                                placeholder={"Nhập mật khẩu"}
                                 onChangeText={handlePasswordChange}
-                                style={[LoginStyle.input, passwordError ? { color: 'red' } : {}]}
+                                style={[LoginStyle.input]}
                                 secureTextEntry={!isPasswordVisible}
                             />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
@@ -98,8 +97,8 @@ const Login = (prop) => {
                         labelStyle={LoginStyle.radio}
                         containerStyle={{ alignItems: 'flex-start' }}
                         radioButtons={radioButtons}
-                        onPress={setSelectedId} // Cần định nghĩa selectedId
-                        selectedId={selectedId} // Cần định nghĩa selectedId
+                        onPress={setSelectedId} 
+                        selectedId={selectedId} 
                     />
                     <TouchableOpacity onPress={ClickForgotPass}>
                         <Text style={LoginStyle.forgot}>Quên mật khẩu?</Text>
