@@ -10,22 +10,6 @@ const ResetPassword = (prop) => {
 
 
     const BtnResetPass = () => {
-       
-
-        const passwordValidationError = validatePassword(password);
-        if (passwordValidationError) {
-            setPassword('');
-            setConfirmPassword('');
-        }
-        if (confirmPassword === '') {
-            setPassword('');
-            setConfirmPassword('');
-            hasError = true;
-        } else if (confirmPassword !== password) {
-            setPassword('');
-            setConfirmPassword('');
-            hasError = true;
-        }
         Alert.alert("Đổi mật khẩu thành công");
         prop.navigation.navigate('Login');
     };
@@ -53,12 +37,11 @@ const ResetPassword = (prop) => {
                             />
                             <TextInput
                                 value={password}
-                                placeholder={passwordError ? "Mật khẩu không hợp lệ!" : "Nhập mật khẩu"}
-                                placeholderTextColor={passwordError ? 'red' : '#999'}
+                                placeholder={"Nhập mật khẩu"}
                                 onChangeText={(text) => {
                                     setPassword(text);
                                 }}
-                                style={[ResetPasswordStyle.input, passwordError ? { color: 'red' } : {}]}
+                                style={[ResetPasswordStyle.input]}
                                 secureTextEntry={!isPasswordVisible}
                             />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
@@ -79,13 +62,12 @@ const ResetPassword = (prop) => {
                             />
                             <TextInput
                                 value={confirmPassword}
-                                placeholder={confirmPasswordError ? "Mật khẩu không giống trên" : "Nhập lại mật khẩu"}
-                                placeholderTextColor={confirmPasswordError ? 'red' : '#999'}
+                                placeholder={"Nhập lại mật khẩu"}
                                 onChangeText={(text) => {
                                     setConfirmPassword(text);
                                 }}
-                                style={[ResetPasswordStyle.input, confirmPasswordError ? { color: 'red' } : {}]}
-                                secureTextEntry={!isConfirmPasswordVisible} // Sử dụng trạng thái riêng
+                                style={[ResetPasswordStyle.input]}
+                                secureTextEntry={!isConfirmPasswordVisible} 
                             />
                             <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
                                 <Image

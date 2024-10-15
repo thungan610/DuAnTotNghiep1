@@ -32,15 +32,10 @@ const ForgotPassword = (prop) => {
               />
               <TextInput
                 value={email}
-                placeholder={errorMessage ? errorMessage : "Nhập email hoặc số điện thoại"}
-                placeholderTextColor={errorMessage ? 'red' : '#999'}
+                placeholder={"Nhập email hoặc số điện thoại"}
                 onChangeText={(text) => {
                   setEmail(text);
-                }}
-                style={[
-                  ForgotPasswordStyle.input,
-                  errorMessage ? { color: 'red' } : {}
-                ]} />
+                }}/>
             </View>
           </View>
           <View style={ForgotPasswordStyle.button}>

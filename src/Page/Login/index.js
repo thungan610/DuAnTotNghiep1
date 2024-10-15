@@ -1,14 +1,14 @@
 import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
-import React, { useMemo, useState } from 'react';
-import { RadioGroup } from 'react-native-radio-buttons-group';
+import React, { useState, useEffect } from 'react';
 import LoginStyle from './style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const Login = (prop) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [selectedId, setSelectedId] = useState();
+    const [rememberAccount, setRememberAccount] = useState(false);
 
 
     const BtnLogin = async () => {
@@ -30,22 +30,32 @@ const Login = (prop) => {
         }
     };
 
+    useEffect(() => {
+        const loadAccount = async () => {
+            try {
+                const savedEmail = await AsyncStorage.getItem('savedEmail');
+                const savedPassword = await AsyncStorage.getItem('savedPassword');
+
+                if (savedEmail !== null && savedPassword !== null) {
+                    setEmail(savedEmail);
+                    setPassword(savedPassword);
+                    setRememberAccount(true);
+                }
+            } catch (error) {
+                console.error("Không thể tải tài khoản đã lưu", error);
+            }
+        };
+        loadAccount();
+    }, []);
+
     const handlePasswordChange = (text) => {
         setPassword(text);
         setEmail(text)
     };
 
-    const ClickForgotPass = () => {
-        prop.navigation.navigate('ForgotPassword');
+    const handleRememberAccount = () => {
+        setRememberAccount(!rememberAccount); 
     };
-
-    const radioButtons = useMemo(() => ([{
-        id: '1',
-        label: 'Nhớ tài khoản',
-        value: 'nhotaikhoan',
-        color: '#37C5DF',
-        selectedColor: '#2CA9C0',
-    }]), []);
 
     return (
         <View style={LoginStyle.container}>
@@ -77,13 +87,16 @@ const Login = (prop) => {
                             <TextInput
                                 value={password}
                                 placeholder={"Nhập mật khẩu"}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 11,
+                                    color: '#2CA9C0',
+                                }}
                                 onChangeText={handlePasswordChange}
-                                style={[LoginStyle.input]}
                                 secureTextEntry={!isPasswordVisible}
                             />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                                 <Image
-                                    style={LoginStyle.eye_closed}
                                     source={isPasswordVisible
                                         ? require("../../../src/assets/eye.png")
                                         : require("../../../src/assets/eye-closed.png")}
@@ -92,18 +105,38 @@ const Login = (prop) => {
                         </View>
                     </View>
                 </View>
-                <View style={LoginStyle.nhotk}>
-                    <RadioGroup
-                        labelStyle={LoginStyle.radio}
-                        containerStyle={{ alignItems: 'flex-start' }}
-                        radioButtons={radioButtons}
-                        onPress={setSelectedId} 
-                        selectedId={selectedId} 
-                    />
-                    <TouchableOpacity onPress={ClickForgotPass}>
-                        <Text style={LoginStyle.forgot}>Quên mật khẩu?</Text>
-                    </TouchableOpacity>
+                <View style={{
+                    flexDirection:'row',
+                    alignItems:'center',
+                    marginLeft:20
+                }}>
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginTop: 10
+                    }}>
+                        <TouchableOpacity onPress={handleRememberAccount} style={{
+                            width: 20,
+                            height: 20,
+                            borderWidth: 1,
+                            borderColor: '#2CA9C0',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 10,
+                        }}>
+                            {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
+                        </TouchableOpacity>
+                        <Text style={LoginStyle.checkboxLabel}>Nhớ tài khoản</Text>
+                    </View>
+                    <Text onPress={() => prop.navigation.navigate('ForgotPassword')} 
+                    style={{
+                        color:'#2CA9C0',
+                        fontSize:15,
+                        marginTop:10,
+                        marginLeft: 120
+                    }}> Quên mật khẩu ?</Text>
                 </View>
+
                 <View style={LoginStyle.button}>
                     <TouchableOpacity onPress={BtnLogin} style={LoginStyle.dn}>
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
