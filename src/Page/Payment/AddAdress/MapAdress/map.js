@@ -1,48 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, PermissionsAndroid, Platform } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
-import MapView, { Marker } from 'react-native-maps';
+// import Geolocation from '@react-native-community/geolocation';
+// import MapView, { Marker } from 'react-native-maps';
 
 const App = () => {
   const [location, setLocation] = useState(null);
   const [address, setAddress] = useState('');
-  const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';  
+  // const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';  
 
   // Hàm lấy địa chỉ từ Geocoding API của Google
-  const getAddressFromCoordinates = async (latitude, longitude) => {
-    try {
-      const apiLink = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
-      const response = await fetch(apiLink);
-      const data = await response.json();
+  // const getAddressFromCoordinates = async (latitude, longitude) => {
+  //   try {
+  //     const apiLink = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+  //     const response = await fetch(apiLink);
+  //     const data = await response.json();
 
-      if (data.status === 'OK' && data.results.length > 0) {
-        setAddress(data.results[0].formatted_address);
-      } else {
-        setAddress('Không tìm thấy địa chỉ');
-      }
-    } catch (error) {
-      console.error('Lỗi khi gọi API:', error);
-      setAddress('Lỗi khi lấy địa chỉ');
-    }
-  };
+  //     if (data.status === 'OK' && data.results.length > 0) {
+  //       setAddress(data.results[0].formatted_address);
+  //     } else {
+  //       setAddress('Không tìm thấy địa chỉ');
+  //     }
+  //   } catch (error) {
+  //     console.error('Lỗi khi gọi API:', error);
+  //     setAddress('Lỗi khi lấy địa chỉ');
+  //   }
+  // };
 
   // Quyền truy cập vị trí
-  const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Quyền truy cập vị trí',
-          message: 'Ứng dụng cần quyền truy cập vị trí của bạn.',
-          buttonNeutral: 'Hỏi sau',
-          buttonNegative: 'Từ chối',
-          buttonPositive: 'Đồng ý',
-        }
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-    return true;
-  };
+  // const requestLocationPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //       {
+  //         title: 'Quyền truy cập vị trí',
+  //         message: 'Ứng dụng cần quyền truy cập vị trí của bạn.',
+  //         buttonNeutral: 'Hỏi sau',
+  //         buttonNegative: 'Từ chối',
+  //         buttonPositive: 'Đồng ý',
+  //       }--
+  //     );
+  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //   }
+  //   return true;
+  // };
 
   // Lấy vị trí hiện tại khi ứng dụng khởi chạy
   useEffect(() => {

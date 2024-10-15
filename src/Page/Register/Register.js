@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import {Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { RadioGroup } from 'react-native-radio-buttons-group'
 import RegisterStyle from './style'
-import axios from 'axios'
+// import axios from 'axios'
 
 const Register = (prop) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -15,27 +15,27 @@ const Register = (prop) => {
         prop.navigation.navigate('Login')
     }
 
-    const BtnRegister = async () => {
-        try {
-            // Gọi API đăng ký
-            const response = await axios.post('http://192.168.1.168:6677/register', {
-                email: email,
-                password: password,
-                name: fullName, 
-                phone: phone 
-            });
+    // const BtnRegister = async () => {
+    //     try {
+    //         // Gọi API đăng ký
+    //         const response = await axios.post('http://192.168.1.168:6677/register', {
+    //             email: email,
+    //             password: password,
+    //             name: fullName, 
+    //             phone: phone 
+    //         });
 
-            if (response.data) {
-                Alert.alert("Thông báo", "Đăng kí thành công!");
-                setTimeout(() => {
-                    prop.navigation.navigate('SMS');
-                }, 1000);
-            }
-        } catch (error) {
-            Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng ký thất bại!");
-        }
+    //         if (response.data) {
+    //             Alert.alert("Thông báo", "Đăng kí thành công!");
+    //             setTimeout(() => {
+    //                 prop.navigation.navigate('SMS');
+    //             }, 1000);
+    //         }
+    //     } catch (error) {
+    //         Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng ký thất bại!");
+    //     }
 
-    };
+    // };
 
     const radioButtons = useMemo(() => ([{
         id: '1',
