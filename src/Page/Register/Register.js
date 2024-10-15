@@ -1,7 +1,3 @@
-import {Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
-
-import React, { useMemo, useState, useEffect } from 'react'
-import { RadioGroup } from 'react-native-radio-buttons-group'
 import RegisterStyle from './style'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
@@ -48,7 +44,7 @@ const Register = (prop) => {
     const BtnRegister = async () => {
         try {
             // Gọi API đăng ký
-            const response = await axios.post('http://localhost:6677/users/register', {
+            const response = await axios.post('http://192.168.1.61:6677/users/register', {
                 email: email,
                 password: password,
                 name: fullName,
@@ -61,7 +57,7 @@ const Register = (prop) => {
                 if (rememberAccount) {
                     await AsyncStorage.setItem('savedEmail', email);
                     await AsyncStorage.setItem('savedPhone', phone);
-                    await AsyncStorage.setItem('savedName', name);
+                    await AsyncStorage.setItem('savedName', fullName);
                     await AsyncStorage.setItem('savedPassword', password);
                 } else {
                     await AsyncStorage.removeItem('savedEmail');
@@ -81,28 +77,8 @@ const Register = (prop) => {
 
     // };
 
-    const radioButtons = useMemo(() => ([{
-        id: '1',
-        label: 'Nhớ tài khoản',
-        value: 'nhotaikhoan',
-        color: '#37C5DF',
-        selectedColor: '#2CA9C0',
-    }]), []);
-
-    const [selectedId, setSelectedId] = useState();
-
-    const handleRememberAccount = async (selectedId) => {
-        setSelectedId(selectedId);
-        const isRememberSelected = selectedId === '1';
-        setRememberAccount(isRememberSelected);
-
-        // Bỏ chọn "Nhớ tài khoản", xóa thông tin tài khoản 
-        if (!isRememberSelected) {
-            await AsyncStorage.removeItem('savedEmail');
-            await AsyncStorage.removeItem('savedPhone');
-            await AsyncStorage.setItem('savedName');
-            await AsyncStorage.setItem('savePassword');
-        }
+    const handleRememberAccount = () => {
+        setRememberAccount(!rememberAccount); // Đảo ngược trạng thái nhớ tài khoản
     };
 
     return (
@@ -185,12 +161,23 @@ const Register = (prop) => {
                                 Đăng Ký
                             </Text>
                         </TouchableOpacity>
-                        <View style={RegisterStyle.radio}>
-                            <RadioGroup labelStyle={RegisterStyle.radio}
-                                containerStyle={{ alignItems: 'flex-start' }}
-                                radioButtons={radioButtons}
-                                onPress={handleRememberAccount}
-                                selectedId={selectedId} />
+                        <View style={{
+                            flexDirection:'row',
+                            alignItems:'center',
+                            marginTop:20
+                        }}>
+                            <TouchableOpacity onPress={handleRememberAccount} style={{
+                                width: 20,
+                                height: 20,
+                                borderWidth: 1,
+                                borderColor: '#2CA9C0',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginRight: 10,
+                            }}>
+                                {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
+                            </TouchableOpacity>
+                            <Text style={RegisterStyle.checkboxLabel}>Nhớ tài khoản</Text>
                         </View>
                     </View>
 
