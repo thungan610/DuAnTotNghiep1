@@ -1,4 +1,5 @@
 import {Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+
 import React, { useMemo, useState, useEffect } from 'react'
 import { RadioGroup } from 'react-native-radio-buttons-group'
 import RegisterStyle from './style'
@@ -77,7 +78,8 @@ const Register = (prop) => {
             Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng ký thất bại!");
         }
 
-    };
+
+    // };
 
     const radioButtons = useMemo(() => ([{
         id: '1',
