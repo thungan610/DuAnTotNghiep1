@@ -7,8 +7,13 @@ const Register = (prop) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [fullName, setFullName] = useState('');
+    const [FullName, setFullName] = useState('');
     const [phone, setPhone] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [FullNameError, setFullNameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [selectedId, setSelectedId] = useState();
     const [rememberAccount, setRememberAccount] = useState(false);
 
     const NextLogin = () => {
@@ -16,149 +21,237 @@ const Register = (prop) => {
     }
 
     const BtnRegister = async () => {
-        try {
-            // Gọi API đăng ký
-            const response = await axios.post('http://192.168.1.61:6677/users/register', {
-                email: email,
-                password: password,
-                name: fullName,
-                phone: phone
-            });
+        let hasError = false;
+        setFullNameError('');
+        setPhoneError('');
+        setPasswordError('');
 
-            if (response.data) {
+        if (FullName.trim() === '') {
+            setFullNameError("Vui lòng nhập họ và tên");
+            setFullName('');
+            hasError = true;
+        }
+        if (email.trim() === '') {
+            setEmailError("Vui lòng nhập email");
+            setEmail('');
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            setEmailError("Email không hợp lệ");
+            setEmail('');
+            hasError = true;
+        }
+        if (phone.trim() === '') {
+            setPhoneError("Vui lòng nhập số điện thoại");
+            setPhone('');
+            hasError = true;
+        } else if (!validatePhone(phone)) {
+            setPhoneError("Số điện thoại không hợp lệ");
+            setPhone('');
+            hasError = true;
+        }
+        if (password.trim() === '') {
+            setPasswordError("Vui lòng nhập mật khẩu");
+            setPassword('');
+            hasError = true;
+        } else {
+            let passwordErrors = [];
+
+            if (password.length < 8) {
+                passwordErrors.push("Phải có ít nhất 8 ký tự.");
+            }
+
+            if (!/[A-Z]/.test(password)) {
+                passwordErrors.push("Phải có ít nhất 1 chữ cái in hoa.");
+            }
+
+            if (!/\d/.test(password)) {
+                passwordErrors.push("Phải có ít nhất 1 số.");
+            }
+
+            if (!/[@$!%*?&]/.test(password)) {
+                passwordErrors.push("Phải có ít nhất 1 ký tự đặc biệt.");
+            }
+
+            if (passwordErrors.length > 0) {
+                setPasswordError(passwordErrors.join(" "));
+                setPassword('');
+                hasError = true;
+            }
+            if (!hasError) {
                 Alert.alert("Thông báo", "Đăng kí thành công!");
-
                 setTimeout(() => {
                     prop.navigation.navigate('SMS');
                 }, 1000);
+            } try {
+                // Gọi API đăng ký
+                const response = await axios.post('http://192.168.1.61:6677/users/register', {
+                    email: email,
+                    password: password,
+                    name: fullName,
+                    phone: phone
+                });
+
+                if (response.data) {
+                    Alert.alert("Thông báo", "Đăng kí thành công!");
+
+                    setTimeout(() => {
+                        prop.navigation.navigate('SMS');
+                    }, 1000);
+                }
+            } catch (error) {
+                Alert.alert("Thông báo", "Đăng ký thất bại!");
             }
-        } catch (error) {
-            Alert.alert("Thông báo", "Đăng ký thất bại!");
-        }
+        };
+    }
+
+    const validateEmail = (email) => {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+        // Kiểm tra số điện thoại hợp lệ
+    }
+    const validatePhone = (phone) => {
+        const re = /^[0-9]{10,11}$/;
+        return re.test(phone);
+    };
+    const handlePasswordChange = (text) => {
+        setPassword(text);
+        setPasswordError('');
     };
 
-const handleRememberAccount = () => {
-    setRememberAccount(!rememberAccount);
-};
+    const handleRememberAccount = () => {
+        setRememberAccount(!rememberAccount);
+    };
 
-return (
-    <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={RegisterStyle.container}
-    >
-        <ScrollView>
-            <View style={RegisterStyle.HDLogo}>
-                <Image
-                    style={RegisterStyle.logo}
-                    source={require('../../../src/assets/logo.png')}
-                />
-            </View>
-            <View style={RegisterStyle.body}>
-                <View style={RegisterStyle.title}>
-                    <Text style={RegisterStyle.text}>Đăng ký</Text>
-                    <Text style={RegisterStyle.text1}>, để tiếp tục sử dụng</Text>
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={RegisterStyle.container}
+        >
+            <ScrollView>
+                <View style={RegisterStyle.HDLogo}>
+                    <Image
+                        style={RegisterStyle.logo}
+                        source={require('../../../src/assets/logo.png')}
+                    />
                 </View>
-                <View style={RegisterStyle.inputView}>
-                    <Text style={RegisterStyle.tieudeInput}>Họ và tên</Text>
-                    <View style={RegisterStyle.anhinput}>
-                        <Image style={{ tintColor: "#2CA9C0", height: 24, width: 24 }} source={require("../../../src/assets/User_alt.png")} />
-                        <TextInput
-                            placeholder="Họ và tên"
-                            onChangeText={(text) => setFullName(text)}
-                            style={RegisterStyle.input}
-                            value={fullName}
-                        />
+                <View style={RegisterStyle.body}>
+                    <View style={RegisterStyle.title}>
+                        <Text style={RegisterStyle.text}>Đăng ký</Text>
+                        <Text style={RegisterStyle.text1}>, để tiếp tục sử dụng</Text>
                     </View>
-
-                    <Text style={RegisterStyle.tieudeInput}>Địa chỉ email</Text>
-                    <View style={RegisterStyle.anhinput}>
-                        <Image style={RegisterStyle.lockalt} source={require("../../../src/assets/Message.png")} />
-                        <TextInput
-                            placeholder="Nhập email"
-                            onChangeText={(text) => setEmail(text)}
-                            style={RegisterStyle.input}
-                            value={email}
-                        />
-                    </View>
-
-                    <Text style={RegisterStyle.tieudeInput}>Số điện thoại</Text>
-                    <View style={RegisterStyle.anhinput}>
-                        <Image style={{ tintColor: '#2CA9C0', width: 24, height: 24 }} source={require("../../../src/assets/Phone_fill.png")} />
-                        <TextInput
-                            placeholder="Số điện thoại"
-                            onChangeText={(text) => setPhone(text)}
-                            style={RegisterStyle.input}
-                            value={phone}
-                        />
-                    </View>
-
-                    <Text style={RegisterStyle.tieudeInput}>Mật khẩu</Text>
-                    <View style={RegisterStyle.anhinput}>
-                        <Image style={RegisterStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
-                        <TextInput
-                            placeholder="Nhập mật khẩu"
-                            onChangeText={(text) => setPassword(text)}
-                            style={RegisterStyle.input}
-                            secureTextEntry={!isPasswordVisible}
-                            keyboardType="default"
-                            returnKeyType="done"
-                        />
-                        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-                            <Image
-                                style={RegisterStyle.eye_closed}
-                                source={isPasswordVisible
-                                    ? require("../../../src/assets/eye.png")
-                                    : require("../../../src/assets/eye-closed.png")
-                                }
+                    <View style={RegisterStyle.inputView}>
+                        <Text style={RegisterStyle.tieudeInput}>Họ và tên</Text>
+                        <View style={[RegisterStyle.anhinput, FullNameError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+                            <Image style={{ tintColor: "#2CA9C0", height: 24, width: 24 }} source={require("../../../src/assets/User_alt.png")} />
+                            <TextInput
+                                placeholder={FullNameError ? "Vui lòng nhập họ tên!" : "Nhập họ và tên"}
+                                placeholderTextColor={FullNameError ? 'red' : '#999'}
+                                onChangeText={(text) => {
+                                    setFullName(text);  
+                                    setFullNameError('');
+                                }}
+                                style={[RegisterStyle.input, FullNameError ? { color: 'red' } : {}]}
                             />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                        </View>
 
-                <View style={RegisterStyle.button}>
-                    <TouchableOpacity onPress={BtnRegister} style={RegisterStyle.tout}>
-                        <Text style={RegisterStyle.textDk}>
-                            Đăng Ký
-                        </Text>
-                    </TouchableOpacity>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginTop: 20
-                    }}>
-                        <TouchableOpacity onPress={handleRememberAccount} style={{
-                            width: 20,
-                            height: 20,
-                            borderWidth: 1,
-                            borderColor: '#2CA9C0',
-                            justifyContent: 'center',
+                        <Text style={RegisterStyle.tieudeInput}>Địa chỉ email</Text>
+                        <View style={[RegisterStyle.anhinput, emailError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+
+                            <Image style={RegisterStyle.lockalt} source={require("../../../src/assets/Message.png")} />
+                            <TextInput
+                                value={email}
+                                placeholder={emailError ? "Email không hợp lệ!" : "Nhập email"}
+                                placeholderTextColor={emailError ? 'red' : '#999'}
+                                onChangeText={(text) => {
+                                    setEmail(text);
+                                    setEmailError('');
+                                }}
+                                style={[RegisterStyle.input, emailError ? { color: 'red' } : {}]}
+                            />
+                        </View>
+
+                        <Text style={RegisterStyle.tieudeInput}>Số điện thoại</Text>
+                        <View style={[RegisterStyle.anhinput, phoneError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+                            <Image style={{ tintColor: '#2CA9C0', width: 24, height: 24 }} source={require("../../../src/assets/Phone_fill.png")} />
+                            <TextInput
+                                value={phone}
+                                placeholder={phoneError || "Nhập số điện thoại"}
+                                placeholderTextColor={phoneError ? 'red' : '#999'}
+                                onChangeText={(text) => {
+                                    setPhone(text);
+                                    setPhoneError('');
+                                }}
+                                style={[RegisterStyle.input, phoneError ? { color: 'red' } : {}]}
+                            />
+                        </View>
+
+                        <Text style={RegisterStyle.tieudeInput}>Mật khẩu</Text>
+                        <View style={[RegisterStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
+                            <Image style={RegisterStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
+                            <TextInput
+                                 value={password}
+                                 placeholder={passwordError || "Nhập mật khẩu"}
+                                 placeholderTextColor={passwordError ? 'red' : '#999'}
+                                 onChangeText={handlePasswordChange} 
+                                 style={[RegisterStyle.input, passwordError ? { color: 'red' } : {}]}
+                                 secureTextEntry={!isPasswordVisible}
+                                 />
+                            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                                <Image
+                                    style={RegisterStyle.eye_closed}
+                                    source={isPasswordVisible
+                                        ? require("../../../src/assets/eye.png")
+                                        : require("../../../src/assets/eye-closed.png")
+                                    }
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View style={RegisterStyle.button}>
+                        <TouchableOpacity onPress={BtnRegister} style={RegisterStyle.tout}>
+                            <Text style={RegisterStyle.textDk}>
+                                Đăng Ký
+                            </Text>
+                        </TouchableOpacity>
+                        <View style={{
+                            flexDirection: 'row',
                             alignItems: 'center',
-                            marginRight: 10,
+                            marginTop: 20
                         }}>
-                            {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
+                            <TouchableOpacity onPress={handleRememberAccount} style={{
+                                width: 20,
+                                height: 20,
+                                borderWidth: 1,
+                                borderColor: '#2CA9C0',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginRight: 10,
+                            }}>
+                                {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
+                            </TouchableOpacity>
+                            <Text style={RegisterStyle.checkboxLabel}>Nhớ tài khoản</Text>
+                        </View>
+                    </View>
+
+                    <Text style={RegisterStyle.hoac}>Hoặc</Text>
+                    <View style={RegisterStyle.icon}>
+                        <TouchableOpacity style={RegisterStyle.fb}>
+                            <Image source={require('../../../src/assets/fb.png')} />
                         </TouchableOpacity>
-                        <Text style={RegisterStyle.checkboxLabel}>Nhớ tài khoản</Text>
+                        <TouchableOpacity style={RegisterStyle.fb}>
+                            <Image source={require('../../../src/assets/gg.png')} />
+                        </TouchableOpacity>
+                    </View>
+
+
+                    <View style={RegisterStyle.footer}>
+                        <Text style={RegisterStyle.ftText}>Bạn đã có tài khoản?</Text>
+                        <Text onPress={NextLogin} style={RegisterStyle.end}> Đăng Nhập</Text>
                     </View>
                 </View>
-
-                <Text style={RegisterStyle.hoac}>Hoặc</Text>
-                <View style={RegisterStyle.icon}>
-                    <TouchableOpacity style={RegisterStyle.fb}>
-                        <Image source={require('../../../src/assets/fb.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={RegisterStyle.fb}>
-                        <Image source={require('../../../src/assets/gg.png')} />
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={RegisterStyle.footer}>
-                    <Text style={RegisterStyle.ftText}>Bạn đã có tài khoản?</Text>
-                    <Text onPress={NextLogin} style={RegisterStyle.end}> Đăng Nhập</Text>
-                </View>
-            </View>
-        </ScrollView>
-    </KeyboardAvoidingView>
-)
+            </ScrollView>
+        </KeyboardAvoidingView>
+    )
 }
 export default Register;

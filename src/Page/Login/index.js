@@ -8,12 +8,43 @@ const Login = (prop) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [loginError, setLoginError] = useState('');
     const [rememberAccount, setRememberAccount] = useState(false);
 
-
     const BtnLogin = async () => {
+        let hasError = false;
+
+        setEmailError('');
+        setPasswordError('');
+        setLoginError('');
+
+        // Kiểm tra email
+        if (email === '') {
+            setEmailError("Vui lòng nhập Email");
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            setEmailError("Email không hợp lệ!");
+            hasError = true;
+        }
+
+        // Kiểm tra mật khẩu
+        if (password === '') {
+            setPasswordError("Vui lòng nhập mật khẩu");
+            hasError = true;
+        } else {
+            const passwordValidationError = validatePassword(password);
+            if (passwordValidationError) {
+                setPasswordError(passwordValidationError);
+                hasError = true;
+            }
+        }
+
+        if (hasError) return;
+
         try {
-            // Gọi API đăng ký
+            // Gọi API đăng nhập
             const response = await axios.post('URL_API_CỦA_BẠN', {
                 email: email,
                 password: password,
@@ -22,7 +53,7 @@ const Login = (prop) => {
             if (response.data) {
                 Alert.alert("Thông báo", "Đăng nhập thành công!");
                 setTimeout(() => {
-                    prop.navigation.navigate('SMS');
+                    prop.navigation.navigate('AddProduct');
                 }, 1000);
             }
         } catch (error) {
@@ -30,6 +61,30 @@ const Login = (prop) => {
         }
     };
 
+    // Hàm kiểm tra định dạng email
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    // Hàm kiểm tra mật khẩu
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            return 'Phải có ít nhất 8 ký tự.';
+        }
+        if (!/\d/.test(password)) {
+            return 'Phải chứa ít nhất một số.';
+        }
+        if (!/[!@#$%^&*]/.test(password)) {
+            return 'Phải chứa ít nhất một ký tự đặc biệt.';
+        }
+        if (!/[A-Z]/.test(password)) {
+            return 'Phải chứa ít nhất một chữ cái in hoa.';
+        }
+        return '';
+    };
+
+    
     useEffect(() => {
         const loadAccount = async () => {
             try {
@@ -50,11 +105,12 @@ const Login = (prop) => {
 
     const handlePasswordChange = (text) => {
         setPassword(text);
-        setEmail(text)
+        setPasswordError('');
+        setLoginError('');
     };
 
     const handleRememberAccount = () => {
-        setRememberAccount(!rememberAccount); 
+        setRememberAccount(!rememberAccount);
     };
 
     return (
@@ -70,28 +126,28 @@ const Login = (prop) => {
                     </View>
                     <View style={LoginStyle.inputall}>
                         <Text style={LoginStyle.tieudeinput}>Địa chỉ email</Text>
-                        <View style={[LoginStyle.anhinput]}>
+                        <View style={[LoginStyle.anhinput, emailError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
                             <Image style={LoginStyle.message} source={require("../../../src/assets/Message.png")} />
                             <TextInput
                                 value={email}
-                                placeholder={"Nhập email"}
+                                placeholder={emailError || "Nhập email"}
+                                placeholderTextColor={emailError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setEmail(text);
-                                    setPassword(text);
+                                    setEmailError('');
+                                    setLoginError('');
                                 }}
+                                style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
                         </View>
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
-                        <View style={[LoginStyle.anhinput]}>
+                        <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
                             <Image style={LoginStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
                             <TextInput
                                 value={password}
-                                placeholder={"Nhập mật khẩu"}
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 11,
-                                    color: '#2CA9C0',
-                                }}
+                                placeholder={passwordError || "Nhập mật khẩu"}
+                                placeholderTextColor={passwordError ? 'red' : '#999'}
+                                style={[LoginStyle.input, passwordError ? { color: 'red' } : {}]}
                                 onChangeText={handlePasswordChange}
                                 secureTextEntry={!isPasswordVisible}
                             />
@@ -106,9 +162,9 @@ const Login = (prop) => {
                     </View>
                 </View>
                 <View style={{
-                    flexDirection:'row',
-                    alignItems:'center',
-                    marginLeft:20
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginLeft: 20
                 }}>
                     <View style={{
                         flexDirection: 'row',
@@ -128,13 +184,13 @@ const Login = (prop) => {
                         </TouchableOpacity>
                         <Text style={LoginStyle.checkboxLabel}>Nhớ tài khoản</Text>
                     </View>
-                    <Text onPress={() => prop.navigation.navigate('ForgotPassword')} 
-                    style={{
-                        color:'#2CA9C0',
-                        fontSize:15,
-                        marginTop:10,
-                        marginLeft: 120
-                    }}> Quên mật khẩu ?</Text>
+                    <Text onPress={() => prop.navigation.navigate('ForgotPassword')}
+                        style={{
+                            color: '#2CA9C0',
+                            fontSize: 15,
+                            marginTop: 10,
+                            marginLeft: 120
+                        }}> Quên mật khẩu ?</Text>
                 </View>
 
                 <View style={LoginStyle.button}>
