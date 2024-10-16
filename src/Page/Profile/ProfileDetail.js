@@ -12,9 +12,9 @@ const ProfileDetail = (prop) => {
   const BtnTabAddress = () => {
     prop.navigation.navigate('TabAddress');
   };
-  const BtnPayMethod = () => {
-    prop.navigation.navigate('PayMethod');
-    
+
+  const BtnPolicy = () => {
+    prop.navigation.navigate('Policy');
   }
   const BtnVoucher = () => {
     prop.navigation.navigate('Voucher');
@@ -57,44 +57,37 @@ const ProfileDetail = (prop) => {
       <View style={profileStyle.body}>
         <View style={profileStyle.firstbody}>
           <Text style={profileStyle.titleB}>Đơn mua</Text>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 2})} style={profileStyle.firstbodyRightside}>
-            <Text style={profileStyle.history}>Lịch sử mua hàng</Text>
-            <Image
-              style={profileStyle.vecto2}
-              source={require('../../../src/assets/vecto1.png')}
-            />
-          </TouchableOpacity>
         </View>
         <View style={profileStyle.secondbody}>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 0})} style={profileStyle.load}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 2})} style={profileStyle.load}>
             <Image
               style={profileStyle.loadimg}
-              source={require('../../../src/assets/Load.png')}
+              source={require('../../../src/assets/Time.png')}
             />
-            <Text style={profileStyle.loadtext}>Chờ xác nhận</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 1})} style={profileStyle.load2}>
-            <Image
-              style={profileStyle.loadimg}
-              source={require('../../../src/assets/car.png')}
-            />
-            <Text style={profileStyle.loadtext2}>Đang giao</Text>
-          </TouchableOpacity >
-          <TouchableOpacity onPress={() => prop.navigation.navigate('Order', { selectedTab: 3})} style={profileStyle.load3}>
-            <Image
-              style={profileStyle.loadimg}
-              source={require('../../../src/assets/cancel.png')}
-            />
-            <Text style={profileStyle.loadtext3}>Đã hủy</Text>
+            <Text style={profileStyle.loadtext}>Lịch sử mua hàng</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={BtnProductReview}>
+            <Image
+              style={profileStyle.loadimg1}
+              source={require('../../../src/assets/star.png')}
+            />
+            <Text style={profileStyle.loadtext2}>Đánh giá</Text>
+          </TouchableOpacity >
+          <TouchableOpacity onPress={BtnPolicy}>
+            <Image
+              style={profileStyle.loadimg}
+              source={require('../../../src/assets/Arhive_export.png')}
+            />
+            <Text style={profileStyle.loadtext3}>Chính sách hoàn trả</Text>
+          </TouchableOpacity>
+          <TouchableOpacity >
             <View style={profileStyle.load4}>
               <Image
-                style={profileStyle.loadimg}
-                source={require('../../../src/assets/star.png')}
+                style={profileStyle.loadimg2}
+                source={require('../../../src/assets/Book_open.png')}
               />
 
-              <Text style={profileStyle.loadtext4}>Đánh giá</Text>
+              <Text style={profileStyle.loadtext4}>Bảo quản</Text>
 
             </View>
           </TouchableOpacity>
@@ -106,7 +99,7 @@ const ProfileDetail = (prop) => {
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Địa chỉ</Text>
                 <Image
-                  style={profileStyle.vecto3}
+                  style={profileStyle.vecto}
                   source={require('../../../src/assets/vecto1.png')}
                 />
               </View>
@@ -115,11 +108,11 @@ const ProfileDetail = (prop) => {
             </View>
           </TouchableOpacity>
           <View>
-            <TouchableOpacity onPress={BtnPayMethod}>
+            <TouchableOpacity>
             <View style={profileStyle.insideAccount}>
-              <Text style={profileStyle.textTab}>Phương thức thanh toán</Text>
+              <Text style={profileStyle.textTab}>Yêu cầu hủy tài khoản</Text>
               <Image
-                style={profileStyle.vecto7}
+                style={profileStyle.vecto}
                 source={require('../../../src/assets/vecto1.png')}
               />
             </View>
@@ -132,7 +125,7 @@ const ProfileDetail = (prop) => {
              <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Trung tâm trợ giúp</Text>
                 <Image
-                  style={profileStyle.vecto5}
+                  style={profileStyle.vecto}
                   source={require('../../../src/assets/vecto1.png')}
                 />
               </View>
@@ -146,14 +139,36 @@ const ProfileDetail = (prop) => {
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Voucher của bạn</Text>
                 <Image
-                  style={profileStyle.vecto6}
+                  style={profileStyle.vecto}
                   source={require('../../../src/assets/vecto1.png')}
                 />
               </View>
               </TouchableOpacity>
-
               <View style={profileStyle.boder} />
             </View>
+
+            <TouchableOpacity>
+            <View style={profileStyle.insideAccount}>
+              <Text style={profileStyle.textTab}>Chương trình khuyến mãi</Text>
+              <Image
+                style={profileStyle.vecto}
+                source={require('../../../src/assets/vecto1.png')}
+              />
+            </View>
+            </TouchableOpacity>
+            <View style={profileStyle.boder} />
+
+
+            <TouchableOpacity>
+            <View style={profileStyle.insideAccount}>
+              <Text style={profileStyle.textTab}>Thông tin về TheMiniStore</Text>
+              <Image
+                style={profileStyle.vecto}
+                source={require('../../../src/assets/vecto1.png')}
+              />
+            </View>
+            </TouchableOpacity>
+            <View style={profileStyle.boder} />
           </View>
         </View>
       </View>
