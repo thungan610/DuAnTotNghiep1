@@ -24,7 +24,8 @@ const Order = (prop) => {
         quantity: 1,
         price: 25000,
         status: 'Đang vận chuyển',
-        image: require('../../../src/assets/image/image1.png')
+        image: require('../../../src/assets/image/image1.png'),
+
       },
       {
         id: 2,

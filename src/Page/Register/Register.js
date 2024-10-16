@@ -58,25 +58,28 @@ const Register = (prop) => {
 
             if (password.length < 8) {
                 passwordErrors.push("Phải có ít nhất 8 ký tự.");
+                setPassword('');
+                return;
             }
 
             if (!/[A-Z]/.test(password)) {
                 passwordErrors.push("Phải có ít nhất 1 chữ cái in hoa.");
+                setPassword('');
+                return;
             }
 
             if (!/\d/.test(password)) {
                 passwordErrors.push("Phải có ít nhất 1 số.");
+                setPassword('');
+                return;
             }
 
             if (!/[@$!%*?&]/.test(password)) {
                 passwordErrors.push("Phải có ít nhất 1 ký tự đặc biệt.");
+                setPassword('');
+                return;
             }
 
-            if (passwordErrors.length > 0) {
-                setPasswordError(passwordErrors.join(" "));
-                setPassword('');
-                hasError = true;
-            }
             if (!hasError) {
                 Alert.alert("Thông báo", "Đăng kí thành công!");
                 setTimeout(() => {
@@ -84,10 +87,10 @@ const Register = (prop) => {
                 }, 1000);
             } try {
                 // Gọi API đăng ký
-                const response = await axios.post('http://192.168.1.61:6677/users/register', {
+                const response = await axios.post('http://localhost:6677/users/register', {
                     email: email,
                     password: password,
-                    name: fullName,
+                    name: FullName,
                     phone: phone
                 });
 
@@ -147,7 +150,7 @@ const Register = (prop) => {
                                 placeholder={FullNameError ? "Vui lòng nhập họ tên!" : "Nhập họ và tên"}
                                 placeholderTextColor={FullNameError ? 'red' : '#999'}
                                 onChangeText={(text) => {
-                                    setFullName(text);  
+                                    setFullName(text);
                                     setFullNameError('');
                                 }}
                                 style={[RegisterStyle.input, FullNameError ? { color: 'red' } : {}]}

@@ -23,20 +23,24 @@ const Login = (prop) => {
         // Kiểm tra email
         if (email === '') {
             setEmailError("Vui lòng nhập Email");
+            setEmail('');
             hasError = true;
         } else if (!validateEmail(email)) {
             setEmailError("Email không hợp lệ!");
+            setEmail('');
             hasError = true;
         }
 
         // Kiểm tra mật khẩu
         if (password === '') {
             setPasswordError("Vui lòng nhập mật khẩu");
+            setPassword('');
             hasError = true;
         } else {
             const passwordValidationError = validatePassword(password);
             if (passwordValidationError) {
                 setPasswordError(passwordValidationError);
+                setPassword('');
                 hasError = true;
             }
         }
@@ -72,13 +76,13 @@ const Login = (prop) => {
         if (password.length < 8) {
             return 'Phải có ít nhất 8 ký tự.';
         }
-        if (!/\d/.test(password)) {
+        else if (!/\d/.test(password)) {
             return 'Phải chứa ít nhất một số.';
         }
-        if (!/[!@#$%^&*]/.test(password)) {
+        else if (!/[!@#$%^&*]/.test(password)) {
             return 'Phải chứa ít nhất một ký tự đặc biệt.';
         }
-        if (!/[A-Z]/.test(password)) {
+        else if (!/[A-Z]/.test(password)) {
             return 'Phải chứa ít nhất một chữ cái in hoa.';
         }
         return '';
