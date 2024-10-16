@@ -140,7 +140,7 @@ const HomeScreen = (prop) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Chat.png')}
+                                source={require('../../../src/assets/chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
