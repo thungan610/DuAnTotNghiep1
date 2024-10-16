@@ -16,8 +16,6 @@ const Login = (prop) => {
     const BtnLogin = async () => {
         let hasError = false;
 
-        setEmailError('');
-        setPasswordError('');
         setLoginError('');
 
         // Kiểm tra email
@@ -28,6 +26,8 @@ const Login = (prop) => {
         } else if (!validateEmail(email)) {
             setEmailError("Email không hợp lệ!");
             setEmail('');
+        setEmailError('');
+        setPasswordError('');
             hasError = true;
         }
 

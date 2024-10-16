@@ -71,6 +71,7 @@ const ProductReviewStyle = StyleSheet.create({
     },
     boxCamera:{ 
       marginTop: 5,
+      width:150,
         flexDirection: 'row',
         borderWidth: 1,
         padding: 10,
@@ -112,6 +113,31 @@ const ProductReviewStyle = StyleSheet.create({
     color: '#FF7400',
     fontSize: 18,
     marginLeft:10,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  imageWrapper: {
+    marginRight: 10,
+    position: 'relative',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 2,
+  },
+  deleteText: {
+    color: 'white',
+    fontSize: 12,
   },
 })
 export default ProductReviewStyle
