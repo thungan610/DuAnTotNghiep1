@@ -22,6 +22,9 @@ const ProfileDetail = (prop) => {
   const BtnBotChat = () => {
     prop.navigation.navigate('BotChat');
   }
+  const BtnUserCancel = () => {
+    prop.navigation.navigate('UserCancel');
+  }
   return (
     <View style={{position:'relative',
       width:'100%', 
@@ -108,7 +111,7 @@ const ProfileDetail = (prop) => {
             </View>
           </TouchableOpacity>
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={BtnUserCancel}>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Yêu cầu hủy tài khoản</Text>
               <Image
