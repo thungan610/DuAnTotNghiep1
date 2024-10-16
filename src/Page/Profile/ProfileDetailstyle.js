@@ -80,47 +80,58 @@ const profileStyle = StyleSheet.create({
   },
   secondbody: {
     flexDirection: 'row',
-    paddingTop: 25,
+    paddingTop: 10,
   },
   load: {
     flexDirection: 'column',
-    marginLeft: 24,
+    marginLeft: 10,
   },
   load2: {
     flexDirection: 'column',
-    marginLeft: 24,
+    marginLeft: 10,
   },
   load3: {
     flexDirection: 'column',
-    marginLeft: 24,
+    marginLeft: 10,
   },
   load4: {
     flexDirection: 'column',
-    marginLeft: 24,
+    marginLeft: 10,
+  
   },
   loadimg: {
     width: 34,
     height: 34,
-    marginLeft: 18,
+    marginLeft: 40,
+  },
+  loadimg1: {
+    width: 34,
+    height: 34,
+    marginLeft: 19,
+  },
+  loadimg2: {
+    width: 34,
+    height: 34,
+    marginLeft: 10,
   },
   loadtext: {
     color: 'black',
-    fontSize: 11,
+    fontSize: 13,
   },
   loadtext2: {
     color: 'black',
-    fontSize: 11,
+    fontSize: 13,
     marginLeft: 10,
   },
   loadtext3: {
     color: 'black',
-    fontSize: 11,
-    marginLeft: 18,
+    fontSize: 13,
+    marginLeft: 10,
+  
   },
   loadtext4: {
     color: 'black',
-    fontSize: 11,
-    marginLeft: 12,
+    fontSize: 13,
   },
   account: {
     fontSize: 20,
@@ -148,10 +159,11 @@ const profileStyle = StyleSheet.create({
   },
   insideAccount:{
     flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingTop: 5,
   },
   vecto3:{
-    marginLeft: 299,
+    marginLeft: 310,
     marginTop: 13,
   },
   textTab:{
@@ -161,16 +173,19 @@ const profileStyle = StyleSheet.create({
     marginTop: 10,
   },
   vecto5:{
-    marginLeft: 214,
+    marginLeft: 230,
     marginTop: 13,
   },
   vecto6:{
-    marginLeft: 224,
+    marginLeft: 240,
     marginTop: 13,
   },
   vecto7:{
     marginLeft: 175,
     marginTop: 13,
+  },
+  vecto:{
+  marginTop:10
   },
 
 

@@ -4,6 +4,7 @@ import StarRating from 'react-native-star-rating-widget';
 import ProductReviewStyle from './style';
 import { useNavigation } from '@react-navigation/native';
 
+
 const ProductReview = ({ maxStars = 5 }) => {
   const navigation = useNavigation();
   const BackRight = () => {

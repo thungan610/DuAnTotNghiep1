@@ -37,6 +37,7 @@ import BotChat from "../src/Page/BotChat/index.js";
 import ZaloPay from "../src/Page/Payment/ZaloPay/index.js";
 import MapAdress from "../src/Page/Payment/AddAdress/MapAdress/map.js"
 import Policy from "../src/Page/Policy/Policy.js";
+import UserCancel from "../src/Page/UserCancel/index.js";
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -45,7 +46,6 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Login"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -84,6 +84,8 @@ const MainStack = () => {
             <Stack.Screen name="ZaloPay" component={ZaloPay}/>
             <Stack.Screen name="MapAdress" component={MapAdress}/>
             <Stack.Screen name="Policy" component={Policy}/>
+            <Stack.Screen name="UserCancel" component={UserCancel}/>
+
 
         </Stack.Navigator >
     );
