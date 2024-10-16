@@ -1,7 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, ImageBackground, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, TouchableOpacity } from 'react-native';
 
-const Policy = () => {
+const Policy = (prop) => {
+
+    const BackRight = () => {
+        prop.navigation.goBack()
+    }
     return (
         <ImageBackground
             style={{ flex: 1 }}
@@ -10,9 +14,11 @@ const Policy = () => {
         >
             <ScrollView style={styles.container}>
                 <View style={styles.header}>
-                    <Image
+                   <TouchableOpacity onPress={BackRight}>
+                   <Image
                         source={require('../../assets/chevron-left.png')}
                         style={styles.backIcon} />
+                   </TouchableOpacity>
                     <Text style={styles.title}>Chính sách hoàn trả</Text>
                 </View>
                 <View style={styles.banner}>
