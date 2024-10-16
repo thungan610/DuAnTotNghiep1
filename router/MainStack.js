@@ -46,7 +46,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="UserCancel"
+            initialRouteName="BottomNav"
 
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
