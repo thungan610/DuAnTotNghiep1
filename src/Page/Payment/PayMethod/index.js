@@ -1,32 +1,33 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import PayMethodStyle from "./style";
-import { useNavigation } from '@react-navigation/native';
-import AddAdressStyle from "../AddAdress/style";
 
-const PayMethod = () => {
-   const navigation = useNavigation();
+const PayMethod = (prop) => {
 
-    const BackRight = () => {
-        navigation.goBack()
-    }
     const [selectedMethod, setSelectedMethod] = useState(null); //Để xử lý trạng thái chọn hoặc không
 
     return (
         <View style={PayMethodStyle.container}>
             <View style={PayMethodStyle.container1}>
-                <View style={AddAdressStyle.header}>
-                    <TouchableOpacity onPress={BackRight}>
-                        <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <View style={{
+                    flexDirection:'row',
+                    justifyContent:'space-between'
+                }}>
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')}>
+                        <Image style={PayMethodStyle.backright} source={require("../../../assets/notifi/backright.png")} />
                     </TouchableOpacity>
-                    <Text style={AddAdressStyle.title}>Phương thức thanh toán</Text>
+                    <Text style={{
+                        fontSize:24,
+                        fontWeight:'bold',
+                        color:'black'
+                    }}>Phương thức thanh toán</Text>
                     <Text />
                 </View>
 
                 <View style={PayMethodStyle.body}>
                     <TouchableOpacity
                         style={PayMethodStyle.ViewCheck}
-                        onPress={() => setSelectedMethod('zalopay')} // Hiện dầu tick khi nhấn Zalo Pay
+                        onPress={() => prop.navigation.navigate('ZaloPay')}
                         accessible={true}
                         accessibilityLabel="Select Zalo Pay"
                     >
@@ -43,7 +44,7 @@ const PayMethod = () => {
 
                     <TouchableOpacity
                         style={PayMethodStyle.ViewCheck}
-                        onPress={() => setSelectedMethod('cash')}
+                        onPress={() => setSelectedMethod('payment')}
                         accessible={true}
                         accessibilityLabel="Select Cash on Delivery"
                     >
@@ -61,7 +62,7 @@ const PayMethod = () => {
 
             </View>
             <View style={[PayMethodStyle.ViewSuss]}>
-                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={PayMethodStyle.BtnSuss}>
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>

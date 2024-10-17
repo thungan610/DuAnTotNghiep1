@@ -5,6 +5,7 @@ export const ZaloPayStyle = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
+        flexDirection:'column',
         padding: 20
     },
     imgQR:{
@@ -18,7 +19,7 @@ export const ZaloPayStyle = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         padding: 10,
-        marginTop: 30,
+        marginTop: 60,
         alignItems:'center'
     }
 });

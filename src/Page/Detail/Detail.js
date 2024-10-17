@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import styles from './style';
-export default Detail = () => {
+import styleDetail from './style';
+
+const Detail = (prop) => {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [quantity, setQuantity] = useState(1);
 
     const images = [
         'https://product.hstatic.net/1000282430/product/upload_deb91932d62348309be82c41136ba92d_c6ba4735a301452399d6a3541535a19c_master.jpg',
         'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png',
         'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png'
     ]
+    const increaseQuantity = () => {
+        setQuantity((prevQuantity) => prevQuantity + 1);
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity((prevQuantity) => prevQuantity - 1);
+        }
+    };
     const renderImages = () => {
         return images.map((item, index) => {
             return (
@@ -39,79 +50,124 @@ export default Detail = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.head}>
-                <Image source={require('../../assets/notifi/backright.png')} />
-                <Image style={styles.iconcart} source={require('../../assets/home/cart.png')} />
-                <Image style={styles.iconnotifi} source={require('../../assets/home/notifi.png')} />
-            </View>
-            <PagerView style={styles.pagerView}
-                initialPage={selectedIndex}>
-                {renderImages()}
-            </PagerView>
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                {renderDots()}
-            </View>
-            <View style={styles.body}>
-                <View style={styles.bodyText}>
-                    <Text style={styles.textBody}>Bắp cải trắng</Text>
-                    <Text style={styles.textkg}>1kg</Text>
-                </View>
-                <View style={styles.butonView}>
-                    <TouchableOpacity style={styles.minus}>
-                        <Text style={styles.textTout}>-</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.tout}>
-                        <Text style={styles.toutText}>1</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.plus}>
-                        <Text style={styles.textTout}>+</Text>
-                    </TouchableOpacity>
+        <View style={styleDetail.container}>
 
-                    <Image style={styles.dolar} source={require('../../assets/Dollar.png')} />
-                    <Text style={styles.price}>19.000d</Text>
+            <View style={styleDetail.head}>
+                <TouchableOpacity>
+                    <Image source={require('../../assets/notifi/backright.png')} />
+                </TouchableOpacity>
+                <View style={{
+                    flexDirection: 'row'
+                }}>
+                    <TouchableOpacity>
+                        <Image style={styleDetail.iconcart} source={require('../../assets/home/cart.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Image style={styleDetail.iconnotifi} source={require('../../assets/home/notifi.png')} />
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.underline}>
-                    <Text style={styles.textunderline}>Thông tin sản phẩm</Text>
+            </View>
+
+            <View style={styleDetail.body}>
+                <View>
+                    <PagerView style={styleDetail.pagerView}
+                        initialPage={selectedIndex}>
+                        {renderImages()}
+                    </PagerView>
+                    <View style={{
+                        marginTop: 60,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        {renderDots()}
+                    </View>
                 </View>
-                <ScrollView style={styles.scroollview}>
-                    <View style={styles.viewScroll}>
-                        <Text style={styles.scrollText}>
-                            Sườn non là một loại thực phẩm phổ biến trên toàn thế giới, được sử dụng trong nhiều món ăn khác nhau.
-                        </Text>
-                        
+
+                <View
+                    style={{
+                        borderTopLeftRadius: 50,
+                        borderTopRightRadius: 50,
+                        backgroundColor: '#37C5DF',
+
+                    }}>
+                    <View
+                        style={{
+                            flexDirection: 'column',
+                        }} >
+                        <View style={styleDetail.bodyText}>
+                            <Text style={styleDetail.textBody}>Bắp cải trắng</Text>
+                            <Text style={styleDetail.textkg}>1kg</Text>
+                        </View>
+
+                        <View style={styleDetail.butonView}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    backgroundColor: '#EAEAEA',
+                                    width: 80,
+                                    height: 36,
+                                    alignItems: 'center',
+                                    borderRadius: 10,
+                                    padding: 4,
+                                    justifyContent: 'space-between',
+                                }}>
+                                <TouchableOpacity style={styleDetail.plus} onPress={increaseQuantity}>
+                                    <Text style={styleDetail.textTout}>-</Text>
+                                </TouchableOpacity>
+                                <Text style={styleDetail.toutText}>{quantity}</Text>
+                                <TouchableOpacity style={styleDetail.minus} onPress={decreaseQuantity}>
+                                    <Text style={styleDetail.textTout}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}>
+                                <Text style={styleDetail.price}>19.000d</Text>
+                                <Image style={styleDetail.dolar} source={require('../../assets/Dollar.png')} />
+                            </View>
+                        </View>
                     </View>
-                    <View style={styles.origin}> 
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Xuất xứ  :</Text>
-                        <Text style={styles.textorigin}>Việt Nam</Text>
+
+                    <Text style={styleDetail.textunderline}>Thông tin sản phẩm</Text>
+
+                    <ScrollView style={styleDetail.scroollview}>
+                        <View style={styleDetail.viewScroll}>
+                            <Text style={styleDetail.scrollText}>
+                                Sườn non là một loại thực phẩm phổ biến trên toàn thế giới, được sử dụng trong nhiều món ăn khác nhau.
+                            </Text>
+
                         </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Chất sơ  :</Text>
-                        <Text style={styles.textorigin}> Khoảng 2.2 gram trên 100 gram</Text>
+
+                        <View style={styleDetail.origin}>
+                            <View style={styleDetail.textoriginRow}>
+                                <Text style={styleDetail.textorigin}>Xuất xứ  :</Text>
+                                <Text style={styleDetail.textorigin}>Việt Nam</Text>
+                            </View>
+                            <View style={styleDetail.textoriginRow}>
+                                <Text style={styleDetail.textorigin}>Chất sơ  :</Text>
+                                <Text style={styleDetail.textorigin}> Khoảng 2.2 gram trên 100 gram</Text>
+                            </View>
+                            <View style={styleDetail.textoriginRow}>
+                                <Text style={styleDetail.textorigin}>Bảo quản  :</Text>
+                                <Text style={styleDetail.textorigin}> Bảo quản lạnh</Text>
+                            </View>
+                            <View style={styleDetail.textoriginRow}>
+                                <Text style={styleDetail.textorigin}>Công dụng :</Text>
+                                <Text style={styleDetail.textorigin}>Chế biến món ăn</Text>
+                            </View>
                         </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Bảo quản  :</Text>
-                        <Text style={styles.textorigin}> Bảo quản lạnh</Text>
-                        </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Công dụng :</Text>
-                        <Text style={styles.textorigin}>Chế biến món ăn</Text>
-                        </View>
-                    </View>
-                    
-                </ScrollView>
-                {/* buton */}
-                <TouchableOpacity style={styles.headerFooter}>
-                    <Text style={styles.textFooter}>Thêm vào giỏ hàng</Text>
+
+                    </ScrollView>
+                </View>
+                <TouchableOpacity style={styleDetail.headerFooter}>
+                    <Text style={styleDetail.textFooter}>Thêm vào giỏ hàng</Text>
                 </TouchableOpacity>
             </View>
-            
-        </View>
+
+        </View >
     );
 };
-
+export default Detail;

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styleDetailbottle from './styleDetailbottle';
-export default Detailbottle = () => {
+
+const Detailbottle = (prop) => {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -127,4 +128,4 @@ export default Detailbottle = () => {
         </View>
     );
 };
-
+export default Detailbottle;
