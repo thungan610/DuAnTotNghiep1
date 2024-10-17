@@ -8,13 +8,12 @@ const PayMethodStyle = StyleSheet.create({
         position:'relative',
         justifyContent: "center",
         alignItems: 'center',
-        padding:10,
+        padding:20,
     },
     container1:{
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
-        padding: 20
     },
     body:{
         width:'100%',
@@ -61,7 +60,7 @@ const PayMethodStyle = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 15,
-        padding: 15
+        padding: 15,
     }
 })
 

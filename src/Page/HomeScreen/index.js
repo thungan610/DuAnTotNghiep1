@@ -104,7 +104,8 @@ const HomeScreen = (prop) => {
     }, [currentIndex]);
 
     const renderProductItem = ({ item }) => (
-        <View style={HomeStyle.productContainer}>
+        <TouchableOpacity onPress={() => prop.navigation.navigate('Detail')}>
+            <View style={HomeStyle.productContainer}>
             <Image source={item.image} style={HomeStyle.productImage} />
             <View style={HomeStyle.productDetails}>
                 <Text style={HomeStyle.productTitle}>{item.title}</Text>
@@ -115,6 +116,7 @@ const HomeScreen = (prop) => {
                 </View>
             </View>
         </View>
+        </TouchableOpacity>
     );
 
     return (
@@ -140,7 +142,7 @@ const HomeScreen = (prop) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/chat.png')}
+                                source={require('../../../src/assets/Chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
