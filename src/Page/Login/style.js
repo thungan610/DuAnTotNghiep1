@@ -89,10 +89,6 @@ const LoginStyle = StyleSheet.create({
     paddingVertical: 13,
     color: '#2CA9C0',
   },
-  nhotk:{
-    flexDirection:'row',
-    
-  },
   forgot:{
     fontSize: 14,
     color:'#2CA9C0',

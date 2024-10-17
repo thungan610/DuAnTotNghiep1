@@ -41,6 +41,8 @@ const Processing1 = (prop) => {
                     </View>
                 </View>
 
+                
+
                 <View style={ProcessingStyle.paymentInfo}>
                     <Text style={ProcessingStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
@@ -139,11 +141,12 @@ const ProcessingStyle = StyleSheet.create({
     product: {
         flexDirection: 'row',
         marginVertical: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+
     },
     productImage: {
-        width: 60,
-        height: 60,
+        width: 20,
+        height: 20,
         marginRight: 10,
         borderWidth: 1,
         borderRadius: 5,
@@ -151,17 +154,21 @@ const ProcessingStyle = StyleSheet.create({
     },
     productInfo: {
         justifyContent: 'center',
+        flexDirection:'row',
     },
     productName: {
         fontSize: 16,
         fontWeight: 'bold',
+        marginLeft:'10'
     },
     category: {
         color: '#777',
         marginVertical: 2,
+        marginLeft:10
     },
     price: {
         color: '#000',
+        marginLeft:10
     },
     paymentInfo: {
         marginVertical: 10,

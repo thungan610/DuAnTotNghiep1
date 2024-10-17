@@ -103,22 +103,12 @@ const RegisterStyle = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white'
   },
-  radio: {
-    flexDirection: 'row',
-
-  },
-  fogotPass: {
-    fontSize: 14,
-    color: '#2CA9C0',
-    marginLeft: 110,
-    marginTop: 9,
-
-  },
+  
   hoac: {
     textAlign: 'center',
     fontSize: 14,
-    color: 'black'
-
+    color: 'black',
+    marginTop:6
   },
   icon: {
     flexDirection: 'row',
