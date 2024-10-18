@@ -11,13 +11,13 @@ const styleDetail = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
-        alignItems:'center',
-        position:'relative',
+        alignItems: 'center',
+        position: 'relative',
     },
     body: {
-        flexDirection:'column',
+        flexDirection: 'column',
         width: '100%',
-        marginTop:10
+        marginTop: 10
     },
     pagerView: {
         width: '100%',
@@ -25,7 +25,7 @@ const styleDetail = StyleSheet.create({
         // backgroundColor: 'white',
     },
     bodyText: {
-        padding:20,
+        padding: 20,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -39,30 +39,29 @@ const styleDetail = StyleSheet.create({
     textkg: {
         fontSize: 18,
         // fontWeight: 'bold',
-        color: '#8F8F8F',
+        color: '#D5D5D5',
     },
     butonView: {
+        paddingHorizontal:20,
+        width: '100%',
         flexDirection: 'row',
-        justifyContent:'space-between',
-        alignItems:'center'
+        justifyContent: 'space-between',
+        alignItems: 'center',
         // backgroundColor:'#EAEAEA',
     },
     tout: {
-        width: 45,
+        width: 52,
         height: 43,
         // backgroundColor: '#EAEAEA',
         flexDirection: 'row'
     },
     textTout: {
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: 'bold',
         color: 'blue',
     },
     iconcart: {
-        marginRight:10
-    },
-    iconnotifi: {
-
+        marginRight: 10
     },
     toutText: {
         fontSize: 22,
@@ -72,38 +71,17 @@ const styleDetail = StyleSheet.create({
         color: 'black',
 
     },
-    // plus: {
-    //     width: 46,
-    //     height: 42,
-    //     backgroundColor: '#EAEAEA',
-    //     borderTopLeftRadius: 20,
-    //     borderBottomLeftRadius: 20,
-    //     justifyContent:'center',
-    //     alignItems:'center'
-    // },
-    // minus: {
-    //     width: 46,
-    //     height: 42,
-    //     backgroundColor: '#EAEAEA',
-    //     borderTopRightRadius: 20,
-    //     borderBottomRightRadius: 20,
-    //     justifyContent:'center',
-    //     alignItems:'center'
-    // },
     dolar: {
         width: 20,
         height: 20,
         resizeMode: 'contain',
-        position: 'absolute'
+        tintColor:'yellow'
     },
     price: {
-        width: 120,
-        height: 20,
         resizeMode: 'contain',
-        position: 'absolute',
         color: 'black',
         fontWeight: 'bold',
-        fontSize: 19
+        fontSize: 20
     },
     underline: {
         width: '100%',
@@ -112,61 +90,52 @@ const styleDetail = StyleSheet.create({
     },
     textunderline: {
         fontSize: 24,
+        marginTop:10,
+        paddingHorizontal:20,
         color: 'black',
         textDecorationLine: 'underline',
     },
     scroollview: {
-        flex: 1,
+        marginTop:6,
         width: '100%',
-        height: 200,
-        // backgroundColor: '#F5F5F5',
-
     },
     viewScroll: {
+        paddingHorizontal:20,
         width: '100%',
-
-        // backgroundColor:'blue'
     },
     scrollText: {
-        fontSize: 15,
-        color: '#8F8F8F',
+        fontSize: 16,
+        color: '#D5D5D5',
     },
     origin: {
         width: '100%',
-        height: 200, // Điều chỉnh chiều cao phù hợp
         // backgroundColor: 'blue',
-        marginTop: 10,
         flexDirection: 'column', // Đổi từ 'row' sang 'column' để xếp chồng các phần tử theo chiều dọc
-        justifyContent: 'flex-start', // Căn phần tử theo chiều dọc
-        padding: 10 // Thêm khoảng cách giữa các phần tử
+        justifyContent: 'center', 
+        paddingHorizontal:20,
     },
 
     textorigin: {
-        fontSize: 15,
-        marginTop: 10,
+        fontSize: 16,
+        marginTop: 6,
         color: 'black'
     },
     textoriginRow: {
         flexDirection: 'row'
-    },
-    butonfooter: {
-        width: '100%',
-        height: 100,
-        color: 'black'
     },
     headerFooter: {
         width: 300,
         height: 50,
         backgroundColor: '#27AAE1',
         borderRadius: 10,
+        borderWidth:1,
+        borderColor:'#27AAE1',
         justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
-
     },
     textFooter: {
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        textAlign:'center'
     }
 }); export default styleDetail

@@ -30,7 +30,6 @@ import Search from "../src/Page/Search/Search.js";
 import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
 import Order from "../src/Page/Order/Order.js";
 import Processing1 from "../src/Page/Order/Processing1.js";
-import Cart from "../src/Page/Cart/Cart.js";
 import Delivering from "../src/Page/Order/Delivering.js";
 import Canceled from "../src/Page/Order/Canceled.js";
 import BotChat from "../src/Page/BotChat/index.js";
@@ -51,7 +50,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Detail"
+            initialRouteName="Wellcome"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -83,7 +82,6 @@ const MainStack = () => {
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="Order" component={Order} />
             <Stack.Screen name="Processing1" component={Processing1} />
-            <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="Delivering" component={Delivering} />
             <Stack.Screen name="Canceled" component={Canceled} />
             <Stack.Screen name="BotChat" component={BotChat} />

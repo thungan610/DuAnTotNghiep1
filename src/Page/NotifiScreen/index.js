@@ -1,6 +1,8 @@
-import React from "react";
+import {React, useEffect} from "react";
 import { View, Text, Image, ScrollView } from "react-native";
 import notifiStyle from './style'
+import axios from "axios";
+
 const DataKM = [
     {
         id: 1,
@@ -45,6 +47,25 @@ const DataSSF = [
     
 ]
 const NotifiScreen = () => {
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const getData = async () => {
+            const result = await fetchData();
+            setData(result);
+        };
+        getData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('https://your-api-endpoint.com/notifications');
+            return response.data; // Trả về dữ liệu từ API
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return []; // Trả về mảng rỗng nếu có lỗi
+        }
+    };
     return (
         <View style={notifiStyle.container}>
             <View style={notifiStyle.header}>
@@ -52,12 +73,16 @@ const NotifiScreen = () => {
                 <Text style={notifiStyle.tieude}>Thông báo</Text>
                 <Text />
             </View>
-            <ScrollView style={notifiStyle.body}>
-                <View style={notifiStyle.body}>
+            <ScrollView style={notifiStyle.body}>   
+                {data.length === 0 ? ( // Kiểm tra xem có dữ liệu không
+                    <View style={notifiStyle.noNotification}>
+                        <Text style={notifiStyle.noNotificationText}>Không có thông báo mới</Text>
+                    </View>
+                ) : (
                     <View style={notifiStyle.list}>
                         {DataKM.map((item) => (
                             <View key={item.id} style={notifiStyle.item}>
-                                <Image style={notifiStyle.image} source={item.image} />
+                                <Image style={notifiStyle.image} source={{ uri: item.image }} />
                                 <View style={notifiStyle.ViewTT}>
                                     <Text style={notifiStyle.khuyenmaiName}>{item.khuyenmai}</Text>
                                     <Text style={notifiStyle.name}>{item.name}</Text>
@@ -66,24 +91,9 @@ const NotifiScreen = () => {
                                     </View>
                                 </View>
                             </View>
-                        ))}
+                        ))} 
                     </View>
-                    <View style={notifiStyle.list}>
-                        {DataSSF.map((item) => (
-                            <View key={item.id} style={notifiStyle.item1}>
-                                <Image style={notifiStyle.image} source={item.image} />
-                                <View style={notifiStyle.ViewTT}>
-                                    <Text style={notifiStyle.name}>{item.trangthai}</Text>
-                                    <Text style={notifiStyle.khuyenmaiName}>{item.name}</Text>
-                                    <Text style={notifiStyle.khuyenmaiName}>Số lượng: {item.quantity}</Text>
-                                    <View style={notifiStyle.ViewTime}>
-                                        <Text style={notifiStyle.time}>{item.time}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
-                </View>
+                )}
             </ScrollView>
         </View>
     );

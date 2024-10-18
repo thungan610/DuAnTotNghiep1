@@ -3,28 +3,6 @@ import {React} from 'react';
 import profileStyle from './ProfileDetailstyle';
 
 const ProfileDetail = (prop) => {
-  const BtnProductReview = () => {
-    prop.navigation.navigate('ProductReview');
-  };
-  const BtnInsertPro5 = () => {
-    prop.navigation.navigate('InsertPro5');
-  };
-  const BtnTabAddress = () => {
-    prop.navigation.navigate('TabAddress');
-  };
-
-  const BtnPolicy = () => {
-    prop.navigation.navigate('Policy');
-  }
-  const BtnVoucher = () => {
-    prop.navigation.navigate('Voucher');
-  }
-  const BtnBotChat = () => {
-    prop.navigation.navigate('BotChat');
-  }
-  const BtnUserCancel = () => {
-    prop.navigation.navigate('UserCancel');
-  }
   return (
     <View style={{position:'relative',
       width:'100%', 
@@ -43,7 +21,7 @@ const ProfileDetail = (prop) => {
 
           <View style={profileStyle.undercontainer}>
             <Text style={profileStyle.username}>Bé Phát</Text>
-            <TouchableOpacity onPress={BtnInsertPro5}>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('InsertPro5')}>
               <View style={profileStyle.mid}>
                 <Text style={profileStyle.pro5small}>Hồ sơ</Text>
                 <Image
@@ -69,14 +47,14 @@ const ProfileDetail = (prop) => {
             />
             <Text style={profileStyle.loadtext}>Lịch sử mua hàng</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={BtnProductReview}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')}>
             <Image
               style={profileStyle.loadimg1}
               source={require('../../../src/assets/star.png')}
             />
             <Text style={profileStyle.loadtext2}>Đánh giá</Text>
           </TouchableOpacity >
-          <TouchableOpacity onPress={BtnPolicy}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Policy')}>
             <Image
               style={profileStyle.loadimg}
               source={require('../../../src/assets/Arhive_export.png')}
@@ -97,7 +75,7 @@ const ProfileDetail = (prop) => {
         </View>
         <View style={profileStyle.thirdbody}>
           <Text style={profileStyle.account}>Tài khoản</Text>
-          <TouchableOpacity onPress={BtnTabAddress}>
+          <TouchableOpacity onPress={() => prop.navigation.navigate('TabAddress')}>
             <View>
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Địa chỉ</Text>
@@ -111,7 +89,7 @@ const ProfileDetail = (prop) => {
             </View>
           </TouchableOpacity>
           <View>
-            <TouchableOpacity onPress={BtnUserCancel}>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('UserCancel')}>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Yêu cầu hủy tài khoản</Text>
               <Image
@@ -124,7 +102,7 @@ const ProfileDetail = (prop) => {
             <View style={profileStyle.boder} />
             <Text style={profileStyle.account2}>Hỗ trợ</Text>
             <View>
-             <TouchableOpacity onPress={BtnBotChat}>
+             <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
              <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Trung tâm trợ giúp</Text>
                 <Image
@@ -138,7 +116,7 @@ const ProfileDetail = (prop) => {
             </View>
             <Text style={profileStyle.account2}>Tiện ích</Text>
             <View>
-              <TouchableOpacity onPress={BtnVoucher}>
+              <TouchableOpacity onPress={() => prop.navigation.navigate('Voucher')}>
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Voucher của bạn</Text>
                 <Image
