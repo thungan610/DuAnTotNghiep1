@@ -13,8 +13,7 @@ const profileStyle = StyleSheet.create({
   iconheader: {
     flexDirection: 'row', // Đặt icon và input theo hàng ngang
     marginLeft: 300,
-    marginTop: 20,
-    position: 'absolute',
+    marginTop: 20,  
   },
   pro5logo: {
     marginTop: 40,
@@ -24,7 +23,7 @@ const profileStyle = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  pro5logo2: {
+  pro5logo2: {  
     width: 30,
     height: 30,
     marginLeft: 10,

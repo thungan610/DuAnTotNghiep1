@@ -5,7 +5,6 @@ import HomeScreen from '../src/Page/HomeScreen'
 import Order from '../src/Page/Order/Order'
 import ProfileDetail from '../src/Page/Profile/ProfileDetail' 
 import AddProduct from '../src/Page/Cart/AddProduct'
-import Cart from '../src/Page/Cart/Cart'
 import NewNotifi from '../src/Page/NotifiScreen/NewNotifi'
 
 const Tab = createBottomTabNavigator()

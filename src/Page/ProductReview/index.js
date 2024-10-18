@@ -43,9 +43,7 @@ const ProductReview = ({ maxStars = 5 }) => {
     <View >
       <View style={ProductReviewStyle.header}>
       <TouchableOpacity onPress={BackRight}>
-      <Image 
-        style={ProductReviewStyle.image}
-        source={require('../../../src/assets/chevron-left.png')} />
+      <Image source={require('../../../src/assets/notifi/backright.png')} />
       </TouchableOpacity>
         <Text style={ProductReviewStyle.headerText}>Đánh giá sản phẩm</Text>
       </View>

@@ -23,6 +23,17 @@ const notifiStyle = StyleSheet.create({
         fontWeight: "bold",
         fontFamily: "Poppins"
     },
+    noNotification: {
+        // flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    noNotificationText: {
+        fontSize: 18,
+        color: '#666',
+        textAlign: 'center',
+    },
     item: {
         flexDirection: 'row',
         alignItems: 'center',
