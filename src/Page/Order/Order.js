@@ -105,6 +105,7 @@ const Order = (prop) => {
             prop.navigation.navigate('Delivering', { order: item });
             break;
           case 'Đã nhận':
+            prop.navigation.navigate('Done', { order: item });
             break;
           case 'Đã hủy':
             prop.navigation.navigate('Canceled', { order: item });

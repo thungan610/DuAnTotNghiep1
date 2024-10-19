@@ -38,11 +38,9 @@ import MapAdress from "../src/Page/Payment/AddAdress/MapAdress/map.js"
 import Policy from "../src/Page/Policy/Policy.js";
 import Information from "../src/Page/Policy/Information.js";
 import Preservation from "../src/Page/Policy/Preservation.js";
-import Request from "../src/Page/Policy/Request.js";
 import Detail from "../src/Page/Detail/Detail.js";
 import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
-
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -51,7 +49,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Wellcome"
+            initialRouteName="ForgotPassword"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -91,11 +89,10 @@ const MainStack = () => {
             <Stack.Screen name="Policy" component={Policy}/>
             <Stack.Screen name="Information" component={Information}/>
             <Stack.Screen name="Preseration" component={Preservation}/>
-            <Stack.Screen name="Request" component={Request}/>
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
-            <Stack.Screen name="Map" component={MapAdress}/>
+
         </Stack.Navigator >
     );
 };
