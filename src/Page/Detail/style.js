@@ -5,24 +5,24 @@ const styleDetail = StyleSheet.create({
         height: '100%',
         position: 'relative',
         flexDirection: 'column',
-        padding: 10,
     },
     head: {
+        paddingTop:6,
         width: '100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center',
         position: 'relative',
+        paddingHorizontal:6
     },
     body: {
         flexDirection: 'column',
         width: '100%',
-        marginTop: 10
+        marginTop: 6
     },
     pagerView: {
         width: '100%',
-        height: 280,
-        // backgroundColor: 'white',
+        height: 260,
     },
     bodyText: {
         padding: 20,
@@ -69,7 +69,6 @@ const styleDetail = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         color: 'black',
-
     },
     dolar: {
         width: 20,
@@ -86,7 +85,6 @@ const styleDetail = StyleSheet.create({
     underline: {
         width: '100%',
         height: 50,
-
     },
     textunderline: {
         fontSize: 24,
