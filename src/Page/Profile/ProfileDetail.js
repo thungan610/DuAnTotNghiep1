@@ -61,7 +61,7 @@ const ProfileDetail = (prop) => {
             />
             <Text style={profileStyle.loadtext3}>Chính sách hoàn trả</Text>
           </TouchableOpacity>
-          <TouchableOpacity >
+          <TouchableOpacity onPress={() => prop.navigation.navigate('Preservation')} >
             <View style={profileStyle.load4}>
               <Image
                 style={profileStyle.loadimg2}
@@ -128,7 +128,7 @@ const ProfileDetail = (prop) => {
               <View style={profileStyle.boder} />
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>prop.navigation.navigate('Promotion')}>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Chương trình khuyến mãi</Text>
               <Image
@@ -140,7 +140,7 @@ const ProfileDetail = (prop) => {
             <View style={profileStyle.boder} />
 
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('Information')}>
             <View style={profileStyle.insideAccount}>
               <Text style={profileStyle.textTab}>Thông tin về TheMiniStore</Text>
               <Image

@@ -104,20 +104,20 @@ const styles = StyleSheet.create({
     },
     title: {
         flex: 1,
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#000000'
     },
     tp: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: 'bold',
         color: '#000000'
     },
     text: {
         flex: 1,
-        fontSize: 11,
+        fontSize: 15,
         color: '#000000'
     }
 });
