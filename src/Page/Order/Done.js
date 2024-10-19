@@ -1,52 +1,61 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const Delivering = (prop) => {
+const Done = (prop) => {
 
     return (
-        <View style={DeliveringStyle.container}>
-            <View style={DeliveringStyle.headertop}>
+        <View style={DoneStyle.container}>
+            <View style={DoneStyle.headertop}>
                 <TouchableOpacity onPress={() => prop.navigation.goBack()}>
-                    <Image style={DeliveringStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
+                    <Image style={DoneStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
-                <Text style={DeliveringStyle.title}>Đơn hàng</Text>
+                <Text style={DoneStyle.title}>Đơn hàng</Text>
             </View>
 
-            <View style={DeliveringStyle.body}>
+            <View style={DoneStyle.body}>
 
-                <View style={DeliveringStyle.banner}>
-                    <Text style={DeliveringStyle.bannerText}>Đơn hàng đang giao</Text>
+                <View style={DoneStyle.banner}>
+                    <Text style={DoneStyle.bannerText}>Đơn hàng đã hoàn thành</Text>
                 </View>
-                <View style={DeliveringStyle.header}>
-                    <Text style={DeliveringStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={DeliveringStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
+                <View style={DoneStyle.header}>
+                    <Text style={DoneStyle.headerText}>Thông tin vận chuyển</Text>
+                    <Text style={DoneStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
-                <View style={DeliveringStyle.address}>
-                    <Text style={DeliveringStyle.label}>Địa chỉ:</Text>
+                <View style={DoneStyle.address}>
+                    <Text style={DoneStyle.label}>Địa chỉ:</Text>
                     <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
                     <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
                 </View>
 
-                <View style={DeliveringStyle.product}>
+                <View style={DoneStyle.product}>
                     <Image
                         source={require('../../assets/image/image1.png')}
-                        style={DeliveringStyle.productImage}
+                        style={DoneStyle.productImage}
                     />
-                    <View style={DeliveringStyle.productInfo}>
-                        <Text style={DeliveringStyle.productName}>Bắp cải trắng</Text>
-                        <Text style={DeliveringStyle.category}>Rau củ</Text>
-                        <Text style={DeliveringStyle.price}>$ 19.000đ</Text>
+                    <View style={DoneStyle.productInfo}>
+                        <Text style={DoneStyle.productName}>Bắp cải trắng</Text>
+                        <Text style={DoneStyle.category}>Rau củ</Text>
+                        <Text style={DoneStyle.price}>$ 19.000đ</Text>
                     </View>
                 </View>
 
-                <View style={DeliveringStyle.paymentInfo}>
-                    <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
+                <View style={DoneStyle.paymentInfo}>
+                    <Text style={DoneStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
                     <Text>Tổng tiền sản phẩm: 19.000</Text>
                     <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={DeliveringStyle.total}>Tổng thanh toán: 29.000</Text>
+                    <Text style={DoneStyle.total}>Tổng thanh toán: 29.000</Text>
                 </View>
+
+                <View style={DoneStyle.buttonContainer}>
+              <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={DoneStyle.buttonnhan}>
+                <Text style={DoneStyle.buttonTextnhan}>Mua lại</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={DoneStyle.buttonhuy}>
+                <Text style={DoneStyle.buttonTexthuy}>Đánh giá</Text>
+              </TouchableOpacity>
+            </View>
 
             </View>
 
@@ -57,7 +66,7 @@ const Delivering = (prop) => {
     );
 };
 
-const DeliveringStyle = StyleSheet.create({
+const DoneStyle = StyleSheet.create({
     // button: {
     //     fontSize: 14,
     //     color: '#FF7400',
@@ -68,7 +77,7 @@ const DeliveringStyle = StyleSheet.create({
     // },
     banner: {
         padding: 10,
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#27AAE1',
         height: 45,
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,
@@ -85,6 +94,7 @@ const DeliveringStyle = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         marginTop: 20,
+        height:450,
     },
     headertop: {
         flexDirection: 'row',
@@ -174,6 +184,43 @@ const DeliveringStyle = StyleSheet.create({
         borderBottomWidth: 2,
 
     },
+    buttonContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'flex-end'
+      },
+      buttonnhan: {
+        backgroundColor: 'white',
+        padding: 5,
+        borderRadius: 5,
+        marginRight: 5,
+        borderWidth: 1,
+        width: 80,
+        height: 34,
+        borderColor: '#BBAFAF',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      buttonhuy: {
+        backgroundColor: 'white',
+        padding: 5,
+        borderWidth: 1,
+        borderRadius: 5,
+        marginRight: 5,
+        width: 80,
+        height: 34,
+        borderColor: '#FF7400',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      buttonTextnhan: {
+        color: 'black',
+        fontSize: 16,
+      },
+      buttonTexthuy: {
+        color: '#FF7400',
+        fontSize: 16,
+      },
 });
 
-export default Delivering;
+export default Done;
