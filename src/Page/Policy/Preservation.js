@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, ImageBackground, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, Touchable, TouchableOpacity } from 'react-native';
 
-const Preservation = () => {
+const Preservation = (prop) => {
+    const BackRight = () => {
+        prop.navigation.goBack()
+    }
     return (
         <ImageBackground
             style={{ flex: 1 }}
@@ -10,9 +13,11 @@ const Preservation = () => {
         >
             <ScrollView style={styles.container}>
                 <View style={styles.header}>
-                    <Image
+                   <TouchableOpacity onPress={BackRight}>
+                   <Image
                         source={require('../../assets/chevron-left.png')}
                         style={styles.backIcon} />
+                   </TouchableOpacity>
                     <Text style={styles.title}>Cách bảo quản</Text>
                 </View>
                 <View style={styles.banner}>
@@ -82,11 +87,12 @@ const styles = StyleSheet.create({
     footer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 10,
+        marginBottom:30,
     },
     footerText: {
         textAlign: 'center',
-        fontSize: 11,
+        fontSize: 15,
         color: '#4CAF50',
     },
     container: {
@@ -103,20 +109,20 @@ const styles = StyleSheet.create({
     },
     title: {
         flex: 1,
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#000000'
     },
     tp: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: 'bold',
         color: '#000000'
     },
     text: {
         flex: 1,
-        fontSize: 11,
+        fontSize: 15,
         color: '#000000'
     }
 });

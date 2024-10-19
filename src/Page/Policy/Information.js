@@ -1,13 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 
-const Information = () => {
+ 
+const Information = (prop) => {
+    const BackRight = () => {
+        prop.navigation.goBack()
+    }
+    
     return (
         <ScrollView style={styles.container}>
                           <View style={styles.header}>
-                    <Image
+                  <TouchableOpacity onPress={BackRight}>
+                  <Image
                         source={require('../../assets/chevron-left.png')}
                         style={styles.backIcon} />
+                  </TouchableOpacity>
                     <Text style={styles.title}>Thông tin về TheMiniStore</Text>
                 </View>
 
@@ -41,7 +48,7 @@ const styles = StyleSheet.create({
     },
     title: {
         flex: 1,
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#000000'
@@ -50,7 +57,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     description: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#000000',
         textAlign: 'justify',
         marginBottom: 20,
@@ -60,6 +67,7 @@ const styles = StyleSheet.create({
         width: 334,
         height: 346,
         resizeMode: 'contain',
+        marginBottom:10,
     },
     backIcon: {
         width: 24,

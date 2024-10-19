@@ -47,7 +47,7 @@ const AddAdress = (prop) => {
                 }}>Địa chỉ hiện tại: </Text>
                 <Image style={{marginTop: 20,
                     marginLeft: 5}} 
-                source={require('../../../assets/map.png')}/>
+                source={require('../../../assets/Map.png')}/>
             </TouchableOpacity>
             <View style={AddAdressStyle.footer}>
                 <TouchableOpacity onPress={HandSubmitTrue} style={AddAdressStyle.button}>
