@@ -9,6 +9,25 @@ const Detail = (prop) => {
     const [price, setPrice] = useState(0);
     const [unitPrice, setUnitPrice] = useState(0);
     const [productDetails, setProductDetails] = useState({});
+    const [hasNotification, setHasNotification] = useState(false); 
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await fetch('YOUR_NOTIFICATION_API_URL');
+                const data = await response.json();
+                
+                // Nếu có thông báo mới, hiển thị chấm đỏ
+                if (data.newNotifications) {
+                    setHasNotification(true);
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra thông báo:', error);
+            }
+        };
+
+        fetchNotifications();
+    }, []);
 
     useEffect(() => {
         const fetchProductDetails = async () => {
@@ -57,6 +76,11 @@ const Detail = (prop) => {
         } else {
             Alert.alert('Thông báo', ' Số lượng sản phẩm tối thiểu là 1 ')
         }
+    };
+
+    const handleNotificationClick = () => {
+        setHasNotification(false); // Ẩn chấm đỏ
+        prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
     };
 
     const handleAddToCart = async () => {
@@ -132,10 +156,10 @@ const Detail = (prop) => {
                 <View style={{
                     flexDirection: 'row'
                 }}>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('AddProduct')}>
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('AddProductsScreen')}>
                         <Image style={styleDetail.iconcart} source={require('../../assets/home/cart.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('NewNotifi')}>
+                    <TouchableOpacity onPress={handleNotificationClick}>
                         <Image style={styleDetail.iconnotifi} source={require('../../assets/home/notifi.png')} />
                     </TouchableOpacity>
                 </View>

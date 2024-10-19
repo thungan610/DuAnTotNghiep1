@@ -39,7 +39,7 @@ const BottomNav = () => {
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BatketTruoc.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="AddProduct" component={AddProduct} />
+                name="AddProductsScreen" component={AddProduct} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BellSau.png') : require('./icon/Bell.png')} />,
