@@ -8,9 +8,7 @@ const InsertPro5 = (prop) => {
   const BackRight = () => {
     prop.navigation.goBack()
   }
-  const BtnLogin = () => {
-    prop.navigation.navigate('Login')
-  }
+
   const data = [
     {
       id: '1', // Thêm id cho mỗi phần tử
@@ -145,7 +143,7 @@ const InsertPro5 = (prop) => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={BtnLogin} style={InsertPro5Styles.btnLogout}>
+      <TouchableOpacity onPress={() => prop.navigation.navigate('Login')} style={InsertPro5Styles.btnLogout}>
         <Text style={InsertPro5Styles.btnLogoutText}>ĐĂNG XUẤT</Text>
       </TouchableOpacity>
     </View>

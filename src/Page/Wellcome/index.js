@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Image } from "react-native";
 import wellcomeStyle from "./style";
-import { useNavigation } from '@react-navigation/native';
 
 const Wellcome = (prop) => {
 

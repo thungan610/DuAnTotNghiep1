@@ -12,58 +12,57 @@ const Login = (prop) => {
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
     const [rememberAccount, setRememberAccount] = useState(false);
-
-    const BtnLogin = async () => {
+    
+        const BtnLogin = async () => {
         let hasError = false;
-
         setLoginError('');
-
+    
         // Kiểm tra email
         if (email === '') {
             setEmailError("Vui lòng nhập Email");
-            setEmail('');
             hasError = true;
         } else if (!validateEmail(email)) {
             setEmailError("Email không hợp lệ!");
-            setEmail('');
-        setEmailError('');
-        setPasswordError('');
             hasError = true;
         }
-
+    
         // Kiểm tra mật khẩu
         if (password === '') {
             setPasswordError("Vui lòng nhập mật khẩu");
-            setPassword('');
             hasError = true;
         } else {
             const passwordValidationError = validatePassword(password);
             if (passwordValidationError) {
                 setPasswordError(passwordValidationError);
-                setPassword('');
                 hasError = true;
             }
         }
-
+    
         if (hasError) return;
-
+    
         try {
             // Gọi API đăng nhập
             const response = await axios.post('URL_API_CỦA_BẠN', {
                 email: email,
                 password: password,
             });
-
+    
             if (response.data) {
                 Alert.alert("Thông báo", "Đăng nhập thành công!");
+    
+                if (rememberAccount) {
+                    await AsyncStorage.setItem('savedEmail', email);
+                    await AsyncStorage.setItem('savedPassword', password);
+                }
+    
                 setTimeout(() => {
-                    prop.navigation.navigate('AddProduct');
+                    prop.navigation.navigate('NextPayment'); 
                 }, 1000);
             }
         } catch (error) {
             Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng nhập thất bại!");
         }
-    };
+    };    
 
     // Hàm kiểm tra định dạng email
     const validateEmail = (email) => {
@@ -116,6 +115,10 @@ const Login = (prop) => {
     const handleRememberAccount = () => {
         setRememberAccount(!rememberAccount);
     };
+    const handleSubmit = () => {
+        BtnLogin();
+    };
+
 
     return (
         <View style={LoginStyle.container}>
@@ -198,7 +201,7 @@ const Login = (prop) => {
                 </View>
 
                 <View style={LoginStyle.button}>
-                    <TouchableOpacity onPress={BtnLogin} style={LoginStyle.dn}>
+                    <TouchableOpacity onPress={handleSubmit} style={LoginStyle.dn}>
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>

@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import PaymentStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
-import AddTranfer from "../AddTranfer";
 const Payment = (prop) => {
     const BackRight = () => {
         prop.navigation.goBack()

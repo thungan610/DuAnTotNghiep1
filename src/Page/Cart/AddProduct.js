@@ -49,27 +49,28 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     </Modal>
 );
 
-const AddProduct = ({ navigation }) => {
+const AddProduct = ({ prop, route }) => {
+    const product = route.params;
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [products, setProducts] = useState([]);
     const [cartItems, setCartItems] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
     // useEffect(() => {
-    //     const fetchProducts = async () => {
+    //     const fetchCartItems = async () => {
     //         try {
-    //             const response = await fetch('YOUR_API_URL'); // Thay thế YOUR_API_URL bằng URL thực tế
+    //             const response = await fetch('https://yourapi.com/get-cart');
     //             const data = await response.json();
-    //             setCartItems(data); // Giả sử API trả về một mảng sản phẩm
+    //             setCartItems(data.items);
     //         } catch (error) {
-    //             console.error('Error fetching products:', error);
+    //             console.error('Error fetching cart items:', error);
     //         } finally {
     //             setLoading(false);
     //         }
     //     };
-    //     fetchProducts();
+
+    //     fetchCartItems();
     // }, []);
 
     const toggleSelectProduct = (id) => {
@@ -78,7 +79,7 @@ const AddProduct = ({ navigation }) => {
         );
     };
 
-    const updateQuantity = (id, action) => {
+    const updateQuantity = async (id, action) => {
         setCartItems(prevItems =>
             prevItems.map(item => {
                 if (item.id === id) {
@@ -96,10 +97,11 @@ const AddProduct = ({ navigation }) => {
     };
 
     const confirmDelete = () => {
-        if (cartItems.length === 0) {
+        const selectedItems = cartItems.filter(item => item.selected);
+        if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Không có sản phẩm để xóa");
         } else {
-            setItemsToDelete(cartItems.filter(item => item.selected));
+            setItemsToDelete(selectedItems);
             setModalVisible(true);
         }
     };
@@ -108,24 +110,42 @@ const AddProduct = ({ navigation }) => {
         .filter(item => item.selected)
         .reduce((total, item) => total + item.quantity * item.price, 0);
 
-    const handleLogin = async () => {
-        // Logic đăng nhập
-        const loginSuccessful = true; // Giả sử đăng nhập thành công
-        if (loginSuccessful) {
-            setIsLoggedIn(true);
-            navigation.navigate('NextPayment');
+    const handleCheckout = async () => {
+        if (!isLoggedIn) {
+            prop.navigation.navigate('Login_required');
         } else {
-            Alert.alert("Đăng nhập không thành công");
+            try {
+                await updateCart(cartItems);
+                prop.navigation.navigate('NextPayment');
+            } catch (error) {
+                Alert.alert("Lỗi", error.message);
+            }
         }
     };
 
-    const handleCheckout = () => {
-        if (!isLoggedIn) {
-            navigation.navigate('Login_required');
-        } else {
-            navigation.navigate('NextPayment');
-        }
-    };
+    // const updateCart = async (cartItems) => {
+    //     try {
+    //         const response = await fetch('https://yourapi.com/update-cart', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ items: cartItems }),
+    //         });
+    
+    //         if (!response.ok) {
+    //             const textResponse = await response.text(); 
+    //             console.error('Error response:', textResponse); 
+    //             throw new Error('Cập nhật giỏ hàng không thành công');
+    //         }
+    
+    //         return await response.json(); 
+    //     } catch (error) {
+    //         console.error('Error fetching cart items:', error);
+    //         throw error; 
+    //     }
+    // };
+    
 
     return (
         <View style={AddProductStyle.container}>
@@ -135,23 +155,20 @@ const AddProduct = ({ navigation }) => {
                     <Image source={require("../../../src/assets/Trash.png")} />
                 </TouchableOpacity>
             </View>
-            {cartItems.length === 0 ? (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{
-                        fontSize: 20,
-                        color: 'black'
-                    }}>Giỏ hàng trống!</Text>
+ 
+                <View style={{ width:'100%', height:'100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#666' }}>Hiện chưa có sản phẩm!!!</Text>
                 </View>
-            ) : (
+
                 <FlatList
                     data={cartItems}
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.id.toString()}
                     contentContainerStyle={AddProductStyle.list}
                 />
-            )}
+
             {totalAmount > 0 && (
                 <View>
                     <View style={AddProductStyle.total}>
