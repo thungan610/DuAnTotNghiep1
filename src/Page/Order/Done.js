@@ -49,6 +49,10 @@ const Done = (prop) => {
                 </View>
 
                 <View style={DoneStyle.buttonContainer}>
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
+                    <Text style={DoneStyle.text}>Tôi muốn hoàn trả?</Text>
+
+                    </TouchableOpacity>
               <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={DoneStyle.buttonnhan}>
                 <Text style={DoneStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
@@ -221,6 +225,11 @@ const DoneStyle = StyleSheet.create({
         color: '#FF7400',
         fontSize: 16,
       },
+      text:{
+        color: 'red',
+        marginTop:5,
+        marginRight:55,
+      }
 });
 
 export default Done;
