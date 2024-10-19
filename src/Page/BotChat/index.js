@@ -12,7 +12,8 @@ const BotChat = () => {
         "Xin chào!",
         "Phí vận chuyển bao nhiêu?",
         "Giờ hoạt động của cửa hàng?",
-        "Khuyến mãi"
+        "Khuyến mãi",
+        "Tôi muốn hoàn trả sản phẩm",
     ];
   
     const navigation = useNavigation();
@@ -35,17 +36,18 @@ const BotChat = () => {
     };
   
     const handleQuestionPress = (question) => {
-        setInputText(question);  // Đặt câu hỏi vào TextInput
+        setInputText(question);  
     };
 
     const autoReply = (userMessage) => {
         let reply = '';
 
-  // Xử lý các từ khóa từ người dùng để trả lời tự động
   if (userMessage.toLowerCase().includes('xin chào')) {
     reply = 'Chào bạn! The MiniStore rất vui khi được trò chuyện cùng bạn?';
   } else if (userMessage.toLowerCase().includes('giờ hoạt động của cửa hàng')) {
     reply = 'Cửa hàng hoạt động từ 7 giờ sáng đến 21 giờ tối mõi ngày';
+  }else if (userMessage.toLowerCase().includes('tôi muốn hoàn trả sản phẩm')) {
+    reply = 'Chào bạn, vui lòng đọc kĩ chính sách hoàn trả ở trang thông tin cá nhân. Nếu bạn chắc chắn muốn hoàn trả thì hãy để lại: tên sản phẩm, thời gian giao hàng, tổng tiền bạn đã thanh toán. Cửa hàng sẽ kiểm tra và trả lời cho bạn ngay nhé!';
   } else if (userMessage.toLowerCase().includes('khuyến mãi')) {
     reply = 'Sau 18h hằng ngày thực phẩm tươi sống sẽ giảm giá 50%, hoặc bạn sẽ nhận được thông báo khuyến mãi từ ứng dụng hoặc tại cửa hàng. Chi tiết vui lòng để lại câu hỏi để cửa hàng hỗ trợ bạn nhé!';
   } else if (userMessage.toLowerCase().includes('phí vận chuyển')) {

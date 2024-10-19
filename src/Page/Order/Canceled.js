@@ -6,7 +6,7 @@ const Canceled = (prop) => {
     return (
         <View style={CanceledStyle.container}>
             <View style={CanceledStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                <TouchableOpacity onPress={() => prop.navigation.goBack()}>
                     <Image style={CanceledStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={CanceledStyle.title}>Đơn hàng</Text>
@@ -19,7 +19,7 @@ const Canceled = (prop) => {
                 </View>
                 <View style={CanceledStyle.header}>
                     <Text style={CanceledStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={CanceledStyle.subText}>Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={CanceledStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
                 <View style={CanceledStyle.address}>
