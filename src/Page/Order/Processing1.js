@@ -8,7 +8,7 @@ const Processing1 = (prop) => {
     return (
         <View style={ProcessingStyle.container}>
             <View style={ProcessingStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                <TouchableOpacity onPress={() => prop.navigation.goBack()}>
                     <Image style={ProcessingStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={ProcessingStyle.title}>Đơn hàng</Text>
@@ -20,7 +20,7 @@ const Processing1 = (prop) => {
                 </View>
                 <View style={ProcessingStyle.header}>
                     <Text style={ProcessingStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={ProcessingStyle.subText}>Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={ProcessingStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
                 <View style={ProcessingStyle.address}>

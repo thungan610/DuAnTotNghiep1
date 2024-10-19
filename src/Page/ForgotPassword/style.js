@@ -103,6 +103,11 @@ const ForgotPasswordStyle = StyleSheet.create({
         color:'#2CA9C0',
         fontSize:15
       },
+      errorText: {
+        color: 'red',
+        marginTop: 5, 
+        textAlign:'center',
+    },
       
 });
 export default ForgotPasswordStyle;

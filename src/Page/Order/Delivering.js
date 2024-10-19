@@ -6,7 +6,7 @@ const Delivering = (prop) => {
     return (
         <View style={DeliveringStyle.container}>
             <View style={DeliveringStyle.headertop}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                <TouchableOpacity onPress={() => prop.navigation.goBack()}>
                     <Image style={DeliveringStyle.backright} source={require('../../../src/assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={DeliveringStyle.title}>Đơn hàng</Text>
@@ -19,7 +19,7 @@ const Delivering = (prop) => {
                 </View>
                 <View style={DeliveringStyle.header}>
                     <Text style={DeliveringStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={DeliveringStyle.subText}>Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={DeliveringStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
                 </View>
 
                 <View style={DeliveringStyle.address}>

@@ -43,6 +43,7 @@ import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
 import UserCancel from "../src/Page/UserCancel/index.js";
 import Promotion from "../src/Page/Promotion/index.js";
+import Done from "../src/Page/Order/Done.js";
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -50,7 +51,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="ProfileDetail"
+            initialRouteName="ForgotPassword"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -96,6 +97,8 @@ const MainStack = () => {
             <Stack.Screen name="UserCancel" component={UserCancel}/>
             <Stack.Screen name="Preservation" component={Preservation}/>
             <Stack.Screen name="Promotion" component={Promotion}/>
+            <Stack.Screen name="Done" component={Done}/>
+
 
 
 

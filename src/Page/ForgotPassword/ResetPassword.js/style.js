@@ -83,6 +83,12 @@ const ResetPasswordStyle = StyleSheet.create({
             fontWeight:'bold',
             color:'white',
            },
+           errorText: {
+            color: 'red',
+            fontSize: 12,
+            marginBottom: 10,
+        },
+    
        
 });
 
