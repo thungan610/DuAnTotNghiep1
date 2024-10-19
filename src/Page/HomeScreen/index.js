@@ -104,18 +104,28 @@ const HomeScreen = (prop) => {
     }, [currentIndex]);
 
     const renderProductItem = ({ item }) => (
-        <TouchableOpacity onPress={() => prop.navigation.navigate('Detail')}>
+        <TouchableOpacity
+            onPress={() => {
+                if (selectedCategory === 5) { // Rau củ
+                    prop.navigation.navigate('Detailbottle', { product: item });
+                } else if (selectedCategory === 6) { // Nước
+                    prop.navigation.navigate('Detailbottle', { product: item });
+                } else {
+                    prop.navigation.navigate('Detail', { product: item });
+                }
+            }}
+        >
             <View style={HomeStyle.productContainer}>
-            <Image source={item.image} style={HomeStyle.productImage} />
-            <View style={HomeStyle.productDetails}>
-                <Text style={HomeStyle.productTitle}>{item.title}</Text>
-                <Text style={HomeStyle.productWeight}>{item.weight}</Text>
-                <View style={HomeStyle.priceall}>
-                    <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
-                    <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
+                <Image source={item.image} style={HomeStyle.productImage} />
+                <View style={HomeStyle.productDetails}>
+                    <Text style={HomeStyle.productTitle}>{item.title}</Text>
+                    <Text style={HomeStyle.productWeight}>{item.weight}</Text>
+                    <View style={HomeStyle.priceall}>
+                        <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
+                        <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
+                    </View>
                 </View>
             </View>
-        </View>
         </TouchableOpacity>
     );
 

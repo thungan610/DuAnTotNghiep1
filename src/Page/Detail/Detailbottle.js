@@ -10,6 +10,30 @@ const Detailbottle = (prop) => {
     const [price, setPrice] = useState(0);
     const [unitPrice, setUnitPrice] = useState(0);
     const [productDetails, setProductDetails] = useState({});
+    const [hasNotification, setHasNotification] = useState(false);
+
+    useEffect(() => {
+        setPrice(quantity * unitPrice);
+    }, [quantity, unitPrice]);
+
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await fetch('YOUR_NOTIFICATION_API_URL');
+                const data = await response.json();
+
+                // Nếu có thông báo mới, hiển thị chấm đỏ
+                if (data.newNotifications) {
+                    setHasNotification(true);
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra thông báo:', error);
+            }
+        };
+
+        fetchNotifications();
+    }, []);
 
     useEffect(() => {
         const fetchProductDetails = async () => {
@@ -64,6 +88,11 @@ const Detailbottle = (prop) => {
         } else {
             Alert.alert('Thông báo', ' Số lượng sản phẩm tối thiểu là 1 ')
         }
+    };
+
+    const handleNotificationClick = () => {
+        setHasNotification(false); // Ẩn chấm đỏ
+        prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
     };
 
     const handleAddToCart = async () => {
@@ -136,10 +165,24 @@ const Detailbottle = (prop) => {
                 <View style={{
                     flexDirection: 'row'
                 }}>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('AddProduct')}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        marginRight: 6
+                    }}
+                        onPress={() => prop.navigation.navigate('AddProduct')}>
                         <Image style={styleDetailbottle.iconcart} source={require('../../assets/home/cart.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('NewNotifi')}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        marginRight: 6
+                    }}
+                        onPress={() => prop.navigation.navigate('NewNotifi')}>
                         <Image style={styleDetailbottle.iconnotifi} source={require('../../assets/home/notifi.png')} />
                     </TouchableOpacity>
                 </View>
@@ -169,7 +212,7 @@ const Detailbottle = (prop) => {
                         style={{
                             borderTopLeftRadius: 50,
                             borderTopRightRadius: 50,
-                            backgroundColor: '#37C5DF',
+                            backgroundColor: 'white',
                             height: '100%',
                             width: '100%',
                         }}>
@@ -230,7 +273,7 @@ const Detailbottle = (prop) => {
                         <View style={styleDetailbottle.scroollview}>
                             <View style={styleDetailbottle.viewScroll}>
                                 <Text style={styleDetailbottle.scrollText}>
-                                {productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}
+                                    {productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}
                                 </Text>
                             </View>
 

@@ -9,14 +9,18 @@ const Detail = (prop) => {
     const [price, setPrice] = useState(0);
     const [unitPrice, setUnitPrice] = useState(0);
     const [productDetails, setProductDetails] = useState({});
-    const [hasNotification, setHasNotification] = useState(false); 
+    const [hasNotification, setHasNotification] = useState(false);
+
+    useEffect(() => {
+        setPrice(quantity * unitPrice);
+    }, [quantity, unitPrice]);
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
                 const response = await fetch('YOUR_NOTIFICATION_API_URL');
                 const data = await response.json();
-                
+
                 // Nếu có thông báo mới, hiển thị chấm đỏ
                 if (data.newNotifications) {
                     setHasNotification(true);
@@ -156,10 +160,23 @@ const Detail = (prop) => {
                 <View style={{
                     flexDirection: 'row'
                 }}>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('AddProductsScreen')}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        marginRight: 6
+                    }}
+                        onPress={() => prop.navigation.navigate('AddProductsScreen')}>
                         <Image style={styleDetail.iconcart} source={require('../../assets/home/cart.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleNotificationClick}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                    }}
+                        onPress={handleNotificationClick}>
                         <Image style={styleDetail.iconnotifi} source={require('../../assets/home/notifi.png')} />
                     </TouchableOpacity>
                 </View>
@@ -189,7 +206,7 @@ const Detail = (prop) => {
                         style={{
                             borderTopLeftRadius: 50,
                             borderTopRightRadius: 50,
-                            backgroundColor: '#37C5DF',
+                            backgroundColor: 'white',
                             height: '100%',
                             width: '100%',
                         }}>
