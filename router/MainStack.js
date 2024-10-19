@@ -41,9 +41,7 @@ import Preservation from "../src/Page/Policy/Preservation.js";
 import Detail from "../src/Page/Detail/Detail.js";
 import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
-import UserCancel from "../src/Page/UserCancel/index.js";
-import Promotion from "../src/Page/Promotion/index.js";
-import Done from "../src/Page/Order/Done.js";
+
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -94,13 +92,6 @@ const MainStack = () => {
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
-            <Stack.Screen name="UserCancel" component={UserCancel}/>
-            <Stack.Screen name="Preservation" component={Preservation}/>
-            <Stack.Screen name="Promotion" component={Promotion}/>
-            <Stack.Screen name="Done" component={Done}/>
-
-
-
 
         </Stack.Navigator >
     );
