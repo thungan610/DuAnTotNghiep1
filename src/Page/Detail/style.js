@@ -5,6 +5,7 @@ const styleDetail = StyleSheet.create({
         height: '100%',
         position: 'relative',
         flexDirection: 'column',
+        backgroundColor:'#27AAE1'
     },
     head: {
         paddingTop:6,
@@ -39,7 +40,7 @@ const styleDetail = StyleSheet.create({
     textkg: {
         fontSize: 18,
         // fontWeight: 'bold',
-        color: '#D5D5D5',
+        color: '#8F8F8F',
     },
     butonView: {
         paddingHorizontal:20,
@@ -60,9 +61,6 @@ const styleDetail = StyleSheet.create({
         fontWeight: 'bold',
         color: 'blue',
     },
-    iconcart: {
-        marginRight: 10
-    },
     toutText: {
         fontSize: 22,
         fontWeight: 'bold',
@@ -74,7 +72,7 @@ const styleDetail = StyleSheet.create({
         width: 20,
         height: 20,
         resizeMode: 'contain',
-        tintColor:'yellow'
+        tintColor:'#37C5DF'
     },
     price: {
         resizeMode: 'contain',
@@ -103,7 +101,7 @@ const styleDetail = StyleSheet.create({
     },
     scrollText: {
         fontSize: 16,
-        color: '#D5D5D5',
+        color: '#8F8F8F',
     },
     origin: {
         width: '100%',
@@ -131,7 +129,7 @@ const styleDetail = StyleSheet.create({
         justifyContent: 'center',
     },
     textFooter: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
         textAlign:'center'
