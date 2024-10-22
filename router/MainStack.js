@@ -49,7 +49,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Home"
+            initialRouteName="Register"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />

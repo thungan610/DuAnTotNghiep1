@@ -13,7 +13,7 @@ const Login = (prop) => {
     const [loginError, setLoginError] = useState('');
     const [rememberAccount, setRememberAccount] = useState(false);
     
-        const BtnLogin = async () => {
+    const BtnLogin = async () => {
         let hasError = false;
         setLoginError('');
     
@@ -41,8 +41,7 @@ const Login = (prop) => {
         if (hasError) return;
     
         try {
-            // Gọi API đăng nhập
-            const response = await axios.post('URL_API_CỦA_BẠN', {
+            const response = await axios.post('http://172.16.92.46:6677/users/login', {
                 email: email,
                 password: password,
             });
@@ -64,24 +63,27 @@ const Login = (prop) => {
         }
     };    
 
-    // Hàm kiểm tra định dạng email
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setEmail('');
         return emailRegex.test(email);
     };
 
-    // Hàm kiểm tra mật khẩu
     const validatePassword = (password) => {
         if (password.length < 8) {
+            setPassword('');
             return 'Phải có ít nhất 8 ký tự.';
         }
         else if (!/\d/.test(password)) {
+            setPassword('');
             return 'Phải chứa ít nhất một số.';
         }
         else if (!/[!@#$%^&*]/.test(password)) {
+            setPassword('');
             return 'Phải chứa ít nhất một ký tự đặc biệt.';
         }
         else if (!/[A-Z]/.test(password)) {
+            setPassword('');
             return 'Phải chứa ít nhất một chữ cái in hoa.';
         }
         return '';
@@ -114,9 +116,6 @@ const Login = (prop) => {
 
     const handleRememberAccount = () => {
         setRememberAccount(!rememberAccount);
-    };
-    const handleSubmit = () => {
-        BtnLogin();
     };
 
 
@@ -201,7 +200,7 @@ const Login = (prop) => {
                 </View>
 
                 <View style={LoginStyle.button}>
-                    <TouchableOpacity onPress={handleSubmit} style={LoginStyle.dn}>
+                    <TouchableOpacity onPress={BtnLogin} style={LoginStyle.dn}>
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
