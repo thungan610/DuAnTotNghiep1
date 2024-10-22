@@ -72,9 +72,10 @@ const Detailbottle = (prop) => {
     ]
 
     const updateQuantity = (value) => {
-        setQuantity(value);
-        setPrice(value * unitPrice);
+        setQuantity((prevQuantity) => prevQuantity + value);
+        setPrice((prevQuantity) => (prevQuantity + value) * unitPrice);
     };
+    
 
     const increaseQuantity = () => {
         setQuantity((prevQuantity) => prevQuantity + 1);
