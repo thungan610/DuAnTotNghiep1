@@ -13,7 +13,6 @@ const Register = (prop) => {
     const [phoneError, setPhoneError] = useState('');
     const [FullNameError, setFullNameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [selectedId, setSelectedId] = useState();
     const [rememberAccount, setRememberAccount] = useState(false);
 
     const NextLogin = () => {
@@ -24,7 +23,28 @@ const Register = (prop) => {
         let hasError = false;
         setFullNameError('');
         setPhoneError('');
+        setEmailError('');
         setPasswordError('');
+
+        const validatePassword = (password) => {
+            if (password.length < 8) {
+                setPassword('');
+                return 'Phải có ít nhất 8 ký tự.';
+            }
+            else if (!/\d/.test(password)) {
+                setPassword('');
+                return 'Phải chứa ít nhất một số.';
+            }
+            else if (!/[!@#$%^&*]/.test(password)) {
+                setPassword('');
+                return 'Phải chứa ít nhất một ký tự đặc biệt.';
+            }
+            else if (!/[A-Z]/.test(password)) {
+                setPassword('');
+                return 'Phải chứa ít nhất một chữ cái in hoa.';
+            }
+            return '';
+        };
 
         if (FullName.trim() === '') {
             setFullNameError("Vui lòng nhập họ và tên");
@@ -49,63 +69,43 @@ const Register = (prop) => {
             setPhone('');
             hasError = true;
         }
-        if (password.trim() === '') {
+        if (password === '') {
             setPasswordError("Vui lòng nhập mật khẩu");
-            setPassword('');
             hasError = true;
         } else {
-            let passwordErrors = [];
-
-            if (password.length < 8) {
-                passwordErrors.push("Phải có ít nhất 8 ký tự.");
-                setPassword('');
-                return;
+            const passwordValidationError = validatePassword(password);
+            if (passwordValidationError) {
+                setPasswordError(passwordValidationError);
+                hasError = true;
             }
+        }
 
-            if (!/[A-Z]/.test(password)) {
-                passwordErrors.push("Phải có ít nhất 1 chữ cái in hoa.");
-                setPassword('');
-                return;
-            }
+        if (!hasError) {
+            Alert.alert("Thông báo", "Đăng kí thành công!");
+            setTimeout(() => {
+                prop.navigation.navigate('SMS');
+            }, 1000);
+        } try {
+            // Gọi API đăng ký
+            const response = await axios.post('http://172.16.92.46:6677/users/register', {
+                email: email,
+                password: password,
+                name: FullName,
+                phone: phone
+            });
 
-            if (!/\d/.test(password)) {
-                passwordErrors.push("Phải có ít nhất 1 số.");
-                setPassword('');
-                return;
-            }
-
-            if (!/[@$!%*?&]/.test(password)) {
-                passwordErrors.push("Phải có ít nhất 1 ký tự đặc biệt.");
-                setPassword('');
-                return;
-            }
-
-            if (!hasError) {
+            if (response.data) {
                 Alert.alert("Thông báo", "Đăng kí thành công!");
+
                 setTimeout(() => {
-                    prop.navigation.navigate('SMS');
+                    prop.navigation.navigate('Login');
                 }, 1000);
-            } try {
-                // Gọi API đăng ký
-                const response = await axios.post('http://localhost:6677/users/register', {
-                    email: email,
-                    password: password,
-                    name: FullName,
-                    phone: phone
-                });
-
-                if (response.data) {
-                    Alert.alert("Thông báo", "Đăng kí thành công!");
-
-                    setTimeout(() => {
-                        prop.navigation.navigate('SMS');
-                    }, 1000);
-                }
-            } catch (error) {
-                Alert.alert("Thông báo", "Đăng ký thất bại!");
             }
-        };
-    }
+        } catch (error) {
+            Alert.alert("Thông báo", "Đăng ký thất bại!");
+        }
+    };
+
 
     const validateEmail = (email) => {
         const re = /\S+@\S+\.\S+/;
@@ -192,13 +192,13 @@ const Register = (prop) => {
                         <View style={[RegisterStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
                             <Image style={RegisterStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
                             <TextInput
-                                 value={password}
-                                 placeholder={passwordError || "Nhập mật khẩu"}
-                                 placeholderTextColor={passwordError ? 'red' : '#999'}
-                                 onChangeText={handlePasswordChange} 
-                                 style={[RegisterStyle.input, passwordError ? { color: 'red' } : {}]}
-                                 secureTextEntry={!isPasswordVisible}
-                                 />
+                                value={password}
+                                placeholder={passwordError || "Nhập mật khẩu"}
+                                placeholderTextColor={passwordError ? 'red' : '#999'}
+                                onChangeText={handlePasswordChange}
+                                style={[RegisterStyle.input, passwordError ? { color: 'red' } : {}]}
+                                secureTextEntry={!isPasswordVisible}
+                            />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                                 <Image
                                     style={RegisterStyle.eye_closed}
