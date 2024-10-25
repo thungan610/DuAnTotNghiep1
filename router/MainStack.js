@@ -34,7 +34,6 @@ import Delivering from "../src/Page/Order/Delivering.js";
 import Canceled from "../src/Page/Order/Canceled.js";
 import BotChat from "../src/Page/BotChat/index.js";
 import ZaloPay from "../src/Page/Payment/ZaloPay/index.js";
-import MapAdress from "../src/Page/Payment/AddAdress/MapAdress/map.js"
 import Policy from "../src/Page/Policy/Policy.js";
 import Information from "../src/Page/Policy/Information.js";
 import Preservation from "../src/Page/Policy/Preservation.js";
@@ -49,7 +48,7 @@ const MainStack = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName="Wellcome"
+            initialRouteName="AddAdress"
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
@@ -85,7 +84,6 @@ const MainStack = () => {
             <Stack.Screen name="Canceled" component={Canceled} />
             <Stack.Screen name="BotChat" component={BotChat} />
             <Stack.Screen name="ZaloPay" component={ZaloPay}/>
-            <Stack.Screen name="MapAdress" component={MapAdress}/>
             <Stack.Screen name="Policy" component={Policy}/>
             <Stack.Screen name="Information" component={Information}/>
             <Stack.Screen name="Preseration" component={Preservation}/>

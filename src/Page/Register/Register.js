@@ -180,6 +180,7 @@ const Register = (prop) => {
                                 value={phone}
                                 placeholder={phoneError || "Nhập số điện thoại"}
                                 placeholderTextColor={phoneError ? 'red' : '#999'}
+                                keyboardType='phone-pad'
                                 onChangeText={(text) => {
                                     setPhone(text);
                                     setPhoneError('');

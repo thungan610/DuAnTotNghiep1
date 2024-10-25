@@ -20,25 +20,22 @@ const HomeScreen = (prop) => {
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
     const apiLinks = [
-        'https://api-h89c.onrender.com/products/getProducts',         
-        'https://api-h89c.onrender.com/products/getVegetables',  
-        'https://api-h89c.onrender.com/products/getFruits',      
-        'https://api-h89c.onrender.com/products/getMeat',        
-        'https://api-h89c.onrender.com/products/getFish',       
-        'https://api-h89c.onrender.com/products/getSpices',      
-        'https://api-h89c.onrender.com/products/getDrinks'       
+        'https://api-h89c.onrender.com/products/getProducts',
+        'https://api-h89c.onrender.com/products/getVegetables',
+        'https://api-h89c.onrender.com/products/getFruits',
+        'https://api-h89c.onrender.com/products/getMeat',
+        'https://api-h89c.onrender.com/products/getFish',
+        'https://api-h89c.onrender.com/products/getSpices',
+        'https://api-h89c.onrender.com/products/getDrinks'
     ];
     const fetchProducts = async () => {
         try {
             const response = await axios.get(apiLinks[selectedCategory]);
-            console.log('Response status:', response.status);
             setProducts(response.data);
-            console.log('Dữ liệu đã được lưu vào state:', products);
         } catch (error) {
             console.error('Lỗi khi gọi API:', error);
         }
     };
-
     useEffect(() => {
         fetchProducts();
     }, [selectedCategory])
@@ -57,27 +54,47 @@ const HomeScreen = (prop) => {
     }, [currentIndex]);
 
     const renderProductItem = ({ item }) => {
+        const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
+
         return (
             <TouchableOpacity
                 onPress={() => {
+                    const Detail = {
+                        id: item._id,
+                        name: item.name,
+                        oum: item.oum,
+                        origin: item.origin,
+                        preserve: item.preserve,
+                        uses: item.uses,
+                        fiber: item.fiber,
+                        description: item.description,
+                        price: item.price,
+                        images: item.images || [imageUri],
+                    };
                     if (selectedCategory === 5 || selectedCategory === 6) {
-                        prop.navigation.navigate('Detailbottle', { products: item });
+                        prop.navigation.navigate('Detailbottle', { product: Detail });
                     } else {
-                        prop.navigation.navigate('Detail', { products: item });
+                        prop.navigation.navigate('Detail', { product: Detail });
                     }
                 }}
             >
                 <View style={HomeStyle.productContainer}>
-                    <Image source={{ uri: item.images?.[0] || 'default_image_url' }} style={HomeStyle.productImage} />
+                    <Image
+                        style={{
+                            width: 100,
+                            height: 80,
+                        }}
+                        source={{ uri: imageUri }}
+                    />
                     <View style={HomeStyle.productDetails}>
                         <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                         <View style={HomeStyle.priceall}>
                             <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
-                            <Text style={HomeStyle.productPrice}>{item.price ? `${item.price} VNĐ` : 'Giá không có'}</Text>
+                            <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
                         </View>
                     </View>
-                </View> 
+                </View>
             </TouchableOpacity>
         );
     };
@@ -151,7 +168,7 @@ const HomeScreen = (prop) => {
                 </ScrollView>
 
                 <FlatList
-                    data={products.data} // Truyền đúng dữ liệu từ API
+                    data={products.data || []} // Truyền đúng dữ liệu từ API
                     renderItem={renderProductItem}
                     keyExtractor={item => item._id.toString()} // Sử dụng _id từ API làm key
                     numColumns={2}

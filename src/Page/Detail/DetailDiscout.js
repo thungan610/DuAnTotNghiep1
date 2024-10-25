@@ -1,170 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import styleDetailDiscout from './styleDiscout';
+import styleDetailDiscout from './style';
 
-const Detail = (prop) => {
-
+const DetailDiscout = (prop) => {
+    const { product } = prop.route.params || {};
+    const [productDetails, setProductDetails] = useState(product);
+    const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    const [price, setPrice] = useState(0);
-    const [unitPrice, setUnitPrice] = useState(0);
-    const [productDetails, setProductDetails] = useState({});
+    const [images, setImages] = useState(product?.images || []);
+    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
+    const [price, setPrice] = useState(product?.price || 0);
     const [hasNotification, setHasNotification] = useState(false);
+
+    useEffect(() => {
+        if (product) {
+            setProductDetails(product);
+            setImages(product.images || []);
+            setUnitPrice(product.price || 0);
+            setPrice(product.price || 0);
+        }
+    }, [product]);
 
     useEffect(() => {
         setPrice(quantity * unitPrice);
     }, [quantity, unitPrice]);
 
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const response = await fetch('YOUR_NOTIFICATION_API_URL');
-                const data = await response.json();
-
-                // Nếu có thông báo mới, hiển thị chấm đỏ
-                if (data.newNotifications) {
-                    setHasNotification(true);
-                }
-            } catch (error) {
-                console.error('Lỗi khi kiểm tra thông báo:', error);
-            }
-        };
-
-        fetchNotifications();
-    }, []);
-
-    useEffect(() => {
-        const fetchProductDetails = async () => {
-            try {
-                const response = await fetch('YOUR_API_URL');
-                const data = await response.json();
-
-                setProductDetails({
-                    name: data.name,
-                    weight: data.weight,
-                    images: data.images,
-                    price: data.price,
-                    description: data.description,
-                    origin: data.origin,
-                    fiber: data.fiber,
-                    storage: data.storage,
-                    usage: data.usage
-                });
-
-                setUnitPrice(data.price);
-                setPrice(data.price * quantity);
-            } catch (error) {
-                console.error('Lỗi khi lấy thông tin sản phẩm từ API:', error);
-                Alert.alert('Lỗi', 'Không thể lấy thông tin sản phẩm');
-            }
-        };
-
-        fetchProductDetails();
-    }, [quantity]);
-
-
-    const images = [
-        'https://product.hstatic.net/1000282430/product/upload_deb91932d62348309be82c41136ba92d_c6ba4735a301452399d6a3541535a19c_master.jpg',
-        'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png',
-        'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png'
-    ]
-
-    const updateQuantity = (value) => {
-        setQuantity(value);
-        setPrice(value * unitPrice);
-    };
     const increaseQuantity = () => {
         setQuantity((prevQuantity) => prevQuantity + 1);
-        setPrice((quantity + 1) * unitPrice);
     };
 
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity((prevQuantity) => prevQuantity - 1);
-            setPrice((quantity - 1) * unitPrice);
         } else {
-            Alert.alert('Thông báo', ' Số lượng sản phẩm tối thiểu là 1 ')
+            Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
-
     const handleNotificationClick = () => {
         setHasNotification(false); // Ẩn chấm đỏ
         prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
     };
 
-    const handleAddToCart = async () => {
-        const product = {
-            name: 'Bắp cải trắng',
-            quantity: quantity,
-            price: 19000,
-            // Bạn có thể thêm các thuộc tính khác nếu cần
-        };
-
-        try {
-            const response = await fetch('YOUR_API_URL', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(product),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            Alert.alert('Thành công', 'Sản phẩm đã được thêm vào giỏ hàng');
-
-            // Điều hướng đến màn hình AddProduct và truyền sản phẩm
-            prop.navigation.navigate('AddProduct', { product: data });
-        } catch (error) {
-            console.error('Lỗi:', error);
-            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng');
-        }
+    const renderImages = () => {
+        return images.map((item, index) => (
+            <View key={index}>
+                <Image
+                    resizeMode='contain'
+                    source={{ uri: item }}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                    }}
+                />
+            </View>
+        ));
     };
 
-
-    const renderImages = () => {
-        return (productDetails.images || ['DEFAULT_IMAGE_URL']).map((item, index) => {
-            return (
-                <View key={index + 1}>
-                    <Image
-                        resizeMode='contain'
-                        source={{ uri: item }}
-                        style={{
-                            width: '100%',
-                            height: 400,
-                        }}
-                    />
-                </View>
-            )
-        })
-    }
     const renderDots = () => {
-        return (productDetails.images || ['DEFAULT_IMAGE_URL']).map((item, index) => {
-            return (
-                <View key={index + 1}
-                    style={{
-                        width: 10, height: 10,
-                        borderRadius: 5,
-                        backgroundColor: selectedIndex === index ? 'black' : 'gray',
-                        margin: 5,
-                    }} />
-            )
-        })
-    }
+        return images.map((_, index) => (
+            <View key={index} style={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: selectedIndex === index ? 'black' : 'gray',
+                margin: 5,
+            }} />
+        ));
+    };
 
     return (
         <View style={styleDetailDiscout.container}>
-
             <View style={styleDetailDiscout.head}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav', { product: selectedProduct })}>
                     <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
+
                 <View style={{
-                    flexDirection: 'row',
+                    flexDirection: 'row'
                 }}>
                     <TouchableOpacity style={{
                         borderRadius: 20,
@@ -197,61 +111,43 @@ const Detail = (prop) => {
                         >
                             {renderImages()}
                         </PagerView>
-
-                        <View style={{
-                            padding: 10,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
+                        <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             {renderDots()}
                         </View>
                     </View>
-
-                    <View
-                        style={{
-                            borderTopLeftRadius: 50,
-                            borderTopRightRadius: 50,
-                            backgroundColor: 'white',
-                            height: '100%',
-                            width: '100%',
-                        }}>
-                        <View
-                            style={{
-                                flexDirection: 'column',
-                            }} >
+                    <View style={{
+                        borderTopLeftRadius: 50,
+                        borderTopRightRadius: 50,
+                        backgroundColor: 'white',
+                        height: '100%',
+                        width: '100%',
+                    }}>
+                        <View style={{ flexDirection: 'column' }}>
                             <View style={styleDetailDiscout.bodyText}>
                                 <Text style={styleDetailDiscout.textBody}>
                                     {productDetails.name || 'Tên sản phẩm'}
                                 </Text>
                                 <Text style={styleDetailDiscout.textkg}>
-                                    {productDetails.weight ? `${productDetails.weight}kg` : 'Khối lượng sản phẩm'}
+                                    {productDetails.oum ? `${productDetails.oum}` : 'Khối lượng sản phẩm'}
                                 </Text>
                             </View>
-
                             <View style={styleDetailDiscout.butonView}>
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        backgroundColor: '#EAEAEA',
-                                        width: 100,
-                                        height: 44,
-                                        alignItems: 'center',
-                                        borderRadius: 14,
-                                        padding: 4,
-                                        justifyContent: 'space-between',
-                                    }}>
-                                    <TouchableOpacity style={{
-                                        marginLeft: 6
-                                    }} onPress={decreaseQuantity}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    backgroundColor: '#EAEAEA',
+                                    width: 100,
+                                    height: 44,
+                                    alignItems: 'center',
+                                    borderRadius: 14,
+                                    padding: 4,
+                                    paddingHorizontal: 12,
+                                    justifyContent: 'space-between',
+                                }}>
+                                    <TouchableOpacity onPress={decreaseQuantity}>
                                         <Text style={styleDetailDiscout.textTout}>-</Text>
                                     </TouchableOpacity>
-
                                     <Text style={styleDetailDiscout.toutText}>{quantity}</Text>
-
-                                    <TouchableOpacity style={{
-                                        marginRight: 6
-                                    }} onPress={increaseQuantity}>
+                                    <TouchableOpacity onPress={increaseQuantity}>
                                         <Text style={styleDetailDiscout.textTout}>+</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -273,47 +169,43 @@ const Detail = (prop) => {
                                             padding: 5
                                         }}>
                                         <Image style={styleDetailDiscout.dolar} source={require('../../assets/Dollar.png')} />
-                                        <Text style={styleDetailDiscout.price}>{price.toLocaleString()}đ</Text>
+                                        <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
                                     </View>
                                 </View>
                             </View>
                         </View>
-
                         <Text style={styleDetailDiscout.textunderline}>Thông tin sản phẩm</Text>
-
                         <View style={styleDetailDiscout.scroollview}>
                             <View style={styleDetailDiscout.viewScroll}>
                                 <Text style={styleDetailDiscout.scrollText}>
                                     {productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}
                                 </Text>
-
                             </View>
-
                             <View style={styleDetailDiscout.origin}>
                                 <View style={styleDetailDiscout.textoriginRow}>
-                                    <Text style={styleDetailDiscout.textorigin}>Xuất xứ  :</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>Xuất xứ:</Text>
                                     <Text style={styleDetailDiscout.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetailDiscout.textoriginRow}>
-                                    <Text style={styleDetailDiscout.textorigin}>Chất sơ  :</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>Chất sơ:</Text>
                                     <Text style={styleDetailDiscout.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
                                 </View>
                                 <View style={styleDetailDiscout.textoriginRow}>
-                                    <Text style={styleDetailDiscout.textorigin}>Bảo quản  :</Text>
-                                    <Text style={styleDetailDiscout.textorigin}>{productDetails.storage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>Bảo quản:</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetailDiscout.textoriginRow}>
-                                    <Text style={styleDetailDiscout.textorigin}>Công dụng :</Text>
-                                    <Text style={styleDetailDiscout.textorigin}>{productDetails.usage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>Công dụng:</Text>
+                                    <Text style={styleDetailDiscout.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
                                 </View>
-                            </View>
 
+                            </View>
                             <View style={{
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 paddingVertical: 40
                             }}>
-                                <TouchableOpacity onPress={handleAddToCart} style={styleDetailDiscout.headerFooter}>
+                                <TouchableOpacity style={styleDetailDiscout.headerFooter}>
                                     <Text style={styleDetailDiscout.textFooter}>Thêm vào giỏ hàng</Text>
                                 </TouchableOpacity>
                             </View>
@@ -321,7 +213,8 @@ const Detail = (prop) => {
                     </View>
                 </View>
             </ScrollView>
-        </View >
+        </View>
     );
 };
-export default Detail;
+
+export default DetailDiscout;

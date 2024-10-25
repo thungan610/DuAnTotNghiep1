@@ -16,7 +16,7 @@ const CartItem = ({ item, toggleSelect, updateQuantity }) => (
         <View style={AddProductStyle.itemDetails}>
             <Text style={AddProductStyle.itemName}>{item.name}</Text>
             <Text style={AddProductStyle.itemCategory}>{item.category}</Text>
-            <Text style={AddProductStyle.itemPrice}>{item.price.toLocaleString()}đ</Text>
+            <Text style={AddProductStyle.itemPrice}>{(item.price ?? 0).toLocaleString()}.000đ</Text>
         </View>
         <View style={AddProductStyle.quantityContainer}>
             <TouchableOpacity onPress={() => updateQuantity(item.id, 'decrease')} style={AddProductStyle.quantityButton}>
@@ -52,26 +52,20 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 const AddProduct = ({ prop, route }) => {
     const product = route.params;
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [cartItems, setCartItems] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [itemsToDelete, setItemsToDelete] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchCartItems = async () => {
-    //         try {
-    //             const response = await fetch('https://yourapi.com/get-cart');
-    //             const data = await response.json();
-    //             setCartItems(data.items);
-    //         } catch (error) {
-    //             console.error('Error fetching cart items:', error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
+    const { id, name, price, image, quantity, category } = route.params;
 
-    //     fetchCartItems();
-    // }, []);
+    const [cartItems, setCartItems] = useState(route.params ? [{
+        id: id,
+        name: name,
+        price: price || 0, 
+        category: category || '', 
+        image: image,
+        quantity: quantity || 1, 
+        selected: false 
+    }] : []);
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
@@ -107,21 +101,21 @@ const AddProduct = ({ prop, route }) => {
     };
 
     const totalAmount = cartItems
-        .filter(item => item.selected)
-        .reduce((total, item) => total + item.quantity * item.price, 0);
+    .filter(item => item.selected)
+    .reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 0), 0);
 
-    const handleCheckout = async () => {
-        if (!isLoggedIn) {
-            prop.navigation.navigate('Login_required');
-        } else {
-            try {
-                await updateCart(cartItems);
-                prop.navigation.navigate('NextPayment');
-            } catch (error) {
-                Alert.alert("Lỗi", error.message);
-            }
-        }
-    };
+    // const handleCheckout = async () => {
+    //     if (!isLoggedIn) {
+    //         prop.navigation.navigate('Login_required');
+    //     } else {
+    //         try {
+    //             await updateCart(cartItems);
+    //             prop.navigation.navigate('NextPayment');
+    //         } catch (error) {
+    //             Alert.alert("Lỗi", error.message);
+    //         }
+    //     }
+    // };
 
     // const updateCart = async (cartItems) => {
     //     try {
@@ -165,7 +159,7 @@ const AddProduct = ({ prop, route }) => {
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={item => item._id ? item._id.toString() : Math.random().toString()}
                     contentContainerStyle={AddProductStyle.list}
                 />
 
@@ -175,7 +169,7 @@ const AddProduct = ({ prop, route }) => {
                         <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
                         <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}đ</Text>
                     </View>
-                    <TouchableOpacity onPress={handleCheckout} style={PayMethodStyle.BtnSuss}>
+                    <TouchableOpacity style={PayMethodStyle.BtnSuss}>
                         <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>
