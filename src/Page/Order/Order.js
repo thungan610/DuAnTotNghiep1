@@ -1,78 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import axios from 'axios';
 
 const Order = (prop) => {
+  const [orders, setOrders] = useState([]);
   const [selectedTabs, setSelectedTabs] = useState(0);
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
-  const orders = {
-    'Chờ xác nhận': [
-      {
-        id: 1,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 29000,
-        status: 'Đang xử lý',
-        image: require('../../../src/assets/image/image1.png')
-      },
-    ],
-    'Đang giao': [
-      {
-        id: 1,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 25000,
-        status: 'Đang vận chuyển',
-        image: require('../../../src/assets/image/image1.png'),
-
-      },
-      {
-        id: 2,
-        name: 'Sườn non',
-        quantity: 1,
-        price: 55000,
-        status: 'Đang vận chuyển',
-        image: require('../../../src/assets/image/image4.png')
-      },
-    ],
-    'Đã nhận': [
-      {
-        id: 1,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 29000,
-        status: 'Đã nhận',
-        image: require('../../../src/assets/image/image1.png')
-      },
-      {
-        id: 2,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 29000,
-        status: 'Đã nhận',
-        image: require('../../../src/assets/image/image1.png')
-      },
-    ],
-    'Đã hủy': [
-      {
-        id: 1,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 25000,
-        status: 'Đã hủy',
-        image: require('../../../src/assets/image/image1.png')
-      },
-      {
-        id: 2,
-        name: 'Bắp cải trắng',
-        quantity: 1,
-        price: 25000,
-        status: 'Đã hủy',
-        image: require('../../../src/assets/image/image1.png')
-      },
-    ],
+  const apiUrls = {
+    'Chờ xác nhận': 'https://your-api-url.com/Processing',  
+    'Đang giao': 'https://your-api-url.com/Delivering',    
+    'Đã nhận': 'https://your-api-url.com/Done',      
+    'Đã hủy': 'https://your-api-url.com/Canceled',         
   };
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const currentTab = tabs[selectedTabs]; // Lấy tên tab hiện tại
+        const response = await axios.get(apiUrls[currentTab]); // Gọi API theo tab hiện tại
+        setOrders(response.data); // Cập nhật trạng thái đơn hàng với dữ liệu nhận được
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      } 
+    };
+
+    fetchOrders(); // Gọi hàm fetchOrders khi component được mount hoặc tab thay đổi
+  }, [selectedTabs]);
+
+
   useEffect(() => {
     const { selectedTab } = prop.route.params || {};
     if (selectedTab !== undefined) {
@@ -80,8 +37,7 @@ const Order = (prop) => {
     }
   }, [prop.route.params]);
 
-  const currentOrders = orders[tabs[selectedTabs]] || [];
-
+  const currentOrders = orders;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -122,7 +78,7 @@ const Order = (prop) => {
           alignItems: 'center',
         }}>
           <View style={OrderStyle.borderimage}>
-            <Image source={item.image} style={OrderStyle.image} />
+          <Image source={{ uri: item.image }} style={OrderStyle.image} />
           </View>
           {item.status === 'Đã nhận' && (
             <Text style={OrderStyle.completedText}>Hoàn thành</Text>
@@ -131,7 +87,7 @@ const Order = (prop) => {
         <View style={OrderStyle.orderInfo}>
           <Text style={OrderStyle.orderName}>{item.name}</Text>
           <Text style={OrderStyle.orderQuantity}>SL: {item.quantity}</Text>
-          <Text style={OrderStyle.orderPrice}>Tổng tiền: {item.price.toLocaleString('vi-VN')}đ</Text>
+          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.price).toLocaleString('vi-VN')}đ</Text>
 
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
@@ -185,7 +141,7 @@ const Order = (prop) => {
       <FlatList
         data={currentOrders}
         renderItem={renderOrderCard}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item._id.toString()}
         style={OrderStyle.orderContainer}
       />
     </View>

@@ -12,10 +12,12 @@ const Login = (prop) => {
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
     const [rememberAccount, setRememberAccount] = useState(false);
-    
+
     const BtnLogin = async () => {
         let hasError = false;
         setLoginError('');
+        setEmailError('');
+        setPasswordError('');
     
         // Kiểm tra email
         if (email === '') {
@@ -38,10 +40,10 @@ const Login = (prop) => {
             }
         }
     
-        if (hasError) return;
+        if (hasError) return;  // Dừng nếu có lỗi
     
         try {
-            const response = await axios.post('http://172.16.92.46:6677/users/login', {
+            const response = await axios.post('https://api-h89c.onrender.com/users/login', {
                 email: email,
                 password: password,
             });
@@ -55,18 +57,19 @@ const Login = (prop) => {
                 }
     
                 setTimeout(() => {
-                    prop.navigation.navigate('NextPayment'); 
+                    prop.navigation.navigate('NextPayment');
                 }, 1000);
             }
         } catch (error) {
-            Alert.alert("Thông báo", error.response ? error.response.data.message : "Đăng nhập thất bại!");
+            console.log(error.response?.data || error.message);
+            Alert.alert("Thông báo", error.response?.data?.message || "Đăng nhập thất bại!");
         }
-    };    
-
+    };
+    
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         setEmail('');
-        return emailRegex.test(email);
+        return emailRegex.test(email);  // Trả về true hoặc false
     };
 
     const validatePassword = (password) => {
@@ -89,7 +92,6 @@ const Login = (prop) => {
         return '';
     };
 
-    
     useEffect(() => {
         const loadAccount = async () => {
             try {
@@ -117,7 +119,6 @@ const Login = (prop) => {
     const handleRememberAccount = () => {
         setRememberAccount(!rememberAccount);
     };
-
 
     return (
         <View style={LoginStyle.container}>
