@@ -1,75 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import styleDetailbottle from './styleDetailbottle';
+import styleDetailbottle from './style';
 
 const Detailbottle = (prop) => {
-
+    const { product } = prop.route.params || {};
+    const [productDetails, setProductDetails] = useState(product);
+    const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    const [price, setPrice] = useState(0);
-    const [unitPrice, setUnitPrice] = useState(0);
-    const [productDetails, setProductDetails] = useState({});
+    const [images, setImages] = useState(product?.images || []);
+    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
+    const [price, setPrice] = useState(product?.price || 0);
     const [hasNotification, setHasNotification] = useState(false);
+
+    useEffect(() => {
+        if (product) {
+            setProductDetails(product);
+            setImages(product.images || []);
+            setUnitPrice(product.price || 0);
+            setPrice(product.price || 0);
+        }
+    }, [product]);
 
     useEffect(() => {
         setPrice(quantity * unitPrice);
     }, [quantity, unitPrice]);
-
-
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const response = await fetch('YOUR_NOTIFICATION_API_URL');
-                const data = await response.json();
-
-                // Nếu có thông báo mới, hiển thị chấm đỏ
-                if (data.newNotifications) {
-                    setHasNotification(true);
-                }
-            } catch (error) {
-                console.error('Lỗi khi kiểm tra thông báo:', error);
-            }
-        };
-
-        fetchNotifications();
-    }, []);
-
-    useEffect(() => {
-        const fetchProductDetails = async () => {
-            try {
-                const response = await fetch('YOUR_API_URL');
-                const data = await response.json();
-
-                setProductDetails({
-                    name: data.name,
-                    weight: data.weight,
-                    images: data.images,
-                    price: data.price,
-                    description: data.description,
-                    origin: data.origin,
-                    fiber: data.fiber,
-                    storage: data.storage,
-                    usage: data.usage
-                });
-
-                setUnitPrice(data.price);
-                setPrice(data.price * quantity);
-            } catch (error) {
-                console.error('Lỗi khi lấy thông tin sản phẩm từ API:', error);
-                Alert.alert('Lỗi', 'Không thể lấy thông tin sản phẩm');
-            }
-        };
-
-        fetchProductDetails();
-    }, [quantity]);
-
-
-    const images = [
-        'https://pastaparadise.com.vn/wp-content/uploads/2021/01/cocazero.jpg',
-        'https://cdn.tgdd.vn/Products/Images/2443/190309/bhx/nuoc-ngot-coca-cola-light-lon-330ml-202209111853245462.jpg',
-        'https://cdn.tgdd.vn/Products/Images/2443/76452/bhx/nuoc-ngot-coca-cola-zero-320ml-202201131326507695.jpg'
-    ]
 
     const updateQuantity = (value) => {
         setQuantity((prevQuantity) => prevQuantity + value);
@@ -90,72 +46,37 @@ const Detailbottle = (prop) => {
             Alert.alert('Thông báo', ' Số lượng sản phẩm tối thiểu là 1 ')
         }
     };
-
     const handleNotificationClick = () => {
         setHasNotification(false); // Ẩn chấm đỏ
         prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
     };
 
-    const handleAddToCart = async () => {
-        const product = {
-            name: 'Bắp cải trắng',
-            quantity: quantity,
-            price: 19000,
-            // Bạn có thể thêm các thuộc tính khác nếu cần
-        };
-
-        try {
-            const response = await fetch('YOUR_API_URL', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(product),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            Alert.alert('Thành công', 'Sản phẩm đã được thêm vào giỏ hàng');
-
-            // Điều hướng đến màn hình AddProduct và truyền sản phẩm
-            prop.navigation.navigate('AddProduct', { product: data });
-        } catch (error) {
-            console.error('Lỗi:', error);
-            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng');
-        }
-    };
     const renderImages = () => {
-        return (productDetails.images || ['DEFAULT_IMAGE_URL']).map((item, index) => {
-            return (
-                <View key={index + 1}>
-                    <Image
-                        resizeMode='contain'
-                        source={{ uri: item }}
-                        style={{
-                            width: '100%',
-                            height: 400,
-                        }}
-                    />
-                </View>
-            )
-        })
-    }
-    const renderDots = () => {
-        return (productDetails.images || ['DEFAULT_IMAGE_URL']).map((item, index) => {
-            return (
-                <View key={index + 1}
+        return images.map((item, index) => (
+            <View key={index}>
+                <Image
+                    resizeMode='contain'
+                    source={{ uri: item }}
                     style={{
-                        width: 10, height: 10,
-                        borderRadius: 5,
-                        backgroundColor: selectedIndex === index ? 'black' : 'gray',
-                        margin: 5,
-                    }} />
-            )
-        })
-    }
+                        width: '100%',
+                        height: '100%',
+                    }}
+                />
+            </View>
+        ));
+    };
+
+    const renderDots = () => {
+        return images.map((_, index) => (
+            <View key={index} style={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: selectedIndex === index ? 'black' : 'gray',
+                margin: 5,
+            }} />
+        ));
+    };
 
     return (
         <View style={styleDetailbottle.container}>
@@ -226,7 +147,7 @@ const Detailbottle = (prop) => {
                                     {productDetails.name || 'Tên sản phẩm'}
                                 </Text>
                                 <Text style={styleDetailbottle.textkg}>
-                                    {productDetails.weight ? `${productDetails.weight}kg` : 'Khối lượng sản phẩm'}
+                                    {productDetails.oum ? `${productDetails.oum}` : 'Khối lượng sản phẩm'}
                                 </Text>
                             </View>
                             <View style={styleDetailbottle.butonView}>
@@ -263,7 +184,7 @@ const Detailbottle = (prop) => {
                                         padding: 5
                                     }}>
                                     <Image style={styleDetailbottle.dolar} source={require('../../assets/Dollar.png')} />
-                                    <Text style={styleDetailbottle.price}>{price.toLocaleString()}đ</Text>
+                                    <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>
                         </View>
@@ -289,11 +210,11 @@ const Detailbottle = (prop) => {
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
                                     <Text style={styleDetailbottle.textorigin}>Bảo quản  :</Text>
-                                    <Text style={styleDetailbottle.textorigin}>{productDetails.storage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetailbottle.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
                                     <Text style={styleDetailbottle.textorigin}>Công dụng :</Text>
-                                    <Text style={styleDetailbottle.textorigin}>{productDetails.usage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetailbottle.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
                                 </View>
                             </View>
 
@@ -314,7 +235,7 @@ const Detailbottle = (prop) => {
                                 justifyContent: 'center',
                                 paddingVertical: 40
                             }}>
-                                <TouchableOpacity onPress={handleAddToCart} style={styleDetailbottle.headerFooter}>
+                                <TouchableOpacity style={styleDetailbottle.headerFooter}>
                                     <Text style={styleDetailbottle.textFooter}>Thêm vào giỏ hàng</Text>
                                 </TouchableOpacity>
                             </View>

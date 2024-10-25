@@ -1,42 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import axios from 'axios';
 import PagerView from 'react-native-pager-view';
 import styleDetail from './style';
 
 const Detail = (prop) => {
     const { product } = prop.route.params || {};
     const [productDetails, setProductDetails] = useState(product);
+    const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [selectedProduct, setselectedProduct] = useState();
     const [quantity, setQuantity] = useState(1);
-    const [images, setImages] = useState([]);
-    const [unitPrice, setUnitPrice] = useState(0);
-    const [price, setPrice] = useState(0);
+    const [images, setImages] = useState(product?.images || []);
+    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
+    const [price, setPrice] = useState(product?.price || 0);
+    const [hasNotification, setHasNotification] = useState(false);
 
     useEffect(() => {
-        const fetchProductDescription = async () => {
-            try {
-                // Kiểm tra xem product.id có tồn tại không
-                if (product.id) {
-                    const response = await axios.get(`https://api-h89c.onrender.com/carts/addCart_App/${product.id}`);
-                    // ...
-                } else {
-                    console.error('ID sản phẩm không tồn tại');
-                }
-            } catch (error) {
-                console.error('Lỗi khi lấy mô tả sản phẩm từ API:', error.message);
-                Alert.alert('Lỗi', `Không thể lấy mô tả sản phẩm: ${error.message}`);
-            }
-        };
-
-        fetchProductDescription();
-    }, [product. id]);
-
-    useEffect(() => {
-        if (unitPrice) {
-            setPrice(quantity * unitPrice);
+        if (product) {
+            setProductDetails(product);
+            setImages(product.images || []);
+            setUnitPrice(product.price || 0);
+            setPrice(product.price || 0);
         }
+    }, [product]);
+
+    useEffect(() => {
+        setPrice(quantity * unitPrice);
     }, [quantity, unitPrice]);
 
     const increaseQuantity = () => {
@@ -50,6 +38,22 @@ const Detail = (prop) => {
             Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
+    const handleNotificationClick = () => {
+        setHasNotification(false); // Ẩn chấm đỏ
+        prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
+    };
+
+    const handleAddToCart = () => {
+        const cartItem = {
+            name: productDetails.name,
+            price: price,
+            quantity: quantity, 
+            category: productDetails.category,
+            image: images[selectedIndex], 
+        };
+        prop.navigation.navigate('AddProduct', { cartItem: cartItem }); // Điều hướng đến màn hình giỏ hàng
+    };
+    
 
     const renderImages = () => {
         return images.map((item, index) => (
@@ -59,7 +63,7 @@ const Detail = (prop) => {
                     source={{ uri: item }}
                     style={{
                         width: '100%',
-                        height: 360,
+                        height: '100%',
                     }}
                 />
             </View>
@@ -81,21 +85,31 @@ const Detail = (prop) => {
     return (
         <View style={styleDetail.container}>
             <View style={styleDetail.head}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav',{ product: selectedProduct })}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav', { product: selectedProduct })}>
                     <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
-                <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity
-                        style={{
-                            borderRadius: 20,
-                            backgroundColor: 'white',
-                            borderWidth: 1,
-                            borderColor: 'white',
-                            marginRight: 6
-                        }}
-                        onPress={() => prop.navigation.navigate('AddProductsScreen')}
-                    >
+
+                <View style={{
+                    flexDirection: 'row'
+                }}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        marginRight: 6
+                    }}
+                        onPress={() => prop.navigation.navigate('AddProductsScreen')}>
                         <Image style={styleDetail.iconcart} source={require('../../assets/home/cart.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                    }}
+                        onPress={handleNotificationClick}>
+                        <Image style={styleDetail.iconnotifi} source={require('../../assets/home/notifi.png')} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -126,7 +140,7 @@ const Detail = (prop) => {
                                     {productDetails.name || 'Tên sản phẩm'}
                                 </Text>
                                 <Text style={styleDetail.textkg}>
-                                    {productDetails.weight ? `${productDetails.weight}kg` : 'Khối lượng sản phẩm'}
+                                    {productDetails.oum ? `${productDetails.oum}` : 'Khối lượng sản phẩm'}
                                 </Text>
                             </View>
                             <View style={styleDetail.butonView}>
@@ -138,6 +152,7 @@ const Detail = (prop) => {
                                     alignItems: 'center',
                                     borderRadius: 14,
                                     padding: 4,
+                                    paddingHorizontal: 12,
                                     justifyContent: 'space-between',
                                 }}>
                                     <TouchableOpacity onPress={decreaseQuantity}>
@@ -154,7 +169,7 @@ const Detail = (prop) => {
                                     padding: 5
                                 }}>
                                     <Image style={styleDetail.dolar} source={require('../../assets/Dollar.png')} />
-                                    <Text style={styleDetail.price}>{price.toLocaleString()}đ</Text>
+                                    <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>
                         </View>
@@ -176,19 +191,20 @@ const Detail = (prop) => {
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
                                     <Text style={styleDetail.textorigin}>Bảo quản:</Text>
-                                    <Text style={styleDetail.textorigin}>{productDetails.storage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
                                     <Text style={styleDetail.textorigin}>Công dụng:</Text>
-                                    <Text style={styleDetail.textorigin}>{productDetails.usage || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
                                 </View>
+
                             </View>
                             <View style={{
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 paddingVertical: 40
                             }}>
-                                <TouchableOpacity style={styleDetail.headerFooter}>
+                                <TouchableOpacity onPress={handleAddToCart} style={styleDetail.headerFooter}>
                                     <Text style={styleDetail.textFooter}>Thêm vào giỏ hàng</Text>
                                 </TouchableOpacity>
                             </View>

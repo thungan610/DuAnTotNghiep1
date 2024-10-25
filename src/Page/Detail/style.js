@@ -22,8 +22,9 @@ const styleDetail = StyleSheet.create({
         marginTop: 6
     },
     pagerView: {
+        marginTop:20,
         width: '100%',
-        height: 260,
+        height: 220,
     },
     bodyText: {
         padding: 20,
