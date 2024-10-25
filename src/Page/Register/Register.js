@@ -87,7 +87,7 @@ const Register = (prop) => {
             }, 1000);
         } try {
             // Gọi API đăng ký
-            const response = await axios.post('http://172.16.92.46:6677/users/register', {
+            const response = await axios.post('https://api-h89c.onrender.com/users/register', {
                 email: email,
                 password: password,
                 name: FullName,

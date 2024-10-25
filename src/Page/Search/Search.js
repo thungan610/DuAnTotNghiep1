@@ -7,21 +7,22 @@ const SearchScreen = (prop) => {
   const [showAllSearches, setShowAllSearches] = useState(false);
   
   // Danh sách sản phẩm để tìm kiếm
-  const productinsearch = [
-    { id: 1, name: 'Bắp cải trắng', weight: '1 kg', price: '19.000đ', image: require('../../assets/image/image1.png') },
-    { id: 2, name: 'Chanh không hạt', weight: '1 kg', price: '9.000đ', image: require('../../assets/image/image2.png') },
-    { id: 3, name: 'Khoai tây', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image3.png') },
-    { id: 4, name: 'Sườn non', weight: '1 kg', price: '45.000đ', image: require('../../assets/image/image4.png') },
-    { id: 5, name: 'Thịt nạt', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image5.png') },
-    { id: 6, name: 'Rau cải', weight: '1 kg', price: '10.000đ', image: require('../../assets/image/image6.png') },
-  ];
+  // const productinsearch = [
+  //   { id: 1, name: 'Bắp cải trắng', weight: '1 kg', price: '19.000đ', image: require('../../assets/image/image1.png') },
+  //   { id: 2, name: 'Chanh không hạt', weight: '1 kg', price: '9.000đ', image: require('../../assets/image/image2.png') },
+  //   { id: 3, name: 'Khoai tây', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image3.png') },
+  //   { id: 4, name: 'Sườn non', weight: '1 kg', price: '45.000đ', image: require('../../assets/image/image4.png') },
+  //   { id: 5, name: 'Thịt nạt', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image5.png') },
+  //   { id: 6, name: 'Rau cải', weight: '1 kg', price: '10.000đ', image: require('../../assets/image/image6.png') },
+  // ];
 
   const handleSearch = (text) => {
     setSearchText(text);
   };
 
   const performSearch = () => {
-    if (searchText.trim() === '') return;
+    if (searchText.trim() === '')
+      return;
 
     if (!recentSearches.includes(searchText)) {
       setRecentSearches(prevSearches => {
