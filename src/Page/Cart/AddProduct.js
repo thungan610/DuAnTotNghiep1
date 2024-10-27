@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import PayMethodStyle from '../Payment/PayMethod/style';
+import axios from 'axios';
 
 const CartItem = ({ item, toggleSelect, updateQuantity }) => (
     <View style={AddProductStyle.itemContainer}>
@@ -11,12 +12,14 @@ const CartItem = ({ item, toggleSelect, updateQuantity }) => (
             />
         </TouchableOpacity>
         <View style={AddProductStyle.borderImage}>
-            <Image source={item.image} style={AddProductStyle.image} />
+            <Image source={{ uri: item.image }} style={AddProductStyle.image} />
         </View>
         <View style={AddProductStyle.itemDetails}>
             <Text style={AddProductStyle.itemName}>{item.name}</Text>
             <Text style={AddProductStyle.itemCategory}>{item.category}</Text>
-            <Text style={AddProductStyle.itemPrice}>{(item.price ?? 0).toLocaleString()}.000đ</Text>
+            <Text style={AddProductStyle.itemPrice}>
+                {((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()}.000đ
+            </Text>
         </View>
         <View style={AddProductStyle.quantityContainer}>
             <TouchableOpacity onPress={() => updateQuantity(item.id, 'decrease')} style={AddProductStyle.quantityButton}>
@@ -50,96 +53,95 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 );
 
 const AddProduct = ({ prop, route }) => {
-    const product = route.params;
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { data } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
-    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [cartItems, setCartItems] = useState([]);
 
-    const { id, name, price, image, quantity, category } = route.params;
+    useEffect(() => {
+        if (data) {
 
-    const [cartItems, setCartItems] = useState(route.params ? [{
-        id: id,
-        name: name,
-        price: price || 0, 
-        category: category || '', 
-        image: image,
-        quantity: quantity || 1, 
-        selected: false 
-    }] : []);
+            axios.post('https://api-h89c.onrender.com/carts/addCart_App', {
+                name: data.name,
+                price: data.price,
+                category: data.category,
+                image: data.image,
+                quantity: data.quantity || 1,
+            })
+
+                .then(response => {
+                    setCartItems(prevItems => [
+                        ...prevItems,
+                        {
+                            ...data,
+                            quantity: data.quantity || 1,
+                            selected: false,
+                        },
+                    ]);
+                })
+                .catch(error => {
+                    if (error.response) {
+                        // Thông báo lỗi cho người dùng
+                        Alert.alert("Thông báo", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+                        console.error('Error data:', error.response.data);
+                        console.error('Error status:', error.response.status);
+                        console.error('Error headers:', error.response.headers);
+                    } else if (error.request) {
+                        console.error('Error request:', error.request);
+                    } else {
+                        console.error('Error message:', error.message);
+                    }
+                });
+        }
+    }, [data]);
+
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
             prevItems.map(item => item.id === id ? { ...item, selected: !item.selected } : item)
         );
-    };
+    }; 
 
-    const updateQuantity = async (id, action) => {
+    const updateQuantity = (id, action) => {
         setCartItems(prevItems =>
             prevItems.map(item => {
                 if (item.id === id) {
                     const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
-                    return { ...item, quantity: newQuantity };
+                    return {
+                        ...item,
+                        quantity: newQuantity,
+                    };
                 }
                 return item;
             })
         );
     };
 
+
+    useEffect(() => {
+        const calculatedTotal = cartItems.reduce(
+            (total, item) => total + (item.price * (item.quantity || 1)), // Tính tổng giá
+            0
+        );
+        setTotalAmount(calculatedTotal);
+    }, [cartItems]);
+
+
+
+
     const removeSelectedItems = () => {
         setCartItems(prevItems => prevItems.filter(item => !item.selected));
         setModalVisible(false);
     };
-
+    
     const confirmDelete = () => {
         const selectedItems = cartItems.filter(item => item.selected);
         if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Không có sản phẩm để xóa");
         } else {
-            setItemsToDelete(selectedItems);
             setModalVisible(true);
         }
     };
-
-    const totalAmount = cartItems
-    .filter(item => item.selected)
-    .reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 0), 0);
-
-    // const handleCheckout = async () => {
-    //     if (!isLoggedIn) {
-    //         prop.navigation.navigate('Login_required');
-    //     } else {
-    //         try {
-    //             await updateCart(cartItems);
-    //             prop.navigation.navigate('NextPayment');
-    //         } catch (error) {
-    //             Alert.alert("Lỗi", error.message);
-    //         }
-    //     }
-    // };
-
-    // const updateCart = async (cartItems) => {
-    //     try {
-    //         const response = await fetch('https://yourapi.com/update-cart', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ items: cartItems }),
-    //         });
-    
-    //         if (!response.ok) {
-    //             const textResponse = await response.text(); 
-    //             console.error('Error response:', textResponse); 
-    //             throw new Error('Cập nhật giỏ hàng không thành công');
-    //         }
-    
-    //         return await response.json(); 
-    //     } catch (error) {
-    //         console.error('Error fetching cart items:', error);
-    //         throw error; 
-    //     }
-    // };
-    
 
     return (
         <View style={AddProductStyle.container}>
@@ -149,31 +151,38 @@ const AddProduct = ({ prop, route }) => {
                     <Image source={require("../../../src/assets/Trash.png")} />
                 </TouchableOpacity>
             </View>
- 
-                <View style={{ width:'100%', height:'100%', justifyContent: 'center', alignItems: 'center' }}>
+
+            {cartItems.length === 0 ? (
+                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontSize: 18, color: '#666' }}>Hiện chưa có sản phẩm!!!</Text>
                 </View>
-
+            ) : (
                 <FlatList
                     data={cartItems}
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={item => item._id ? item._id.toString() : Math.random().toString()}
+                    keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
                     contentContainerStyle={AddProductStyle.list}
+                    initialNumToRender={10} // Số lượng item render ban đầu
+                    maxToRenderPerBatch={5} // Số lượng item tối đa render mỗi lần
                 />
+
+
+            )}
 
             {totalAmount > 0 && (
                 <View>
                     <View style={AddProductStyle.total}>
                         <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
-                        <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}đ</Text>
+                        <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}.000đ</Text>
                     </View>
                     <TouchableOpacity style={PayMethodStyle.BtnSuss}>
                         <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>
             )}
+
             <ConfirmationModal
                 visible={modalVisible}
                 onConfirm={removeSelectedItems}
@@ -284,7 +293,7 @@ const AddProductStyle = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0,5 )'
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
         width: '80%',
@@ -298,11 +307,6 @@ const AddProductStyle = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    itemRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -310,22 +314,24 @@ const AddProductStyle = StyleSheet.create({
         marginTop: 20,
     },
     cancelButton: {
-        backgroundColor: '#75D379',
+        flex: 1,
+        backgroundColor: '#e0e0e0',
         padding: 10,
         borderRadius: 5,
-        flex: 1,
         marginRight: 5,
+        alignItems: 'center',
     },
     confirmButton: {
-        backgroundColor: '#FF7B7B',
+        flex: 1,
+        backgroundColor: '#f44336',
         padding: 10,
         borderRadius: 5,
-        flex: 1,
         marginLeft: 5,
+        alignItems: 'center',
     },
     buttonText: {
         color: 'white',
-        textAlign: 'center',
+        fontWeight: 'bold',
     },
 });
 

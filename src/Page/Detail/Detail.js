@@ -6,6 +6,7 @@ import styleDetail from './style';
 const Detail = (prop) => {
     const { product } = prop.route.params || {};
     const [productDetails, setProductDetails] = useState(product);
+    const [selectedQuantity, setselectedQuantity] = useState(1);
     const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -15,7 +16,7 @@ const Detail = (prop) => {
     const [hasNotification, setHasNotification] = useState(false);
 
     useEffect(() => {
-        if (product) {
+        if (product) {  
             setProductDetails(product);
             setImages(product.images || []);
             setUnitPrice(product.price || 0);
@@ -39,19 +40,19 @@ const Detail = (prop) => {
         }
     };
     const handleNotificationClick = () => {
-        setHasNotification(false); // Ẩn chấm đỏ
-        prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
+        setHasNotification(false); 
+        prop.navigation.navigate('NotifiScreen'); 
     };
 
     const handleAddToCart = () => {
-        const cartItem = {
-            name: productDetails.name,
-            price: price,
-            quantity: quantity, 
-            category: productDetails.category,
-            image: images[selectedIndex], 
+        const data = {
+            name: product.name,
+            price: product.price,
+            quantity: selectedQuantity,
+            category: product.category,
+            image: product.images[0],
         };
-        prop.navigation.navigate('AddProduct', { cartItem: cartItem }); // Điều hướng đến màn hình giỏ hàng
+        prop.navigation.navigate('AddProduct', { data }); 
     };
     
 
