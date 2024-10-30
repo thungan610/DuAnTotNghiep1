@@ -9,12 +9,11 @@ const HomeStyle = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     avatar: {
-        height: 45,
-        width: 45,
-        marginLeft: 10
+        height: 50,
+        width: 50,
     },
     searchall: {
         flexDirection: 'row', // Đặt icon và input theo hàng ngang
@@ -26,7 +25,7 @@ const HomeStyle = StyleSheet.create({
         marginLeft:10,
         backgroundColor: '#EAEAEA',
         height:45,
-        width:275
+        width:240
     },
     search: {
         height: 25,
@@ -37,10 +36,6 @@ const HomeStyle = StyleSheet.create({
         flex: 1,
         paddingVertical: 13,
     },
-    bell:{
-        height:45,
-        width:45,
-    },
     productContainer:{
         borderColor: '#2CA9C0',
         borderRadius: 10,
@@ -48,10 +43,10 @@ const HomeStyle = StyleSheet.create({
         justifyContent:'space-evenly',
         alignItems:'center',
         height:180,
+        marginHorizontal: 6,
         width: 170,
         marginTop: 15,
-        marginHorizontal: 6,
-        marginRight: 15
+        marginRight: 15,
     },
     productDetails:{
         justifyContent:'center',

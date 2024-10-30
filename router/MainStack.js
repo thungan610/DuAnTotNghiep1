@@ -1,20 +1,47 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Wellcome from "../src/Page/Wellcome";
-import Login from "../src/Page/Login";
-import BottomNav from "./BottomNav";
+import Login from "../src/Page/Login/index.js";
+import BottomNav from "../router/BottomNav.js";
 import Register from "../src/Page/Register/Register";
 import AddProduct from "../src/Page/Cart/AddProduct.js";
+import HomeScreen from "../src/Page/HomeScreen/index.js";
 import NextPayment from "../src/Page/Payment/Next/index.js";
 import AddAdress from "../src/Page/Payment/AddAdress";
 import SubmitTrue from "../src/Page/Payment/SubmitTrue";
-import Payment from "../src/Page/Payment/Payment";
+import Payment from "../src/Page/Payment/Payment/index.js";
 import PayMethod from "../src/Page/Payment/PayMethod/index.js";
 import Voucher from "../src/Page/Payment/Voucher/index.js";
 import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
 import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 import Login_required from "../src/Page/Login/Login_required/index.js";
-const Stack = createNativeStackNavigator()
+import ForgotPassword from "../src/Page/ForgotPassword/index.js";
+import ResetPassword from "../src/Page/ForgotPassword/ResetPassword.js/index.js";
+import SMS from "../src/Page/SMS/index.js";
+import Registration_successful from "../src/Page/SMS/Registration_successful.js";
+import ProductCancel from "../src/Page/ProductCancel/index.js";
+import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
+import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
+import InsertPro5 from "../src/Page/Profile/InsertPro5.js";
+import InsertAddress from "../src/Page/Profile/InsertAddress.js";
+import TabAddress from "../src/Page/Profile/TabAddress.js";
+import ProductReview from "../src/Page/ProductReview/index.js";
+import Search from "../src/Page/Search/Search.js";
+import ProfileDetail from "../src/Page/Profile/ProfileDetail.js";
+import Order from "../src/Page/Order/Order.js";
+import Processing1 from "../src/Page/Order/Processing1.js";
+import Delivering from "../src/Page/Order/Delivering.js";
+import Canceled from "../src/Page/Order/Canceled.js";
+import BotChat from "../src/Page/BotChat/index.js";
+import ZaloPay from "../src/Page/Payment/ZaloPay/index.js";
+import Policy from "../src/Page/Policy/Policy.js";
+import Information from "../src/Page/Policy/Information.js";
+import Preservation from "../src/Page/Policy/Preservation.js";
+import Detail from "../src/Page/Detail/Detail.js";
+import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
+import Detailbottle from "../src/Page/Detail/Detailbottle.js";
+
+const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
         <Stack.Navigator
@@ -25,6 +52,7 @@ const MainStack = () => {
         >
             <Stack.Screen name="Wellcome" component={Wellcome} />
             <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="BottomNav" component={BottomNav} />
             <Stack.Screen name="AddProduct" component={AddProduct} />
@@ -37,7 +65,33 @@ const MainStack = () => {
             <Stack.Screen name="AddTranfer" component={AddTranfer} />
             <Stack.Screen name="PaySusses" component={PaySusses} />
             <Stack.Screen name="Login_required" component={Login_required} />
-        </Stack.Navigator>
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
+            <Stack.Screen name="SMS" component={SMS} />
+            <Stack.Screen name="Registration_successful" component={Registration_successful} />
+            <Stack.Screen name="ProductCancel" component={ProductCancel} />
+            <Stack.Screen name="CancelTrue" component={CancelTrue} />
+            <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
+            <Stack.Screen name="InsertPro5" component={InsertPro5} />
+            <Stack.Screen name="InsertAddress" component={InsertAddress} />
+            <Stack.Screen name="TabAddress" component={TabAddress} />
+            <Stack.Screen name="ProductReview" component={ProductReview} />
+            <Stack.Screen name="NewNotifi" component={NewNotifi} />
+            <Stack.Screen name="Search" component={Search} />
+            <Stack.Screen name="Order" component={Order} />
+            <Stack.Screen name="Processing1" component={Processing1} />
+            <Stack.Screen name="Delivering" component={Delivering} />
+            <Stack.Screen name="Canceled" component={Canceled} />
+            <Stack.Screen name="BotChat" component={BotChat} />
+            <Stack.Screen name="ZaloPay" component={ZaloPay}/>
+            <Stack.Screen name="Policy" component={Policy}/>
+            <Stack.Screen name="Information" component={Information}/>
+            <Stack.Screen name="Preseration" component={Preservation}/>
+            <Stack.Screen name="Detail" component={Detail}/>
+            <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
+            <Stack.Screen name="Detailbottle" component={Detailbottle}/>
+
+        </Stack.Navigator >
     );
 };
-export default MainStack
+export default MainStack;

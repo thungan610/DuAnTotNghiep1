@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const Login_required = ({ navigation }) => {
+const Login_required = (prop) => {
 
     const HanLogin = () => {
-        navigation.navigate('Login')
+        prop.navigation.navigate('Login')
     }
   return (
     <View style={{

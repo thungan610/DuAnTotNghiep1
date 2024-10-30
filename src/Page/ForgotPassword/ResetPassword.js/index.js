@@ -1,50 +1,72 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text,Alert, Image, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import ResetPasswordStyle from './style'
 
-const ResetPassword = () => {
+const ResetPassword = (prop) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false); 
 
+    const validatePassword = (password) => {
+        const uppercaseRegex = /[A-Z]/;  
+        const numberRegex = /\d/;        
 
-    const BtnResetPass = () => {
-        let hasError = false;
-
-        setPasswordError('');
-        setConfirmPasswordError('');
-
-        if (password === '') {
-            setPasswordError("Vui lòng nhập mật khẩu");
-            setPassword('');
-            hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
-            setPassword('');
-            hasError = true;
+        if (!uppercaseRegex.test(password)) {
+            return 'Mật khẩu phải chứa ít nhất một chữ in hoa.';
         }
 
-        if (confirmPassword === '') {
-            setConfirmPasswordError("Vui lòng nhập lại mật khẩu");
-            setConfirmPassword('');
-            hasError = true;
-        } else if (confirmPassword !== password) {
-            setConfirmPasswordError("Vui longf nhập mật khẩu!");
-            setConfirmPassword('');
-            hasError = true;
+        if (!numberRegex.test(password)) {
+            return 'Mật khẩu phải chứa ít nhất một số.';
         }
 
-        if (hasError) {
-            return;
-        }
-
-        Alert.alert("Đổi mật khẩu thành công");
-        prop.navigation.navigate('Login');
+        return '';
     };
 
+    const handleSubmit = () => {
+        let isValid = true;
 
+        const passwordValidationError = validatePassword(password);
+
+        // Kiểm tra trường mật khẩu
+        if (password === '') {
+            setPasswordError('Vui lòng nhập mật khẩu.');
+            isValid = false;
+        } else if (passwordValidationError !== '') {
+            setPasswordError(passwordValidationError);  // Hiển thị lỗi từ hàm kiểm tra mật khẩu
+            isValid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        // Kiểm tra trường xác nhận mật khẩu
+        if (confirmPassword === '') {
+            setConfirmPasswordError('Vui lòng nhập lại mật khẩu.');
+            isValid = false;
+        } else if (password !== confirmPassword) {
+            setConfirmPasswordError('Mật khẩu không khớp.');
+            isValid = false;
+        } else {
+            setConfirmPasswordError('');
+        }
+
+        // Nếu hợp lệ, hiển thị thông báo thành công (hoặc thực hiện điều hướng)
+        if (isValid) {
+            prop.navigation.navigate('Login'); 
+        }
+    };
+
+    // Hàm chuyển đổi hiển thị mật khẩu
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+
+    // Hàm chuyển đổi hiển thị mật khẩu xác nhận
+    const toggleConfirmPasswordVisibility = () => {
+        setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+    };
     return (
         <View style={ResetPasswordStyle.container}>
             <View style={ResetPasswordStyle.headerLogo}>
@@ -68,17 +90,12 @@ const ResetPassword = () => {
                             />
                             <TextInput
                                 value={password}
-                                placeholder={passwordError ? "Mật khẩu không hợp lệ!" : "Nhập mật khẩu"}
-                                placeholderTextColor={passwordError ? 'red' : '#999'}
-                                onChangeText={(text) => {
-                                    setPassword(text);
-                                    setPasswordError('');
-                                    setConfirmPasswordError('');
-                                }}
-                                style={[ResetPasswordStyle.input, passwordError ? { color: 'red' } : {}]}
+                                placeholder={"Nhập mật khẩu"}
+                                onChangeText={setPassword}
+                                style={[ResetPasswordStyle.input]}
                                 secureTextEntry={!isPasswordVisible}
                             />
-                            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                            <TouchableOpacity onPress={togglePasswordVisibility}>
                                 <Image
                                     style={ResetPasswordStyle.eye}
                                     source={isPasswordVisible
@@ -88,6 +105,8 @@ const ResetPassword = () => {
                                 />
                             </TouchableOpacity>
                         </View>
+                        {passwordError ? <Text style={ResetPasswordStyle.errorText}>{passwordError}</Text> : null}
+
                         <Text style={ResetPasswordStyle.tieudeinput}>Nhập lại mật khẩu</Text>
                         <View style={ResetPasswordStyle.anhinput}>
                             <Image
@@ -96,27 +115,25 @@ const ResetPassword = () => {
                             />
                             <TextInput
                                 value={confirmPassword}
-                                placeholder={confirmPasswordError ? "Mật khẩu không giống trên" : "Nhập lại mật khẩu"}
-                                placeholderTextColor={confirmPasswordError ? 'red' : '#999'}
-                                onChangeText={(text) => {
-                                    setConfirmPassword(text);
-                                    setConfirmPasswordError('');
-                                }}
-                                style={[ResetPasswordStyle.input, confirmPasswordError ? { color: 'red' } : {}]}
-                                secureTextEntry={!isPasswordVisible}
+                                placeholder={"Nhập lại mật khẩu"}
+                                onChangeText={setConfirmPassword}
+                                style={[ResetPasswordStyle.input]}
+                                secureTextEntry={!isConfirmPasswordVisible} 
                             />
-                            <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                            <TouchableOpacity onPress={toggleConfirmPasswordVisibility}>
                                 <Image
                                     style={ResetPasswordStyle.eye}
-                                    source={isPasswordVisible
+                                    source={isConfirmPasswordVisible
                                         ? require("../../../../src/assets/eye.png")
                                         : require("../../../../src/assets/eye-closed.png")
                                     }
                                 />
                             </TouchableOpacity>
                         </View>
+                        {confirmPasswordError ? <Text style={ResetPasswordStyle.errorText}>{confirmPasswordError}</Text> : null}
 
-                        <TouchableOpacity onPress={BtnResetPass} style={ResetPasswordStyle.dn}>
+
+                        <TouchableOpacity  onPress={handleSubmit}  style={ResetPasswordStyle.dn}>
                             <Text style={ResetPasswordStyle.chudn}>TIẾP TỤC</Text>
                         </TouchableOpacity>
 

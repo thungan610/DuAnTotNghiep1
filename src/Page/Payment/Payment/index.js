@@ -1,27 +1,28 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import PaymentStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
-import AddTranfer from "../AddTranfer";
 const Payment = (prop) => {
-    const { navigation } = prop
     const BackRight = () => {
-        navigation.goBack()
+        prop.navigation.goBack()
     }
     const HandMethod = () => {
-        navigation.navigate('PayMethod')
+        prop.navigation.navigate('PayMethod')
     }
     const HandVoucher = () => {
-        navigation.navigate('Voucher')
+        prop.navigation.navigate('Voucher')
     }
     const HandTransfer = () => {
-        navigation.navigate('AddTranfer')
+        prop.navigation.navigate('AddTranfer')
     }
     const HandPaySuccess = () => {
-        navigation.navigate('PaySusses')
+        prop.navigation.navigate('PaySusses')
+    }
+    const BtnTabAddress = () => {
+        prop.navigation.navigate('InsertAddress')
     }
     return (
-        <View style={PaymentStyle.container}>
+        <ScrollView style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
                 <TouchableOpacity onPress={BackRight}>
                     <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
@@ -29,17 +30,17 @@ const Payment = (prop) => {
                 <Text style={AddAdressStyle.title}>Thanh toán</Text>
                 <Text />
             </View>
-            <View style={[PaymentStyle.body, PaymentStyle.paddingHorizontal,PaymentStyle.paddingBottom]}>
+            <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
                 <Image style={PaymentStyle.imgmap} source={require("../../../assets/notifi/map.png")} />
-                <View>
+                <View style={{marginRight:30}}>
                     <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
                     <Text style={PaymentStyle.txtLH}>Bé phát, <Text style={PaymentStyle.txtLH}>0329 999 999</Text></Text>
                     <Text style={PaymentStyle.txtLH}>Tân thới nhất, quận 12, Hồ Chí Minh</Text>
                 </View>
-                <TouchableOpacity style={PaymentStyle.BtnExpandRight}>
-                    <Image style={PaymentStyle.imgexpand} source={require("../../../assets/notifi/expand_right.png")} />
-                </TouchableOpacity>
-            </View>
+
+                <Image source={require("../../../assets/notifi/expand_right.png")} />
+
+            </TouchableOpacity>
             <Text style={PaymentStyle.Line} />
             <View style={[PaymentStyle.body, PaymentStyle.Padding]}>
                 <View style={PaymentStyle.Viewimg}>
@@ -70,7 +71,17 @@ const Payment = (prop) => {
             <View style={PaymentStyle.ViewBodyContainer}>
                 <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
-                    <TextInput style={PaymentStyle.input} placeholder="Để lại ghi chú" />
+                    <TextInput style={{
+                        width: '100%',
+                        height: 40,
+                        borderColor: '#ccc',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        marginLeft:5
+                    }} 
+                    placeholder="Để lại ghi chú" 
+                    multiline 
+                    numberOfLines={4} />
                 </View>
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
@@ -116,17 +127,15 @@ const Payment = (prop) => {
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
                 <View style={PaymentStyle.ViewFooter}>
                     <View>
-                    <Text style={PaymentStyle.txtDC1}>Tổng thanh toán:</Text>
-                    <Text style={PaymentStyle.txtDC2}>29.000đ</Text>
+                        <Text style={PaymentStyle.txtDC1}>Tổng thanh toán:</Text>
+                        <Text style={PaymentStyle.txtDC2}>29.000đ</Text>
                     </View>
                     <TouchableOpacity onPress={HandPaySuccess} style={PaymentStyle.btnSubmit}>
                         <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
-
-        </View>
+        </ScrollView>
     )
 
 }

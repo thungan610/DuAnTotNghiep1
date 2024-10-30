@@ -1,117 +1,220 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import styles from './style';
-export default Detail = () => {
+import styleDetail from './style';
 
+const Detail = (prop) => {
+    const { product } = prop.route.params || {};
+    const [productDetails, setProductDetails] = useState(product);
+    const [selectedQuantity, setselectedQuantity] = useState(1);
+    const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [quantity, setQuantity] = useState(1);
+    const [images, setImages] = useState(product?.images || []);
+    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
+    const [price, setPrice] = useState(product?.price || 0);
+    const [hasNotification, setHasNotification] = useState(false);
 
-    const images = [
-        'https://product.hstatic.net/1000282430/product/upload_deb91932d62348309be82c41136ba92d_c6ba4735a301452399d6a3541535a19c_master.jpg',
-        'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png',
-        'https://www.hasfarmgreens.com/wp-content/uploads/2021/07/Bap-Cai-Trang-1-700x700.png'
-    ]
+    useEffect(() => {
+        if (product) {  
+            setProductDetails(product);
+            setImages(product.images || []);
+            setUnitPrice(product.price || 0);
+            setPrice(product.price || 0);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        setPrice(quantity * unitPrice);
+    }, [quantity, unitPrice]);
+
+    const increaseQuantity = () => {
+        setQuantity((prevQuantity) => prevQuantity + 1);
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity((prevQuantity) => prevQuantity - 1);
+        } else {
+            Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
+        }
+    };
+    const handleNotificationClick = () => {
+        setHasNotification(false); 
+        prop.navigation.navigate('NotifiScreen'); 
+    };
+
+    const handleAddToCart = () => {
+        const data = {
+            name: product.name,
+            price: product.price,
+            quantity: selectedQuantity,
+            category: product.category,
+            image: product.images[0],
+        };
+        prop.navigation.navigate('AddProduct', { data }); 
+    };
+    
+
     const renderImages = () => {
-        return images.map((item, index) => {
-            return (
-                <View key={index + 1}>
-                    <Image
-                        resizeMode='contain'
-                        source={{ uri: item }}
-                        style={{ width: '100%', height: 300, }}
-                    />
-                </View>
-            )
-        })
-    }
-    const renderDots = () => {
-        return images.map((item, index) => {
-            return (
-                <View key={index + 1}
+        return images.map((item, index) => (
+            <View key={index}>
+                <Image
+                    resizeMode='contain'
+                    source={{ uri: item }}
                     style={{
-                        width: 10, height: 10,
-                        borderRadius: 5,
-                        backgroundColor: selectedIndex === index ? 'black' : 'gray',
-                        margin: 5, top: -50
-                    }} />
-            )
-        })
-    }
+                        width: '100%',
+                        height: '100%',
+                    }}
+                />
+            </View>
+        ));
+    };
+
+    const renderDots = () => {
+        return images.map((_, index) => (
+            <View key={index} style={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: selectedIndex === index ? 'black' : 'gray',
+                margin: 5,
+            }} />
+        ));
+    };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.head}>
-                <Image source={require('../../assets/notifi/backright.png')} />
-                <Image style={styles.iconcart} source={require('../../assets/home/cart.png')} />
-                <Image style={styles.iconnotifi} source={require('../../assets/home/notifi.png')} />
-            </View>
-            <PagerView style={styles.pagerView}
-                initialPage={selectedIndex}>
-                {renderImages()}
-            </PagerView>
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                {renderDots()}
-            </View>
-            <View style={styles.body}>
-                <View style={styles.bodyText}>
-                    <Text style={styles.textBody}>Bắp cải trắng</Text>
-                    <Text style={styles.textkg}>1kg</Text>
-                </View>
-                <View style={styles.butonView}>
-                    <TouchableOpacity style={styles.minus}>
-                        <Text style={styles.textTout}>-</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.tout}>
-                        <Text style={styles.toutText}>1</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.plus}>
-                        <Text style={styles.textTout}>+</Text>
-                    </TouchableOpacity>
-
-                    <Image style={styles.dolar} source={require('../../assets/Dollar.png')} />
-                    <Text style={styles.price}>19.000d</Text>
-                </View>
-                <View style={styles.underline}>
-                    <Text style={styles.textunderline}>Thông tin sản phẩm</Text>
-                </View>
-                <ScrollView style={styles.scroollview}>
-                    <View style={styles.viewScroll}>
-                        <Text style={styles.scrollText}>
-                            Sườn non là một loại thực phẩm phổ biến trên toàn thế giới, được sử dụng trong nhiều món ăn khác nhau.
-                        </Text>
-                        
-                    </View>
-                    <View style={styles.origin}> 
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Xuất xứ  :</Text>
-                        <Text style={styles.textorigin}>Việt Nam</Text>
-                        </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Chất sơ  :</Text>
-                        <Text style={styles.textorigin}> Khoảng 2.2 gram trên 100 gram</Text>
-                        </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Bảo quản  :</Text>
-                        <Text style={styles.textorigin}> Bảo quản lạnh</Text>
-                        </View>
-                        <View style={styles.textoriginRow}>
-                        <Text style={styles.textorigin}>Công dụng :</Text>
-                        <Text style={styles.textorigin}>Chế biến món ăn</Text>
-                        </View>
-                    </View>
-                    
-                </ScrollView>
-                {/* buton */}
-                <TouchableOpacity style={styles.headerFooter}>
-                    <Text style={styles.textFooter}>Thêm vào giỏ hàng</Text>
+        <View style={styleDetail.container}>
+            <View style={styleDetail.head}>
+                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav', { product: selectedProduct })}>
+                    <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
+
+                <View style={{
+                    flexDirection: 'row'
+                }}>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        marginRight: 6
+                    }}
+                        onPress={() => prop.navigation.navigate('AddProductsScreen')}>
+                        <Image style={styleDetail.iconcart} source={require('../../assets/home/cart.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        borderRadius: 20,
+                        backgroundColor: 'white',
+                        borderWidth: 1,
+                        borderColor: 'white',
+                    }}
+                        onPress={handleNotificationClick}>
+                        <Image style={styleDetail.iconnotifi} source={require('../../assets/home/notifi.png')} />
+                    </TouchableOpacity>
+                </View>
             </View>
-            
+            <ScrollView>
+                <View style={styleDetail.body}>
+                    <View>
+                        <PagerView
+                            style={styleDetail.pagerView}
+                            initialPage={selectedIndex}
+                            onPageSelected={e => setSelectedIndex(e.nativeEvent.position)}
+                        >
+                            {renderImages()}
+                        </PagerView>
+                        <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            {renderDots()}
+                        </View>
+                    </View>
+                    <View style={{
+                        borderTopLeftRadius: 50,
+                        borderTopRightRadius: 50,
+                        backgroundColor: 'white',
+                        height: '100%',
+                        width: '100%',
+                    }}>
+                        <View style={{ flexDirection: 'column' }}>
+                            <View style={styleDetail.bodyText}>
+                                <Text style={styleDetail.textBody}>
+                                    {productDetails.name || 'Tên sản phẩm'}
+                                </Text>
+                                <Text style={styleDetail.textkg}>
+                                    {productDetails.oum ? `${productDetails.oum}` : 'Khối lượng sản phẩm'}
+                                </Text>
+                            </View>
+                            <View style={styleDetail.butonView}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    backgroundColor: '#EAEAEA',
+                                    width: 100,
+                                    height: 44,
+                                    alignItems: 'center',
+                                    borderRadius: 14,
+                                    padding: 4,
+                                    paddingHorizontal: 12,
+                                    justifyContent: 'space-between',
+                                }}>
+                                    <TouchableOpacity onPress={decreaseQuantity}>
+                                        <Text style={styleDetail.textTout}>-</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styleDetail.toutText}>{quantity}</Text>
+                                    <TouchableOpacity onPress={increaseQuantity}>
+                                        <Text style={styleDetail.textTout}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    padding: 5
+                                }}>
+                                    <Image style={styleDetail.dolar} source={require('../../assets/Dollar.png')} />
+                                    <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <Text style={styleDetail.textunderline}>Thông tin sản phẩm</Text>
+                        <View style={styleDetail.scroollview}>
+                            <View style={styleDetail.viewScroll}>
+                                <Text style={styleDetail.scrollText}>
+                                    {productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}
+                                </Text>
+                            </View>
+                            <View style={styleDetail.origin}>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Xuất xứ:</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
+                                </View>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Chất sơ:</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
+                                </View>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Bảo quản:</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
+                                </View>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Công dụng:</Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
+                                </View>
+
+                            </View>
+                            <View style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                paddingVertical: 40
+                            }}>
+                                <TouchableOpacity onPress={handleAddToCart} style={styleDetail.headerFooter}>
+                                    <Text style={styleDetail.textFooter}>Thêm vào giỏ hàng</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
         </View>
     );
 };
 
+export default Detail;

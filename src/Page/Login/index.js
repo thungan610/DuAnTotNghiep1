@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
-import React, { useMemo, useState } from 'react';
-import { RadioGroup } from 'react-native-radio-buttons-group';
+import React, { useState, useEffect } from 'react';
 import LoginStyle from './style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const Login = (prop) => {
     const [email, setEmail] = useState('');
@@ -10,66 +11,114 @@ const Login = (prop) => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
+    const [rememberAccount, setRememberAccount] = useState(false);
 
-    const BtnLogin = () => {
+    const BtnLogin = async () => {
         let hasError = false;
-
+        setLoginError('');
         setEmailError('');
         setPasswordError('');
-        setLoginError('');
-
+    
+        // Kiểm tra email
         if (email === '') {
             setEmailError("Vui lòng nhập Email");
-            setEmail(''); 
             hasError = true;
         } else if (!validateEmail(email)) {
             setEmailError("Email không hợp lệ!");
-            setEmail(''); 
             hasError = true;
         }
+    
+        // Kiểm tra mật khẩu
         if (password === '') {
             setPasswordError("Vui lòng nhập mật khẩu");
-            setPassword(''); 
             hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError("Mật khẩu phải có ít nhất 6 ký tự");
-            setPassword(''); 
-            hasError = true;
-        }
-
-        // Kiểm tra đăng nhập
-        if (!hasError) {
-            if (email !== "example@mail.com" || password !== "password") { 
-                setLoginError("Email hoặc mật khẩu không đúng!");
-                setEmail('');
-                setPassword(''); 
-                return;
+        } else {
+            const passwordValidationError = validatePassword(password);
+            if (passwordValidationError) {
+                setPasswordError(passwordValidationError);
+                hasError = true;
             }
-
-            Alert.alert("Đăng nhập thành công");
-            prop.navigation.navigate('BottomNav');
+        }
+    
+        if (hasError) return;  // Dừng nếu có lỗi
+    
+        try {
+            const response = await axios.post('https://api-h89c.onrender.com/users/login', {
+                email: email,
+                password: password,
+            });
+    
+            if (response.data) {
+                Alert.alert("Thông báo", "Đăng nhập thành công!");
+    
+                if (rememberAccount) {
+                    await AsyncStorage.setItem('savedEmail', email);
+                    await AsyncStorage.setItem('savedPassword', password);
+                }
+    
+                setTimeout(() => {
+                    prop.navigation.navigate('NextPayment');
+                }, 1000);
+            }
+        } catch (error) {
+            console.log(error.response?.data || error.message);
+            Alert.alert("Thông báo", error.response?.data?.message || "Đăng nhập thất bại!");
         }
     };
-
-    // Kiểm tra email hợp lệ
+    
     const validateEmail = (email) => {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setEmail('');
+        return emailRegex.test(email);  // Trả về true hoặc false
     };
 
-    const ClickRegister = () => {
-        prop.navigation.navigate('Register');
+    const validatePassword = (password) => {
+        if (password.length < 8) {
+            setPassword('');
+            return 'Phải có ít nhất 8 ký tự.';
+        }
+        else if (!/\d/.test(password)) {
+            setPassword('');
+            return 'Phải chứa ít nhất một số.';
+        }
+        else if (!/[!@#$%^&*]/.test(password)) {
+            setPassword('');
+            return 'Phải chứa ít nhất một ký tự đặc biệt.';
+        }
+        else if (!/[A-Z]/.test(password)) {
+            setPassword('');
+            return 'Phải chứa ít nhất một chữ cái in hoa.';
+        }
+        return '';
     };
 
-    const radioButtons = useMemo(() => ([{
-        id: '1',
-        label: 'Nhớ tài khoản',
-        value: 'nhotaikhoan',
-        color: '#37C5DF',
-        selectedColor: '#2CA9C0',
-    }]), []);
+    useEffect(() => {
+        const loadAccount = async () => {
+            try {
+                const savedEmail = await AsyncStorage.getItem('savedEmail');
+                const savedPassword = await AsyncStorage.getItem('savedPassword');
 
-    const [selectedId, setSelectedId] = useState();
+                if (savedEmail !== null && savedPassword !== null) {
+                    setEmail(savedEmail);
+                    setPassword(savedPassword);
+                    setRememberAccount(true);
+                }
+            } catch (error) {
+                console.error("Không thể tải tài khoản đã lưu", error);
+            }
+        };
+        loadAccount();
+    }, []);
+
+    const handlePasswordChange = (text) => {
+        setPassword(text);
+        setPasswordError('');
+        setLoginError('');
+    };
+
+    const handleRememberAccount = () => {
+        setRememberAccount(!rememberAccount);
+    };
 
     return (
         <View style={LoginStyle.container}>
@@ -92,13 +141,12 @@ const Login = (prop) => {
                                 placeholderTextColor={emailError ? 'red' : '#999'}
                                 onChangeText={(text) => {
                                     setEmail(text);
-                                    setEmailError(''); 
-                                    setLoginError(''); 
+                                    setEmailError('');
+                                    setLoginError('');
                                 }}
                                 style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
                         </View>
-
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
                         <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
                             <Image style={LoginStyle.lockalt} source={require("../../../src/assets/Lock_alt.png")} />
@@ -106,17 +154,12 @@ const Login = (prop) => {
                                 value={password}
                                 placeholder={passwordError || "Nhập mật khẩu"}
                                 placeholderTextColor={passwordError ? 'red' : '#999'}
-                                onChangeText={(text) => {
-                                    setPassword(text);
-                                    setPasswordError(''); 
-                                    setLoginError(''); 
-                                }}
                                 style={[LoginStyle.input, passwordError ? { color: 'red' } : {}]}
+                                onChangeText={handlePasswordChange}
                                 secureTextEntry={!isPasswordVisible}
                             />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                                 <Image
-                                    style={LoginStyle.eye_closed}
                                     source={isPasswordVisible
                                         ? require("../../../src/assets/eye.png")
                                         : require("../../../src/assets/eye-closed.png")}
@@ -125,16 +168,36 @@ const Login = (prop) => {
                         </View>
                     </View>
                 </View>
-
-                <View style={LoginStyle.nhotk}>
-                    <RadioGroup
-                        labelStyle={LoginStyle.radio}
-                        containerStyle={{ alignItems: 'flex-start' }}
-                        radioButtons={radioButtons}
-                        onPress={setSelectedId}
-                        selectedId={selectedId}
-                    />
-                    <Text style={LoginStyle.forgot}>Quên mật khẩu?</Text>
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginLeft: 20
+                }}>
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginTop: 10
+                    }}>
+                        <TouchableOpacity onPress={handleRememberAccount} style={{
+                            width: 20,
+                            height: 20,
+                            borderWidth: 1,
+                            borderColor: '#2CA9C0',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 10,
+                        }}>
+                            {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
+                        </TouchableOpacity>
+                        <Text style={LoginStyle.checkboxLabel}>Nhớ tài khoản</Text>
+                    </View>
+                    <Text onPress={() => prop.navigation.navigate('ForgotPassword')}
+                        style={{
+                            color: '#2CA9C0',
+                            fontSize: 15,
+                            marginTop: 10,
+                            marginLeft: 120
+                        }}> Quên mật khẩu ?</Text>
                 </View>
 
                 <View style={LoginStyle.button}>
@@ -142,22 +205,18 @@ const Login = (prop) => {
                         <Text style={LoginStyle.chudn}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
-
                 <Text style={LoginStyle.or}>Hoặc</Text>
-
                 <View style={LoginStyle.buttonall}>
                     <TouchableOpacity style={LoginStyle.buttonfb}>
                         <Image style={LoginStyle.fb} source={require('../../../src/assets/fb.png')} />
                     </TouchableOpacity>
-
                     <TouchableOpacity style={LoginStyle.buttongg}>
                         <Image style={LoginStyle.gg} source={require("../../../src/assets/gg.png")} />
                     </TouchableOpacity>
                 </View>
-
                 <View style={LoginStyle.footer}>
                     <Text style={LoginStyle.footerdau}>Bạn chưa có tài khoản?</Text>
-                    <Text onPress={ClickRegister} style={LoginStyle.footerduoi}> Đăng ký</Text>
+                    <Text onPress={() => prop.navigation.navigate('Register')} style={LoginStyle.footerduoi}> Đăng ký</Text>
                 </View>
             </View>
         </View>

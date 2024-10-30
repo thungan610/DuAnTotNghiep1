@@ -4,7 +4,7 @@ const VoucherStyle = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
-    },
+        padding:20,    },
     ViewAdd:{
         width: '100%',
         backgroundColor: 'white',
@@ -12,7 +12,7 @@ const VoucherStyle = StyleSheet.create({
         marginBottom: 20,
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20
+    
     },
     input:{
         width: '75%',
@@ -31,7 +31,7 @@ const VoucherStyle = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 50,
-        height: 40
+        height: 40,
     },
     buttonText:{
         color: "#33363F",
@@ -39,11 +39,12 @@ const VoucherStyle = StyleSheet.create({
         fontFamily: 'Poppins',
     },
     bodyMain:{
-        padding: 10,
+        marginTop:10,
         width: '100%',
         backgroundColor: 'white',
     },
     body:{
+        
         width: '100%',
         backgroundColor: '#FFDEC2',
         borderRadius: 10,
@@ -66,7 +67,13 @@ const VoucherStyle = StyleSheet.create({
         color: '#8F8F8F',
         fontSize: 14,
         fontFamily: 'Poppins',
-    }
+    },
+    ViewSuss:{
+        marginTop: 320,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+
+     },
    
 })
 export default VoucherStyle

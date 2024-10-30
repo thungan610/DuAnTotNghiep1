@@ -1,15 +1,59 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native'
+import React, { useState, useRef } from 'react'
 import SmsStyle from './style'
+import { useNavigation } from '@react-navigation/native';
 
-const SMS = () => {
-    const phoneNumber = "0329492562"; // Thay bằng số điện thoại thật
-    const [code, setCode] = useState(["", "", "", ""]); // Lưu trữ mã SMS nhập vào
+const SMS = (prop) => {
+    const phoneNumber = "0329492562";
+    const navigation = useNavigation();
+    const [code, setCode] = useState(["", "", "", ""]);
+    const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
     const handleChange = (text, index) => {
         let newCode = [...code];
-        newCode[index] = text;
-        setCode(newCode);
+
+
+        if (text && !isNaN(text)) {
+            newCode[index] = text;
+            setCode(newCode);
+
+
+            if (index < 3) {
+                setTimeout(() => {
+                    if (inputRefs[index + 1].current) {
+                        inputRefs[index + 1].current.focus();
+                    }
+                }, 100);
+            }
+        } else if (text === "") {
+            newCode[index] = "";
+            setCode(newCode);
+
+            if (index > 0) {
+                setTimeout(() => {
+                    if (inputRefs[index - 1].current) { 
+                        inputRefs[index - 1].current.focus();
+                    }
+                }, 100);
+            }
+        } else {
+            newCode[index] = text;
+            setCode(newCode);
+        }
+    };
+    const handleConfirm = () => {
+        if (code.some(digit => digit === "")) {
+            Alert.alert("Thông báo", "Vui lòng nhập đầy đủ mã xác nhận!");
+            return;
+        }
+
+        // Thực hiện xác nhận mã (có thể gọi API hoặc xử lý tiếp theo)
+        Alert.alert("Thông báo", "Mã xác nhận thành công!", [
+            {
+                text:'OK',
+                onPress: () => prop.navigation.navigate('Registration_successful'),
+            },
+        ]);
     };
 
     return (
@@ -28,6 +72,7 @@ const SMS = () => {
                 {code.map((digit, index) => (
                     <TextInput
                         key={index}
+                        ref={inputRefs[index]}
                         style={SmsStyle.input}
                         value={digit}
                         onChangeText={(text) => handleChange(text, index)}
@@ -37,7 +82,7 @@ const SMS = () => {
                 ))}
             </View>
 
-            <TouchableOpacity style={SmsStyle.button}>
+            <TouchableOpacity onPress={handleConfirm} style={SmsStyle.button}>
                 <Text style={SmsStyle.buttonText}>Xác nhận</Text>
             </TouchableOpacity>
 
@@ -45,5 +90,4 @@ const SMS = () => {
         </View>
     )
 }
-
 export default SMS;

@@ -59,7 +59,7 @@ const Voucher = (prop) => {
                     </TouchableOpacity>
                 </View>
             ))}
-            <View style={PayMethodStyle.ViewSuss}>
+            <View style={VoucherStyle.ViewSuss}>
                 <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>

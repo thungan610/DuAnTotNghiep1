@@ -1,16 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Image, TextInput, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
-import { useNavigation } from '@react-navigation/native'; 
+import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
 import HomeStyle from "./style";
+import axios from "axios";
 
 const HomeScreen = (prop) => {
-    const [search, setSearch] = useState("");
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(0);
+    const [search] = useState('');
     const screenWidth = Dimensions.get('window').width;
-
-    const navigation = useNavigation();
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -20,18 +19,26 @@ const HomeScreen = (prop) => {
 
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
-    const products = [
-        { id: '1', title: 'Bắp cải trắng', price: '19.000', weight: '1 kg', image: require('../../../src/assets/image/image1.png') },
-        { id: '2', title: 'Chanh không hạt', price: '9.000', weight: '1 kg', image: require('../../../src/assets/image/image2.png') },
-        { id: '3', title: 'Khoai tây', price: '30.000', weight: '1 kg', image: require('../../../src/assets/image/image3.png') },
-        { id: '4', title: 'Sườn non', price: '45.000', weight: '1 kg', image: require('../../../src/assets/image/image4.png') },
-        { id: '5', title: 'Thịt đùi', price: '30.000', weight: '1 kg', image: require('../../../src/assets/image/image5.png') },
-        { id: '6', title: 'Rau bó sôi', price: '9.000', weight: '1 kg', image: require('../../../src/assets/image/image6.png') },
+    const apiLinks = [
+        'https://api-h89c.onrender.com/products/getProducts',
+        'https://api-h89c.onrender.com/products/getVegetables',
+        'https://api-h89c.onrender.com/products/getFruits',
+        'https://api-h89c.onrender.com/products/getMeat',
+        'https://api-h89c.onrender.com/products/getFish',
+        'https://api-h89c.onrender.com/products/getSpices',
+        'https://api-h89c.onrender.com/products/getDrinks'
     ];
-
-    const filteredProducts = products.filter(product =>
-        product.title.toLowerCase().includes(search.toLowerCase())
-    );
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(apiLinks[selectedCategory]);
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+        }
+    };
+    useEffect(() => {
+        fetchProducts();
+    }, [selectedCategory])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -46,47 +53,84 @@ const HomeScreen = (prop) => {
         }
     }, [currentIndex]);
 
-    const renderProductItem = ({ item }) => (
-        <View style={HomeStyle.productContainer}>
-            <Image source={item.image} style={HomeStyle.productImage} />
-            <View style={HomeStyle.productDetails}>
-                <Text style={HomeStyle.productTitle}>{item.title}</Text>
-                <Text style={HomeStyle.productWeight}>{item.weight}</Text>
-                <View style={HomeStyle.priceall}>
-                    <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
-                    <Text style={HomeStyle.productPrice}>{item.price} VNĐ</Text>
+    const renderProductItem = ({ item }) => {
+        const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
+
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    const Detail = {
+                        id: item._id,
+                        name: item.name,
+                        oum: item.oum,
+                        origin: item.origin,
+                        preserve: item.preserve,
+                        uses: item.uses,
+                        fiber: item.fiber,
+                        description: item.description,
+                        price: item.price,
+                        images: item.images || [imageUri],
+                    };
+                    if (selectedCategory === 5 || selectedCategory === 6) {
+                        prop.navigation.navigate('Detailbottle', { product: Detail });
+                    } else {
+                        prop.navigation.navigate('Detail', { product: Detail });
+                    }
+                }}
+            >
+                <View style={HomeStyle.productContainer}>
+                    <Image
+                        style={{
+                            width: 100,
+                            height: 80,
+                        }}
+                        source={{ uri: imageUri }}
+                    />
+                    <View style={HomeStyle.productDetails}>
+                        <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
+                        <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
+                        <View style={HomeStyle.priceall}>
+                            <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
+                            <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+                        </View>
+                    </View>
                 </View>
-            </View>
-        </View>
-    );
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <View>
             <ScrollView style={HomeStyle.container}>
                 <View style={HomeStyle.header}>
-                    <Image style={HomeStyle.avatar} source={require('../../../src/assets/avatar.png')} />
+                    <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
+                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
+                            <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         </TouchableOpacity>
-                        <TextInput
-                            placeholder="Tìm kiếm"
-                            value={search}
-                            onChangeText={setSearch}
-                            style={HomeStyle.input}
-                        />
+                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
+                            <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
+                        </TouchableOpacity>
                     </View>
-        
-                {/* Thêm chức năng chuyển màn hình */}
-                <TouchableOpacity onPress={() => navigation.navigate('NewNotifi')}>
-                    <Image style={{
-                        tintColor: 'black',
-                        width: 34,
-                        height: 34,
-                    }} source={require('../../../src/assets/Bell.png')} />
-                </TouchableOpacity>
 
-                </View >
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
+                        <View style={{ position: 'relative' }}>
+                            <Image
+                                style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Chat.png')}
+                            />
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('TabAddress')}>
+                        <View style={{ position: 'relative' }}>
+                            <Image
+                                style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
+                                source={require('../../../src/assets/Pin_alt.png')}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                </View>
 
                 <ScrollView
                     ref={scrollViewRef}
@@ -114,7 +158,8 @@ const HomeScreen = (prop) => {
                                 fontWeight: selectedCategory === index ? 'bold' : 'normal',
                                 textDecorationLine: selectedCategory === index ? 'underline' : 'none',
                                 marginHorizontal: 5,
-                                marginTop: 7
+                                marginTop: 7,
+                                color: selectedCategory === index ? 'black' : '#8B8B8B',
                             }}>
                                 {category}
                             </Text>
@@ -123,15 +168,14 @@ const HomeScreen = (prop) => {
                 </ScrollView>
 
                 <FlatList
-                    data={filteredProducts}
+                    data={products.data || []} // Truyền đúng dữ liệu từ API
                     renderItem={renderProductItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id.toString()} // Sử dụng _id từ API làm key
                     numColumns={2}
-                    contentContainerStyle={HomeStyle.productList}
                     scrollEnabled={false}
                 />
-            </ScrollView >
-        </View >
+            </ScrollView>
+        </View>
     );
 };
 
