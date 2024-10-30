@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import { useDispatch } from 'react-redux'; // Ensure useDispatch is imported
 import PayMethodStyle from '../Payment/PayMethod/style';
-import { cart } from "../redux/CartApi"; 
-import { addtoCart } from "../redux/CartApi"; 
 import AddProductStyle from './AddProductStyle'; 
 
 const CartItem = ({ item, toggleSelect, updateQuantity }) => {
