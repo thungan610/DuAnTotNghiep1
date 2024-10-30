@@ -59,6 +59,9 @@ export default DetailDiscout = () => {
             <View style={styleDiscout.body}>
                 <View style={styleDiscout.bodyText}>
                     <Text style={styleDiscout.textBody}>Sườn non</Text>
+         
+         
+         
                     <Text style={styleDiscout.textkg}>1kg</Text>
                 </View>
                 <View style={styleDiscout.butonView}>
