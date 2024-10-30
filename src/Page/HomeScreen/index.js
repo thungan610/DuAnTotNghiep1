@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
 import HomeStyle from "./style";
-import axios from "axios";
+import AxiosInstance from "../api/AxiosInstance";
 
-const HomeScreen = (prop) => {
+const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(0);
-    const [search] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
 
     const banners = [
@@ -20,25 +20,26 @@ const HomeScreen = (prop) => {
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
     const apiLinks = [
-        'https://api-h89c.onrender.com/products/getProducts',
-        'https://api-h89c.onrender.com/products/getVegetables',
-        'https://api-h89c.onrender.com/products/getFruits',
-        'https://api-h89c.onrender.com/products/getMeat',
-        'https://api-h89c.onrender.com/products/getFish',
-        'https://api-h89c.onrender.com/products/getSpices',
-        'https://api-h89c.onrender.com/products/getDrinks'
+        '/products/getProducts',
+        
     ];
+
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(apiLinks[selectedCategory]);
-            setProducts(response.data);
+            setRefreshing(true);
+            const response = await AxiosInstance().get(apiLinks[selectedCategory]);
+            const filteredProducts = response.data.filter(item => item.quantity > 0);
+            setProducts(filteredProducts);
+            setRefreshing(false);
         } catch (error) {
-            console.error('Lỗi khi gọi API:', error);
+            console.error('API call error:', error);
+            setRefreshing(false);
         }
     };
+
     useEffect(() => {
         fetchProducts();
-    }, [selectedCategory])
+    }, [selectedCategory]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -55,6 +56,7 @@ const HomeScreen = (prop) => {
 
     const renderProductItem = ({ item }) => {
         const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
+        const { navigation } = props;
 
         return (
             <TouchableOpacity
@@ -72,18 +74,15 @@ const HomeScreen = (prop) => {
                         images: item.images || [imageUri],
                     };
                     if (selectedCategory === 5 || selectedCategory === 6) {
-                        prop.navigation.navigate('Detailbottle', { product: Detail });
+                        navigation.navigate('Detailbottle', { product: Detail });
                     } else {
-                        prop.navigation.navigate('Detail', { product: Detail });
+                        navigation.navigate('Detail', { product: Detail });
                     }
                 }}
             >
                 <View style={HomeStyle.productContainer}>
                     <Image
-                        style={{
-                            width: 100,
-                            height: 80,
-                        }}
+                        style={{ width: 100, height: 80 }}
                         source={{ uri: imageUri }}
                     />
                     <View style={HomeStyle.productDetails}>
@@ -105,24 +104,24 @@ const HomeScreen = (prop) => {
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
-                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
                             <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
-                            <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
+                            <Text style={{ color: '#999' }}>Tìm kiếm</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('BotChat')}>
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Chat.png')}
+                                source={require('../../../src/assets/chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('TabAddress')}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('TabAddress')}>
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
@@ -168,9 +167,9 @@ const HomeScreen = (prop) => {
                 </ScrollView>
 
                 <FlatList
-                    data={products.data || []} // Truyền đúng dữ liệu từ API
+                    data={products}
                     renderItem={renderProductItem}
-                    keyExtractor={item => item._id.toString()} // Sử dụng _id từ API làm key
+                    keyExtractor={item => item._id.toString()}
                     numColumns={2}
                     scrollEnabled={false}
                 />
