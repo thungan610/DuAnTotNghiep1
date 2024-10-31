@@ -7,9 +7,6 @@ const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("all");
-    const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
 
     const banners = [
@@ -48,7 +45,28 @@ const HomeScreen = (props) => {
     }, []);
 
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get('https://api-h89c.onrender.com/products/filter/?id');
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching products:", error.message); // Thêm thông báo lỗi chi tiết
+                if (error.response) {
+                    // Yêu cầu đã được gửi và server đã phản hồi với mã trạng thái không phải 2xx
+                    console.error("Response data:", error.response.data);
+                    console.error("Response status:", error.response.status);
+                } else if (error.request) {
+                    // Yêu cầu đã được gửi nhưng không có phản hồi
+                    console.error("Request data:", error.request);
+                } else {
+                    // Một cái gì đó đã xảy ra trong khi thiết lập yêu cầu
+                    console.error("Error message:", error.message);
+                }
+            }
+        };
+    
         fetchProducts();
+
     }, [selectedCategory]);
 
     useEffect(() => {
@@ -57,9 +75,30 @@ const HomeScreen = (props) => {
         }, 3000);
         return () => clearInterval(interval);
     }, []);
+    
 
     useEffect(() => {
-        if (scrollViewRef.current) {
+        if (products.length > 0) {
+            if (selectedCategory === 0) {
+                setFilteredProducts(products); // Hiển thị tất cả sản phẩm
+            } else {
+                const filtered = products.filter(product => product.category === categories[selectedCategory]);
+                setFilteredProducts(filtered);
+            }
+        }
+    }, [selectedCategory, products]);
+
+    useEffect(() => {
+        if (banners.length > 0) {
+            const interval = setInterval(() => {
+                setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [banners.length]);
+
+    useEffect(() => {
+        if (scrollViewRef.current && currentIndex >= 0 && currentIndex < banners.length) {
             scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
         }
     }, [currentIndex]);
@@ -82,11 +121,6 @@ const HomeScreen = (props) => {
                         price: item.price,
                         images: item.images || [imageUri],
                     };
-                    if (selectedCategory === 5 || selectedCategory === 6) {
-                        props.navigation.navigate('Detailbottle', { product: Detail });
-                    } else {
-                        props.navigation.navigate('Detail', { product: Detail });
-                    }
                 }}
             >
                 <View style={HomeStyle.productContainer}>
@@ -113,11 +147,6 @@ const HomeScreen = (props) => {
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
-                            <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
-                            <Text style={{ color: '#999' }}>Tìm kiếm</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -176,7 +205,6 @@ const HomeScreen = (props) => {
                 </ScrollView>
 
                 <FlatList
-                    data={products}
                     renderItem={renderProductItem}
                     keyExtractor={item => item._id.toString()}
                     numColumns={2}

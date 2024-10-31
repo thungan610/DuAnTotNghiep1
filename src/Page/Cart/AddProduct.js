@@ -68,9 +68,6 @@ const AddProduct = ({ route }) => {
 
     useEffect(() => {
         if (data) {
-            dispatch(addtoCart({
-                user: "user123", // Replace with the actual user if available
-                products: data,
                 quantity: data.quantity || 1,
             }))
                 .then(response => {
@@ -93,6 +90,21 @@ const AddProduct = ({ route }) => {
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
             prevItems.map(item => item.id === id ? { ...item, selected: !item.selected } : item)
+        );
+    };
+
+    const updateQuantity = (id, action) => {
+        setCartItems(prevItems =>
+            prevItems.map(item => {
+                if (item.id === id) {
+                    const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+                    return {
+                        ...item,
+                        quantity: newQuantity,
+                    };
+                }
+                return item;
+            })
         );
     };
 
