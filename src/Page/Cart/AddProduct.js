@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import { useDispatch } from 'react-redux'; // Ensure useDispatch is imported
 import PayMethodStyle from '../Payment/PayMethod/style';
-import AddProductStyle from './AddProductStyle'; 
+import AddProductStyle from './AddProductStyle';
+import AxiosInstance from "../api/AxiosInstance";
 
-const CartItem = ({ item, toggleSelect, updateQuantity }) => {
+
+const CartItem = ({ item, toggleSelect, updateQuantity,  }) => {
     const imageUri = item.images && item.images.length > 0 ? item.images[0] : null; // Handle image URI properly
-
+  
     return (
         <View style={AddProductStyle.itemContainer}>
             <TouchableOpacity onPress={() => toggleSelect(item.id)}>
@@ -20,7 +22,7 @@ const CartItem = ({ item, toggleSelect, updateQuantity }) => {
             </View>
             <View style={AddProductStyle.itemDetails}>
                 <Text style={AddProductStyle.itemName}>{item.name}</Text>
-                <Text style={AddProductStyle.itemCategory}>{item.category}</Text>
+                <Text style={AddProductStyle.itemCategory}>{item.category.category_name}</Text>
                 <Text style={AddProductStyle.itemPrice}>
                     {((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()}.000đ
                 </Text>

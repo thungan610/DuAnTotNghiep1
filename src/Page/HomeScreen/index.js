@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
 import HomeStyle from "./style";
 import AxiosInstance from "../api/AxiosInstance";
-
+import AxiosInstanceSP from "../api/AxiosInstanceSP";
 const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(0);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
 
@@ -17,25 +18,34 @@ const HomeScreen = (props) => {
         require('../../../src/assets/banner/baner3.jpg'),
     ];
 
-    const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
-
-    const apiLinks = [
-        '/products/getProducts',
-        
-    ];
+    const fetchCategories = async () => {
+        try {
+            const response = await AxiosInstance().get("/categories");
+            setCategories([{ name: "Tất cả", _id: "all" }, ...response.data]);
+        } catch (error) {
+            console.error('Failed to fetch categories:', error);
+        }
+    };
 
     const fetchProducts = async () => {
         try {
             setRefreshing(true);
-            const response = await AxiosInstance().get(apiLinks[selectedCategory]);
+            const endpoint = selectedCategory === "all" 
+                ? "/products/getProducts" 
+                : `/products/filter/${selectedCategory}`;
+            const response = await AxiosInstanceSP().get(endpoint);
             const filteredProducts = response.data.filter(item => item.quantity > 0);
             setProducts(filteredProducts);
-            setRefreshing(false);
         } catch (error) {
             console.error('API call error:', error);
+        } finally {
             setRefreshing(false);
         }
     };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         fetchProducts();
@@ -56,7 +66,6 @@ const HomeScreen = (props) => {
 
     const renderProductItem = ({ item }) => {
         const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
-        const { navigation } = props;
 
         return (
             <TouchableOpacity
@@ -66,7 +75,7 @@ const HomeScreen = (props) => {
                         name: item.name,
                         oum: item.oum,
                         origin: item.origin,
-                        preserve: item.preserve,
+                        preserve: item.preserve.preserve_name,
                         uses: item.uses,
                         fiber: item.fiber,
                         description: item.description,
@@ -74,9 +83,9 @@ const HomeScreen = (props) => {
                         images: item.images || [imageUri],
                     };
                     if (selectedCategory === 5 || selectedCategory === 6) {
-                        navigation.navigate('Detailbottle', { product: Detail });
+                        props.navigation.navigate('Detailbottle', { product: Detail });
                     } else {
-                        navigation.navigate('Detail', { product: Detail });
+                        props.navigation.navigate('Detail', { product: Detail });
                     }
                 }}
             >
@@ -146,21 +155,21 @@ const HomeScreen = (props) => {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={HomeStyle.categoryContainer}>
-                    {categories.map((category, index) => (
+                    {categories.map((category) => (
                         <TouchableOpacity
-                            key={index}
-                            style={[HomeStyle.categoryButton, selectedCategory === index && HomeStyle.selectedCategoryButton]}
-                            onPress={() => setSelectedCategory(index)}
+                            key={category._id}
+                            style={[HomeStyle.categoryButton, selectedCategory === category._id && HomeStyle.selectedCategoryButton]}
+                            onPress={() => setSelectedCategory(category._id)}
                         >
                             <Text style={{
-                                fontSize: selectedCategory === index ? 20 : 18,
-                                fontWeight: selectedCategory === index ? 'bold' : 'normal',
-                                textDecorationLine: selectedCategory === index ? 'underline' : 'none',
+                                fontSize: selectedCategory === category._id ? 20 : 18,
+                                fontWeight: selectedCategory === category._id ? 'bold' : 'normal',
+                                textDecorationLine: selectedCategory === category._id ? 'underline' : 'none',
                                 marginHorizontal: 5,
                                 marginTop: 7,
-                                color: selectedCategory === index ? 'black' : '#8B8B8B',
+                                color: selectedCategory === category._id ? 'black' : '#8B8B8B',
                             }}>
-                                {category}
+                                {category.name}
                             </Text>
                         </TouchableOpacity>
                     ))}

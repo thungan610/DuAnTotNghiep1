@@ -55,7 +55,25 @@ const Detail = (prop) => {
         prop.navigation.navigate('AddProduct', { data }); 
     };
     
-
+    useEffect(() => {
+        // Gọi API để lấy tất cả danh mục
+        const getAllCategories = async () => {
+            const response = await fetch("https://api-h89c.onrender.com/categories/");
+            const result = await response.json();
+            setCategories(result.data);
+        };
+        getAllCategories();
+    }, []);
+    const [preserves, setPreserves] = useState([]);
+    useEffect(() => {
+        const getPreserves = async () => {
+            const response = await fetch("https://api-h89c.onrender.com/preserves");
+            const result = await response.json();
+            setPreserves(result.data);
+        };
+        getPreserves();
+        return () => { };
+    }, []);
     const renderImages = () => {
         return images.map((item, index) => (
             <View key={index}>
