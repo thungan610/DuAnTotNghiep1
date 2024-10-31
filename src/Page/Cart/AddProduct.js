@@ -93,6 +93,21 @@ const AddProduct = ({ route }) => {
         );
     };
 
+    const updateQuantity = (id, action) => {
+        setCartItems(prevItems =>
+            prevItems.map(item => {
+                if (item.id === id) {
+                    const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+                    return {
+                        ...item,
+                        quantity: newQuantity,
+                    };
+                }
+                return item;
+            })
+        );
+    };
+
     const updateQuantity = async (id, action) => {
         const newQuantity = action === 'increase' ? 1 : -1;
         try {

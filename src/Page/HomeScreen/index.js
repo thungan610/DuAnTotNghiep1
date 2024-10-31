@@ -23,6 +23,27 @@ const HomeScreen = (props) => {
             console.error('Failed to fetch categories:', error);
         }
     };
+
+    const fetchProducts = async () => {
+        try {
+            setRefreshing(true);
+            const endpoint = selectedCategory === "all" 
+                ? "/products/getProducts" 
+                : `/products/filter/${selectedCategory}`;
+            const response = await AxiosInstanceSP().get(endpoint);
+            const filteredProducts = response.data.filter(item => item.quantity > 0);
+            setProducts(filteredProducts);
+        } catch (error) {
+            console.error('API call error:', error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -45,6 +66,16 @@ const HomeScreen = (props) => {
         };
     
         fetchProducts();
+
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+    
 
     useEffect(() => {
         if (products.length > 0) {
