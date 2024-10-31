@@ -7,6 +7,7 @@ const HomeScreen = (prop) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(0);
     const [search] = useState('');
     const screenWidth = Dimensions.get('window').width;
@@ -19,36 +20,53 @@ const HomeScreen = (prop) => {
 
     const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
 
-    const apiLinks = [
-        'https://api-h89c.onrender.com/products/getProducts',
-        'https://api-h89c.onrender.com/products/getVegetables',
-        'https://api-h89c.onrender.com/products/getFruits',
-        'https://api-h89c.onrender.com/products/getMeat',
-        'https://api-h89c.onrender.com/products/getFish',
-        'https://api-h89c.onrender.com/products/getSpices',
-        'https://api-h89c.onrender.com/products/getDrinks'
-    ];
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get(apiLinks[selectedCategory]);
-            setProducts(response.data);
-        } catch (error) {
-            console.error('Lỗi khi gọi API:', error);
-        }
-    };
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get('https://api-h89c.onrender.com/products/filter/?id');
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching products:", error.message); // Thêm thông báo lỗi chi tiết
+                if (error.response) {
+                    // Yêu cầu đã được gửi và server đã phản hồi với mã trạng thái không phải 2xx
+                    console.error("Response data:", error.response.data);
+                    console.error("Response status:", error.response.status);
+                } else if (error.request) {
+                    // Yêu cầu đã được gửi nhưng không có phản hồi
+                    console.error("Request data:", error.request);
+                } else {
+                    // Một cái gì đó đã xảy ra trong khi thiết lập yêu cầu
+                    console.error("Error message:", error.message);
+                }
+            }
+        };
+    
         fetchProducts();
-    }, [selectedCategory])
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
-        }, 3000);
-        return () => clearInterval(interval);
     }, []);
+    
 
     useEffect(() => {
-        if (scrollViewRef.current) {
+        if (products.length > 0) {
+            if (selectedCategory === 0) {
+                setFilteredProducts(products); // Hiển thị tất cả sản phẩm
+            } else {
+                const filtered = products.filter(product => product.category === categories[selectedCategory]);
+                setFilteredProducts(filtered);
+            }
+        }
+    }, [selectedCategory, products]);
+
+    useEffect(() => {
+        if (banners.length > 0) {
+            const interval = setInterval(() => {
+                setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [banners.length]);
+
+    useEffect(() => {
+        if (scrollViewRef.current && currentIndex >= 0 && currentIndex < banners.length) {
             scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
         }
     }, [currentIndex]);
@@ -71,11 +89,7 @@ const HomeScreen = (prop) => {
                         price: item.price,
                         images: item.images || [imageUri],
                     };
-                    if (selectedCategory === 5 || selectedCategory === 6) {
-                        prop.navigation.navigate('Detailbottle', { product: Detail });
-                    } else {
-                        prop.navigation.navigate('Detail', { product: Detail });
-                    }
+                    prop.navigation.navigate(selectedCategory === 5 || selectedCategory === 6 ? 'Detailbottle' : 'Detail', { product: Detail });
                 }}
             >
                 <View style={HomeStyle.productContainer}>
@@ -105,11 +119,11 @@ const HomeScreen = (prop) => {
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
-                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', alignItems: 'center' }}
+                            onPress={() => prop.navigation.navigate('Search', { products })}>
                             <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => prop.navigation.navigate('Search')}>
-                            <Text style={{ color: '#999' }}>{search || "Tìm kiếm"}</Text>
+                            <Text style={{ color: '#999', marginLeft: 6 }}>{search || "Tìm kiếm"}</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -168,9 +182,9 @@ const HomeScreen = (prop) => {
                 </ScrollView>
 
                 <FlatList
-                    data={products.data || []} // Truyền đúng dữ liệu từ API
+                    data={filteredProducts}
                     renderItem={renderProductItem}
-                    keyExtractor={item => item._id.toString()} // Sử dụng _id từ API làm key
+                    keyExtractor={item => item._id.toString()}
                     numColumns={2}
                     scrollEnabled={false}
                 />

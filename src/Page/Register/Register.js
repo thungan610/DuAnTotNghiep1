@@ -83,7 +83,7 @@ const Register = (prop) => {
         if (!hasError) {
             Alert.alert("Thông báo", "Đăng kí thành công!");
             setTimeout(() => {
-                prop.navigation.navigate('SMS');
+                prop.navigation.navigate('SMS', { phoneNumber: phone });
             }, 1000);
         } try {
             // Gọi API đăng ký

@@ -61,7 +61,7 @@ const AddProduct = ({ prop, route }) => {
     useEffect(() => {
         if (data) {
 
-            axios.post('https://api-h89c.onrender.com/carts/addCart_App', {
+            axios.post('https:/localhost:6677/carts/addCart_App', {
                 name: data.name,
                 price: data.price,
                 category: data.category,
@@ -100,7 +100,7 @@ const AddProduct = ({ prop, route }) => {
         setCartItems(prevItems =>
             prevItems.map(item => item.id === id ? { ...item, selected: !item.selected } : item)
         );
-    }; 
+    };
 
     const updateQuantity = (id, action) => {
         setCartItems(prevItems =>
@@ -133,7 +133,7 @@ const AddProduct = ({ prop, route }) => {
         setCartItems(prevItems => prevItems.filter(item => !item.selected));
         setModalVisible(false);
     };
-    
+
     const confirmDelete = () => {
         const selectedItems = cartItems.filter(item => item.selected);
         if (selectedItems.length === 0) {

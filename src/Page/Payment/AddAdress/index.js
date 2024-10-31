@@ -4,29 +4,35 @@ import AddAdressStyle from "./style";
 import axios from "axios";
 
 const AddAdress = (prop) => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [region, setRegion] = useState('');
+    // const [name, setName] = useState('');
+    // const [phone, setPhone] = useState('');
+    const [alley, setalley] = useState('');
     const [district, setDistrict] = useState('');
-    const [details, setDetails] = useState('');
+    const [quarter, setquarter] = useState('');
+    const [houseNumber, sethouseNumber] = useState('');
+    const [city, setcity] = useState('');
+    const [country, setcountry] = useState('');
 
     const BackRight = () => {
         prop.navigation.navigate('ProfileDetail');
     };
 
     const handleSubmit = async () => {
-        if (!name || !phone || !region || !district || !details) {
+        if (!alley || !district || !quarter || !houseNumber || !city || !country ) {
             Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
             return;
         }
 
         try {
-            const response = await axios.post('http://192.168.2.21:6677/addresses/addAddress', {
-                name,
-                phone,
-                region,
+            const response = await axios.post('https://localhost:6677/addresses/addAddress', {
+                // name,
+                // phone,
+                alley,
                 district,
-                details,
+                quarter,
+                houseNumber,
+                city,
+                country,
             });
 
             if (response.status === 200) {
@@ -52,7 +58,7 @@ const AddAdress = (prop) => {
             </View>
             <View>
                 <Text style={AddAdressStyle.txtLH}>Thông tin liên hệ</Text>
-                <View style={AddAdressStyle.body}>
+                {/* <View style={AddAdressStyle.body}>
                     <TextInput 
                         style={AddAdressStyle.input} 
                         placeholder="Họ và tên"
@@ -66,29 +72,46 @@ const AddAdress = (prop) => {
                         onChangeText={setPhone}
                         keyboardType="phone-pad"
                     />
-                </View>
+                </View> */}
             </View>
             <View>
                 <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
                 <View style={AddAdressStyle.body}>
-                    <Text style={AddAdressStyle.input}>Việt Nam</Text>
-                    <TextInput 
+                <TextInput 
                         style={AddAdressStyle.input} 
-                        placeholder="Nhập khu vực"
-                        value={region} 
-                        onChangeText={setRegion} 
+                        placeholder="Nhập quốc gia"
+                        value={country} 
+                        onChangeText={setcountry}
                     />
                     <TextInput 
                         style={AddAdressStyle.input} 
-                        placeholder="Nhập quận/phường"
+                        placeholder="Nhập khu vực"
+                        value={city} 
+                        onChangeText={setcity}
+                    />
+                    <TextInput 
+                        style={AddAdressStyle.input} 
+                        placeholder="Nhập quận"
                         value={district} 
                         onChangeText={setDistrict}
                     />
                     <TextInput 
                         style={AddAdressStyle.input} 
-                        placeholder="Nhập số nhà/hẻm chi tiết"
-                        value={details} 
-                        onChangeText={setDetails} 
+                        placeholder="Nhập phường"
+                        value={quarter} 
+                        onChangeText={setquarter} 
+                    />
+                    <TextInput 
+                        style={AddAdressStyle.input} 
+                        placeholder="Nhập hẻm"
+                        value={alley} 
+                        onChangeText={setalley} 
+                    />
+                    <TextInput 
+                        style={AddAdressStyle.input} 
+                        placeholder="Nhập số nhà"
+                        value={houseNumber} 
+                        onChangeText={sethouseNumber} 
                     />
                 </View>
             </View>
