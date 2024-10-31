@@ -184,7 +184,9 @@ const HomeScreen = (props) => {
                 />
             </ScrollView>
         </View>
-    );
+    );  
+    // vghb
 };
 
 export default HomeScreen;
+                                                                                                  
