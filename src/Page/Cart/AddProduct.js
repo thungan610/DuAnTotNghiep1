@@ -68,9 +68,6 @@ const AddProduct = ({ route }) => {
 
     useEffect(() => {
         if (data) {
-            dispatch(addtoCart({
-                user: "user123", // Replace with the actual user if available
-                products: data,
                 quantity: data.quantity || 1,
             }))
                 .then(response => {
