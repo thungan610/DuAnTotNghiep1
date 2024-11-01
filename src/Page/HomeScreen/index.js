@@ -21,7 +21,7 @@ const HomeScreen = (props) => {
 
     const fetchCategories = async () => {
         try {
-            const response = await AxiosInstance().get("/categories");
+            const response = await AxiosInstanceSP().get("/categories");
             setCategories([{ name: "Tất cả", _id: "all" }, ...response.data]);
         } catch (error) {
             console.error('Lỗi khi lấy danh mục:', error);
