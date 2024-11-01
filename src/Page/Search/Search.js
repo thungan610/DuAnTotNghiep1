@@ -1,81 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import AxiosInstance from "../api/AxiosInstance";
 
-const SearchScreen = ({ route, prop }) => {
-    const { products } = route.params || {}; // Nhận sản phẩm từ props
-    const [searchText, setSearchText] = useState('');
-    const [filteredProducts, setFilteredProducts] = useState([]);
+const SearchScreen = ({ route, navigation }) => {
+  const [searchText, setSearchText] = useState('');
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-        if (Array.isArray(products)) {
-            setFilteredProducts(products);
-        } else {
-            console.warn("Products is not an array:", products); // Cảnh báo nếu không phải mảng
-            setFilteredProducts([]);
-        }
-    }, [products]);
+  // Hàm lấy sản phẩm từ API dựa trên từ khóa
+  const fetchProducts = async (keyword) => {
+    try {
+      setRefreshing(true);
+      const response = await AxiosInstance().get(`/products/search?key=${keyword}`);
+      console.log('Fetched products:', response.data);
 
-    const handleSearch = (text) => {
-        setSearchText(text);
-    };
+      const productsData = Array.isArray(response.data) ? response.data : [];
+      setProducts(productsData); 
+      setFilteredProducts(productsData); // Cập nhật danh sách gợi ý
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setProducts([]);
+      setFilteredProducts([]);
+      setRefreshing(false);
+    }
+  };
 
-    const performSearch = () => {
-        if (searchText.trim() === '') return;
+  // Gọi API khi `searchText` thay đổi
+  useEffect(() => {
+    if (searchText.trim()) {
+      fetchProducts(searchText);
+    } else {
+      setFilteredProducts(products); // Hiển thị toàn bộ sản phẩm nếu không có từ khóa
+    }
+  }, [searchText]);
 
-        const results = products.filter(product =>
-            product.name.toLowerCase().includes(searchText.toLowerCase())
-        );
+  // Khi nhấn nút tìm kiếm hoặc `Enter`, hiển thị toàn bộ sản phẩm khớp
+  const handleSearch = () => {
+    fetchProducts(searchText); // Lấy toàn bộ sản phẩm khớp với từ khóa hiện tại
+  };
 
-        setFilteredProducts(results);
-        setSearchText(''); // Xóa trường tìm kiếm sau khi tìm
-    };
+  // Hàm render từng sản phẩm trong FlatList
+  const renderProduct = ({ item }) => (
+    <View style={SearchStyle.productContainer}>
+      {/* <Image source={{ uri: item.images[0] }} style={SearchStyle.productImage} /> */}
+      <View style={SearchStyle.productDetails}>
+        <Text style={SearchStyle.productName}>{item.name}</Text>
+        <Text style={SearchStyle.productWeight}>{item.oum}</Text>
+        <Text style={SearchStyle.productPrice}>{item.price} VNĐ</Text>
+      </View>
+    </View>
+  );
 
-    const renderProduct = ({ item }) => (
-        <View style={SearchStyle.productContainer}>
-            <Image source={{ uri: item.images[0] }} style={SearchStyle.productImage} />
-            <View style={SearchStyle.productDetails}>
-                <Text style={SearchStyle.productName}>{item.name}</Text>
-                <Text style={SearchStyle.productWeight}>{item.oum}</Text>
-                <Text style={SearchStyle.productPrice}>{item.price} VNĐ</Text>
-            </View>
-        </View>
-    );
+  return (
+    <View style={SearchStyle.container}>
+      <View style={SearchStyle.searchBar}>
+        <TextInput
+          style={SearchStyle.searchInput}
+          placeholder='Tìm kiếm...'
+          value={searchText}
+          onChangeText={setSearchText}
+          onSubmitEditing={handleSearch}
+        />
+        {searchText.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
+            <Text style={SearchStyle.clearText}>×</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={() => navigation.navigate('BottomNav')}>
+          <Text style={SearchStyle.cancelText}>Hủy</Text>
+        </TouchableOpacity>
+      </View>
 
-    return (
-        <View style={SearchStyle.container}>
-            <View style={SearchStyle.searchBar}>
-                <TextInput
-                    style={SearchStyle.searchInput}
-                    placeholder='Tìm kiếm...'
-                    value={searchText}
-                    onChangeText={handleSearch}
-                    onSubmitEditing={performSearch}
-                />
-                {searchText.length > 0 && (
-                    <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
-                        <Text style={SearchStyle.clearText}>×</Text>
-                    </TouchableOpacity>
-                )}
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
-                    <Text style={SearchStyle.cancelText}>Hủy</Text>
-                </TouchableOpacity>
-            </View>
-
-            <FlatList
-                data={filteredProducts}
-                renderItem={renderProduct}
-                keyExtractor={item => item._id.toString()}
-                numColumns={2}
-                contentContainerStyle={SearchStyle.productList}
-            />
-        </View>
-    );
+      <FlatList
+        data={filteredProducts}
+        renderItem={renderProduct}
+        keyExtractor={item => item._id.toString()}
+        numColumns={2}
+contentContainerStyle={SearchStyle.productList}
+        refreshing={refreshing}
+        onRefresh={() => fetchProducts(searchText)}
+        ListEmptyComponent={() => (
+          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+            Không tìm thấy sản phẩm nào
+          </Text>
+        )}
+      />
+    </View>
+  );
 };
 
 export default SearchScreen;
 
 const SearchStyle = StyleSheet.create({
   container: {
+    flex: 1,
     paddingTop: 20,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
@@ -122,12 +142,10 @@ const SearchStyle = StyleSheet.create({
     width: 170,
     marginTop: 15,
     marginHorizontal: 6,
-    marginRight: 15,
   },
   productDetails: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
   },
   productName: {
     fontSize: 18,
@@ -136,17 +154,9 @@ const SearchStyle = StyleSheet.create({
   productWeight: {
     fontSize: 16,
   },
-  priceall: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   productPrice: {
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  price: {
-    marginRight: 5,
   },
 });

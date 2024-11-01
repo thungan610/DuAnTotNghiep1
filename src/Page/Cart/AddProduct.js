@@ -5,10 +5,9 @@ import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import AxiosInstance from "../api/AxiosInstance";
 
+const CartItem = ({ item, toggleSelect, updateQuantity }) => {
+    const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
 
-const CartItem = ({ item, toggleSelect, updateQuantity,  }) => {
-    const imageUri = item.images && item.images.length > 0 ? item.images[0] : null; // Handle image URI properly
-  
     return (
         <View style={AddProductStyle.itemContainer}>
             <TouchableOpacity onPress={() => toggleSelect(item.id)}>
@@ -68,24 +67,16 @@ const AddProduct = ({ route }) => {
 
     useEffect(() => {
         if (data) {
-                quantity: data.quantity || 1,
-            }))
-                .then(response => {
-                    setCartItems(prevItems => [
-                        ...prevItems,
-                        {
-                            ...data,
-                            quantity: data.quantity || 1,
-                            selected: false,
-                        },
-                    ]);
-                })
-                .catch(error => {
-                    Alert.alert("Thông báo", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-                    console.error(error);
-                });
+            setCartItems(prevItems => [
+                ...prevItems,
+                {
+                    ...data,
+                    quantity: data.quantity || 1,
+                    selected: false,
+                },
+            ]);
         }
-    }, [data, dispatch]);
+    }, [data]);
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
@@ -106,24 +97,6 @@ const AddProduct = ({ route }) => {
                 return item;
             })
         );
-    };
-
-    const updateQuantity = async (id, action) => {
-        const newQuantity = action === 'increase' ? 1 : -1;
-        try {
-            await cart.updateQuantity(id, newQuantity); // Assuming updateQuantity is configured in CartApi
-            setCartItems(prevItems =>
-                prevItems.map(item => {
-                    if (item.id === id) {
-                        return { ...item, quantity: Math.max(1, item.quantity + newQuantity) };
-                    }
-                    return item;
-                })
-            );
-        } catch (error) {
-            Alert.alert("Error", "Failed to update quantity");
-            console.error(error);
-        }
     };
 
     useEffect(() => {

@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
-import HomeStyle from "./style";
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
 import AxiosInstance from "../api/AxiosInstance";
 import AxiosInstanceSP from "../api/AxiosInstanceSP";
+import HomeStyle from './style';
+
 const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("all");
+    const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
 
     const banners = [
@@ -17,10 +21,10 @@ const HomeScreen = (props) => {
 
     const fetchCategories = async () => {
         try {
-            const response = await AxiosInstance().get("/categories");
+            const response = await AxiosInstanceSP().get("/categories");
             setCategories([{ name: "Tất cả", _id: "all" }, ...response.data]);
         } catch (error) {
-            console.error('Failed to fetch categories:', error);
+            console.error('Lỗi khi lấy danh mục:', error);
         }
     };
 
@@ -31,10 +35,16 @@ const HomeScreen = (props) => {
                 ? "/products/getProducts" 
                 : `/products/filter/${selectedCategory}`;
             const response = await AxiosInstanceSP().get(endpoint);
-            const filteredProducts = response.data.filter(item => item.quantity > 0);
-            setProducts(filteredProducts);
+
+            if (response && response.data) {
+                const filteredProducts = response.data.filter(item => item.quantity > 0);
+                setProducts(filteredProducts);
+            } else {
+                console.warn("Dữ liệu API không đúng định dạng:", response.data);
+                setProducts([]);
+            }
         } catch (error) {
-            console.error('API call error:', error);
+            console.error('Lỗi khi gọi API:', error);
         } finally {
             setRefreshing(false);
         }
@@ -45,28 +55,7 @@ const HomeScreen = (props) => {
     }, []);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get('https://api-h89c.onrender.com/products/filter/?id');
-                setProducts(response.data);
-            } catch (error) {
-                console.error("Error fetching products:", error.message); // Thêm thông báo lỗi chi tiết
-                if (error.response) {
-                    // Yêu cầu đã được gửi và server đã phản hồi với mã trạng thái không phải 2xx
-                    console.error("Response data:", error.response.data);
-                    console.error("Response status:", error.response.status);
-                } else if (error.request) {
-                    // Yêu cầu đã được gửi nhưng không có phản hồi
-                    console.error("Request data:", error.request);
-                } else {
-                    // Một cái gì đó đã xảy ra trong khi thiết lập yêu cầu
-                    console.error("Error message:", error.message);
-                }
-            }
-        };
-    
         fetchProducts();
-
     }, [selectedCategory]);
 
     useEffect(() => {
@@ -75,30 +64,9 @@ const HomeScreen = (props) => {
         }, 3000);
         return () => clearInterval(interval);
     }, []);
-    
 
     useEffect(() => {
-        if (products.length > 0) {
-            if (selectedCategory === 0) {
-                setFilteredProducts(products); // Hiển thị tất cả sản phẩm
-            } else {
-                const filtered = products.filter(product => product.category === categories[selectedCategory]);
-                setFilteredProducts(filtered);
-            }
-        }
-    }, [selectedCategory, products]);
-
-    useEffect(() => {
-        if (banners.length > 0) {
-            const interval = setInterval(() => {
-                setCurrentIndex(prevIndex => (prevIndex + 1) % banners.length);
-            }, 3000);
-            return () => clearInterval(interval);
-        }
-    }, [banners.length]);
-
-    useEffect(() => {
-        if (scrollViewRef.current && currentIndex >= 0 && currentIndex < banners.length) {
+        if (scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ x: currentIndex * screenWidth, animated: true });
         }
     }, [currentIndex]);
@@ -114,20 +82,22 @@ const HomeScreen = (props) => {
                         name: item.name,
                         oum: item.oum,
                         origin: item.origin,
-                        preserve: item.preserve.preserve_name,
+                        preserve: item.preserve?.preserve_name,
                         uses: item.uses,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,
                         images: item.images || [imageUri],
                     };
+                    if (selectedCategory === "5" || selectedCategory === "6") {
+                        props.navigation.navigate('Detailbottle', { product: Detail });
+                    } else {
+                        props.navigation.navigate('Detail', { product: Detail });
+                    }
                 }}
             >
                 <View style={HomeStyle.productContainer}>
-                    <Image
-                        style={{ width: 100, height: 80 }}
-                        source={{ uri: imageUri }}
-                    />
+                    <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
                     <View style={HomeStyle.productDetails}>
                         <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
@@ -147,6 +117,11 @@ const HomeScreen = (props) => {
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
+                            <Image style={HomeStyle.search} source={require('../../../src/assets/Search_alt.png')} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Search')}>
+                            <Text style={{ color: '#999' }}>Tìm kiếm</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -205,6 +180,7 @@ const HomeScreen = (props) => {
                 </ScrollView>
 
                 <FlatList
+                    data={products}
                     renderItem={renderProductItem}
                     keyExtractor={item => item._id.toString()}
                     numColumns={2}
