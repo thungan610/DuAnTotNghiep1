@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import AxiosInstance from "../api/AxiosInstance";
 
-const SearchScreen = ({ route, navigation }) => {
+const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -16,8 +16,8 @@ const SearchScreen = ({ route, navigation }) => {
       console.log('Fetched products:', response.data);
 
       const productsData = Array.isArray(response.data) ? response.data : [];
-      setProducts(productsData); 
-      setFilteredProducts(productsData); // Cập nhật danh sách gợi ý
+      setProducts(productsData);
+      setFilteredProducts(productsData);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
@@ -27,31 +27,32 @@ const SearchScreen = ({ route, navigation }) => {
     }
   };
 
-  // Gọi API khi `searchText` thay đổi
   useEffect(() => {
     if (searchText.trim()) {
       fetchProducts(searchText);
     } else {
-      setFilteredProducts(products); // Hiển thị toàn bộ sản phẩm nếu không có từ khóa
+      setFilteredProducts(products);
     }
   }, [searchText]);
 
-  // Khi nhấn nút tìm kiếm hoặc `Enter`, hiển thị toàn bộ sản phẩm khớp
   const handleSearch = () => {
-    fetchProducts(searchText); // Lấy toàn bộ sản phẩm khớp với từ khóa hiện tại
+    fetchProducts(searchText);
   };
 
   // Hàm render từng sản phẩm trong FlatList
-  const renderProduct = ({ item }) => (
-    <View style={SearchStyle.productContainer}>
-      {/* <Image source={{ uri: item.images[0] }} style={SearchStyle.productImage} /> */}
-      <View style={SearchStyle.productDetails}>
-        <Text style={SearchStyle.productName}>{item.name}</Text>
-        <Text style={SearchStyle.productWeight}>{item.oum}</Text>
-        <Text style={SearchStyle.productPrice}>{item.price} VNĐ</Text>
-      </View>
-    </View>
-  );
+  const renderProduct = ({ item }) => {
+    return (
+        <View style={SearchStyle.productContainer}>
+            <Image source={ item.image } style={SearchStyle.productImage} />
+            <View style={SearchStyle.productDetails}>
+                <Text style={SearchStyle.productName}>{item.name}</Text>
+                <Text style={SearchStyle.productWeight}>{item.oum}</Text>
+                <Text style={SearchStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+            </View>
+        </View>
+    );
+};
+
 
   return (
     <View style={SearchStyle.container}>
@@ -78,7 +79,7 @@ const SearchScreen = ({ route, navigation }) => {
         renderItem={renderProduct}
         keyExtractor={item => item._id.toString()}
         numColumns={2}
-contentContainerStyle={SearchStyle.productList}
+        contentContainerStyle={SearchStyle.productList}
         refreshing={refreshing}
         onRefresh={() => fetchProducts(searchText)}
         ListEmptyComponent={() => (

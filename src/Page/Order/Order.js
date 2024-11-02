@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 
 const Order = (prop) => {
   const [orders, setOrders] = useState([]);
   const [selectedTabs, setSelectedTabs] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
@@ -17,18 +18,20 @@ const Order = (prop) => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true); // Bắt đầu tải dữ liệu
       try {
-        const currentTab = tabs[selectedTabs]; // Lấy tên tab hiện tại
-        const response = await axios.get(apiUrls[currentTab]); // Gọi API theo tab hiện tại
-        setOrders(response.data); // Cập nhật trạng thái đơn hàng với dữ liệu nhận được
+        const currentTab = tabs[selectedTabs];
+        const response = await axios.get(apiUrls[currentTab]);
+        setOrders(response.data);
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
-      } 
+      } finally {
+        setLoading(false); // Kết thúc tải dữ liệu
+      }
     };
 
-    fetchOrders(); // Gọi hàm fetchOrders khi component được mount hoặc tab thay đổi
+    fetchOrders();
   }, [selectedTabs]);
-
 
   useEffect(() => {
     const { selectedTab } = prop.route.params || {};
@@ -36,8 +39,6 @@ const Order = (prop) => {
       setSelectedTabs(selectedTab);
     }
   }, [prop.route.params]);
-
-  const currentOrders = orders;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -78,7 +79,11 @@ const Order = (prop) => {
           alignItems: 'center',
         }}>
           <View style={OrderStyle.borderimage}>
-          <Image source={{ uri: item.image }} style={OrderStyle.image} />
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={OrderStyle.image} />
+            ) : (
+              <View style={[OrderStyle.image, { backgroundColor: '#cccccc' }]} />
+            )}
           </View>
           {item.status === 'Đã nhận' && (
             <Text style={OrderStyle.completedText}>Hoàn thành</Text>
@@ -88,13 +93,12 @@ const Order = (prop) => {
           <Text style={OrderStyle.orderName}>{item.name}</Text>
           <Text style={OrderStyle.orderQuantity}>SL: {item.quantity}</Text>
           <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.price).toLocaleString('vi-VN')}đ</Text>
-
+  
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
           )}
-
+  
           {tabs[selectedTabs] === 'Đã nhận' && (
-
             <View style={OrderStyle.buttonContainer}>
               <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
@@ -138,12 +142,16 @@ const Order = (prop) => {
         ))}
       </View>
 
-      <FlatList
-        data={currentOrders}
-        renderItem={renderOrderCard}
-        keyExtractor={item => item._id.toString()}
-        style={OrderStyle.orderContainer}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={orders}
+          renderItem={renderOrderCard}
+          keyExtractor={item => (item._id ? item._id.toString() : Math.random().toString())}
+          style={OrderStyle.orderContainer}
+        />
+      )}
     </View>
   );
 };
