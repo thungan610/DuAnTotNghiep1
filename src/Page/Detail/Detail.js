@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
+import AxiosInstance from '../../../src/Page/api/AxiosInstance';
 import styleDetail from './style';
 
 const Detail = (prop) => {
@@ -14,6 +15,8 @@ const Detail = (prop) => {
     const [unitPrice, setUnitPrice] = useState(product?.price || 0);
     const [price, setPrice] = useState(product?.price || 0);
     const [hasNotification, setHasNotification] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [preserves, setPreserves] = useState([]);
 
     useEffect(() => {
         if (product) {  
@@ -39,41 +42,59 @@ const Detail = (prop) => {
             Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
+
     const handleNotificationClick = () => {
         setHasNotification(false); 
         prop.navigation.navigate('NotifiScreen'); 
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         const data = {
-            name: product.name,
-            price: product.price,
-            quantity: selectedQuantity,
-            category: product.category,
-            image: product.images[0],
+            name: productDetails.name,           // Tên sản phẩm
+            price: price,                         // Giá sản phẩm
+            quantity: quantity,                   // Số lượng
+            category: productDetails.category,    // Danh mục
+            image: productDetails.images[0],      // Hình ảnh sản phẩm
         };
-        prop.navigation.navigate('AddProduct', { data }); 
+        
+        try {
+            const response = await AxiosInstance.post('/carts/addCart_App', data);
+            if (response.status === 200) {
+                Alert.alert('Thông báo', 'Sản phẩm đã được thêm vào giỏ hàng');
+            } else {
+                Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        } catch (error) {
+            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
+            Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+        }
     };
     
+
     useEffect(() => {
-        // Gọi API để lấy tất cả danh mục
         const getAllCategories = async () => {
-            const response = await fetch("https://api-h89c.onrender.com/categories/");
-            const result = await response.json();
-            setCategories(result.data);
+            try {
+                const response = await AxiosInstance.get("/categories");
+                setCategories(response.data.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy danh mục:", error);
+            }
         };
         getAllCategories();
     }, []);
-    const [preserves, setPreserves] = useState([]);
+
     useEffect(() => {
         const getPreserves = async () => {
-            const response = await fetch("https://api-h89c.onrender.com/preserves");
-            const result = await response.json();
-            setPreserves(result.data);
+            try {
+                const response = await AxiosInstance.get("/preserves");
+                setPreserves(response.data.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu bảo quản:", error);
+            }
         };
         getPreserves();
-        return () => { };
     }, []);
+
     const renderImages = () => {
         return images.map((item, index) => (
             <View key={index}>
@@ -107,7 +128,6 @@ const Detail = (prop) => {
                 <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav', { product: selectedProduct })}>
                     <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
-
                 <View style={{
                     flexDirection: 'row'
                 }}>
@@ -201,7 +221,7 @@ const Detail = (prop) => {
                             </View>
                             <View style={styleDetail.origin}>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Xuất xứ:</Text>
+                                    <Text style={styleDetail.textorigin}>Xuất xứ: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
@@ -209,14 +229,13 @@ const Detail = (prop) => {
                                     <Text style={styleDetail.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Bảo quản:</Text>
+                                    <Text style={styleDetail.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Công dụng:</Text>
+                                    <Text style={styleDetail.textorigin}>Công dụng: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
                                 </View>
-
                             </View>
                             <View style={{
                                 alignItems: 'center',
