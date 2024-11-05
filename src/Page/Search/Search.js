@@ -1,116 +1,106 @@
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import AxiosInstanceSP from "../api/AxiosInstanceSP";
 
-const SearchScreen = (prop) => {
+const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [showAllSearches, setShowAllSearches] = useState(false);
-  
-  // Danh sách sản phẩm để tìm kiếm
-  // const productinsearch = [
-  //   { id: 1, name: 'Bắp cải trắng', weight: '1 kg', price: '19.000đ', image: require('../../assets/image/image1.png') },
-  //   { id: 2, name: 'Chanh không hạt', weight: '1 kg', price: '9.000đ', image: require('../../assets/image/image2.png') },
-  //   { id: 3, name: 'Khoai tây', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image3.png') },
-  //   { id: 4, name: 'Sườn non', weight: '1 kg', price: '45.000đ', image: require('../../assets/image/image4.png') },
-  //   { id: 5, name: 'Thịt nạt', weight: '1 kg', price: '30.000đ', image: require('../../assets/image/image5.png') },
-  //   { id: 6, name: 'Rau cải', weight: '1 kg', price: '10.000đ', image: require('../../assets/image/image6.png') },
-  // ];
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleSearch = (text) => {
-    setSearchText(text);
-  };
+  const defaultImageUri = 'https://res.cloudinary.com/imagesupload2024/image/upload/v1729583649/Rau%20c%E1%BB%A7/zjj0p3oqj0q1dfnta4z8.png'; 
 
-  const performSearch = () => {
-    if (searchText.trim() === '')
-      return;
+  // Hàm lấy sản phẩm từ API dựa trên từ khóa
+  const fetchProducts = async (keyword) => {
+    try {
+        setRefreshing(true);
+        const response = await AxiosInstanceSP().get(`/products/search?key=${keyword}`);
+        console.log('Fetched products:', response.data);
 
-    if (!recentSearches.includes(searchText)) {
-      setRecentSearches(prevSearches => {
-        const newSearches = [searchText, ...prevSearches];
-        return newSearches.slice(0, 10);
-      });
+        const productsData = Array.isArray(response.data) ? response.data : [];
+        setProducts(productsData);
+        setFilteredProducts(productsData);
+        setRefreshing(false);
+    } catch (error) {
+        console.log(error);
+        setProducts([]);
+        setFilteredProducts([]);
+        setRefreshing(false);
     }
+};
 
-    setSearchText('');
+
+  useEffect(() => {
+    if (searchText.trim()) {
+      fetchProducts(searchText);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [searchText]);
+
+  const handleSearch = async (key) => {
+    try {
+      const results = await findProductsByKey_App(key);
+      setProducts(results); 
+    } catch (error) {
+      console.error("Lỗi tìm kiếm: ", error.message);
+    }
   };
 
-  const handleRecentSearchPress = (item) => {
-    setSearchText(item);
-  };
-
-  // Lọc sản phẩm theo searchText
-  const filteredProducts = productinsearch.filter(product =>
-    product.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const renderProduct = ({ item }) => (
-    <View style={SearchStyle.productContainer}>
-      <Image source={item.image} style={SearchStyle.productImage} />
-      <View style={SearchStyle.productDetails}>
-        <Text style={SearchStyle.productName}>{item.name}</Text>
-        <Text style={SearchStyle.productWeight}>{item.weight}</Text>
-        <View style={SearchStyle.priceall}>
-          <Image style={SearchStyle.price} source={require('../../../src/assets/Dollar.png')} />
-          <Text style={SearchStyle.productPrice}>{item.price} VNĐ</Text>
+  const renderProduct = ({ item }) => {
+    // Kiểm tra và lấy URL ảnh từ sản phẩm
+    const imageUri = (item.images && item.images.length > 0) ? item.images[0] : defaultImageUri;
+    
+    return (
+        <View style={SearchStyle.productContainer}>
+            <Image
+                style={{ width: 100, height: 80 }}
+                source={{ uri: imageUri }}
+                onError={() => console.log('Error loading image, using default image.')}
+            />
+            <View style={SearchStyle.productDetails}>
+                <Text style={SearchStyle.productName}>{item.name || 'Không có tên sản phẩm'}</Text>
+                <Text style={SearchStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
+                <Text style={SearchStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+            </View>
         </View>
-      </View>
-    </View>
-  );
+    );
+};
+
 
   return (
-    <View style={SearchStyle.container}>
+    <View style={SearchStyle.container}>  
       <View style={SearchStyle.searchBar}>
         <TextInput
           style={SearchStyle.searchInput}
           placeholder='Tìm kiếm...'
           value={searchText}
-          onChangeText={handleSearch}
-          onSubmitEditing={performSearch}
+          onChangeText={setSearchText}
+          onSubmitEditing={handleSearch}
         />
         {searchText.length > 0 && (
           <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
             <Text style={SearchStyle.clearText}>×</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+        <TouchableOpacity onPress={() => navigation.navigate('BottomNav')}>
           <Text style={SearchStyle.cancelText}>Hủy</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={SearchStyle.recentSearchContainer}>
-        {(showAllSearches ? recentSearches : recentSearches.slice(0, 4)).map((item, index) => (
-          <TouchableOpacity key={index} style={SearchStyle.recentSearchItem} onPress={() => handleRecentSearchPress(item)}>
-            <Image source={require('../../assets/iconSearch.png')} style={SearchStyle.searchIcon} />
-            <Text style={SearchStyle.recentSearchText}>{item}</Text>
-            <TouchableOpacity onPress={() => {
-              setRecentSearches(prevSearches => prevSearches.filter((search) => search !== item));
-            }}>
-              <Image source={require('../../assets/delete.png')} style={SearchStyle.deleteIcon} />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
-
-        {recentSearches.length > 4 && !showAllSearches && (
-          <TouchableOpacity style={SearchStyle.viewMoreContainer} onPress={() => setShowAllSearches(true)}>
-            <Text style={SearchStyle.viewMoreText}>Xem thêm</Text>
-            <Image source={require('../../assets/chevron-left.png')} style={{ transform: [{ rotate: '270deg' }] }} />
-          </TouchableOpacity>
-        )}
-
-        {recentSearches.length > 4 && showAllSearches && (
-          <TouchableOpacity style={SearchStyle.viewMoreContainer} onPress={() => setShowAllSearches(false)}>
-            <Text style={SearchStyle.viewMoreText}>Ẩn bớt</Text>
-            <Image source={require('../../assets/chevron-left.png')} style={{ transform: [{ rotate: '270deg' }] }} />
-          </TouchableOpacity>
-        )}
       </View>
 
       <FlatList
         data={filteredProducts}
         renderItem={renderProduct}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item._id.toString()}
         numColumns={2}
         contentContainerStyle={SearchStyle.productList}
+        refreshing={refreshing}
+        onRefresh={() => fetchProducts(searchText)}
+        ListEmptyComponent={() => (
+          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+            Không tìm thấy sản phẩm nào
+          </Text>
+        )}
       />
     </View>
   );
@@ -120,6 +110,7 @@ export default SearchScreen;
 
 const SearchStyle = StyleSheet.create({
   container: {
+    flex: 1,
     paddingTop: 20,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
@@ -153,42 +144,8 @@ const SearchStyle = StyleSheet.create({
     fontSize: 16,
     color: '#007AFF',
   },
-  recentSearchContainer: {
-    marginBottom: 20,
-  },
-  recentSearchItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  recentSearchText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  deleteIcon: {
-    width: 20,
-    height: 20,
-  },
-  viewMoreContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'center'
-  },
-  viewMoreText: {
-    fontSize: 16,
-    color: '#F1F1F1',
-  },
-  productList: {  
+  productList: {
     paddingBottom: 20,
-    backgroundColor:'#'
   },
   productContainer: {
     borderColor: '#2CA9C0',
@@ -200,31 +157,22 @@ const SearchStyle = StyleSheet.create({
     width: 170,
     marginTop: 15,
     marginHorizontal: 6,
-    marginRight: 15
   },
   productDetails: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
   },
   productName: {
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign:'center'
   },
   productWeight: {
     fontSize: 16,
   },
-  priceall: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   productPrice: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 18,
-    fontWeight: 'bold'
-  },
-  price: {
-    marginRight: 5
+    fontWeight: 'bold',
   },
 });

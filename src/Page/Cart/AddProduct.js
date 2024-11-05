@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
-import { useDispatch } from 'react-redux'; // Ensure useDispatch is imported
 import PayMethodStyle from '../Payment/PayMethod/style';
-import AddProductStyle from './AddProductStyle'; 
+import AddProductStyle from './AddProductStyle';
+import AxiosInstance from "../api/AxiosInstance";
 
 const CartItem = ({ item, toggleSelect, updateQuantity }) => {
-    const imageUri = item.images && item.images.length > 0 ? item.images[0] : null; // Handle image URI properly
+    const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
 
     return (
         <View style={AddProductStyle.itemContainer}>
@@ -58,7 +58,6 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 );
 
 const AddProduct = ({ route }) => {
-    const dispatch = useDispatch(); // useDispatch hook
     const { data } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
@@ -66,27 +65,16 @@ const AddProduct = ({ route }) => {
 
     useEffect(() => {
         if (data) {
-            dispatch(addtoCart({
-                user: "user123", // Replace with the actual user if available
-                products: data,
-                quantity: data.quantity || 1,
-            }))
-                .then(response => {
-                    setCartItems(prevItems => [
-                        ...prevItems,
-                        {
-                            ...data,
-                            quantity: data.quantity || 1,
-                            selected: false,
-                        },
-                    ]);
-                })
-                .catch(error => {
-                    Alert.alert("Thông báo", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-                    console.error(error);
-                });
+            setCartItems(prevItems => [
+                ...prevItems,
+                {
+                    ...data,
+                    quantity: data.quantity || 1,
+                    selected: false,
+                },
+            ]);
         }
-    }, [data, dispatch]);
+    }, [data]);
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
@@ -94,22 +82,19 @@ const AddProduct = ({ route }) => {
         );
     };
 
-    const updateQuantity = async (id, action) => {
-        const newQuantity = action === 'increase' ? 1 : -1;
-        try {
-            await cart.updateQuantity(id, newQuantity); // Assuming updateQuantity is configured in CartApi
-            setCartItems(prevItems =>
-                prevItems.map(item => {
-                    if (item.id === id) {
-                        return { ...item, quantity: Math.max(1, item.quantity + newQuantity) };
-                    }
-                    return item;
-                })
-            );
-        } catch (error) {
-            Alert.alert("Error", "Failed to update quantity");
-            console.error(error);
-        }
+    const updateQuantity = (id, action) => {
+        setCartItems(prevItems =>
+            prevItems.map(item => {
+                if (item.id === id) {
+                    const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+                    return {
+                        ...item,
+                        quantity: newQuantity,
+                    };
+                }
+                return item;
+            })
+        );
     };
 
     useEffect(() => {
@@ -182,3 +167,4 @@ const AddProduct = ({ route }) => {
 };
 
 export default AddProduct;
+

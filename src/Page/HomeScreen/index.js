@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Image, ScrollView, Dimensions, TouchableOpacity, Text, FlatList } from "react-native";
-import HomeStyle from "./style";
-import AxiosInstance from "../api/AxiosInstance";
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
+import AxiosInstanceSP from "../api/AxiosInstanceSP";
+import HomeStyle from './style';
 
 const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [products, setProducts] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(0);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
 
@@ -17,25 +18,40 @@ const HomeScreen = (props) => {
         require('../../../src/assets/banner/baner3.jpg'),
     ];
 
-    const categories = ["Tất cả", "Rau củ", "Trái cây", "Thịt", "Cá", "Gia vị", "Nước ngọt"];
-
-    const apiLinks = [
-        '/products/getProducts',
-        
-    ];
+    const fetchCategories = async () => {
+        try {
+            const response = await AxiosInstanceSP().get("/categories");
+            setCategories([{ name: "Tất cả", _id: "all" }, ...response.data]);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh mục:', error);
+        }
+    };
 
     const fetchProducts = async () => {
         try {
             setRefreshing(true);
-            const response = await AxiosInstance().get(apiLinks[selectedCategory]);
-            const filteredProducts = response.data.filter(item => item.quantity > 0);
-            setProducts(filteredProducts);
-            setRefreshing(false);
+            const endpoint = selectedCategory === "all" 
+                ? "/products/getProducts" 
+                : `/products/filter/${selectedCategory}`;
+            const response = await AxiosInstanceSP().get(endpoint);
+
+            if (response && response.data) {
+                const filteredProducts = response.data.filter(item => item.quantity > 0);
+                setProducts(filteredProducts);
+            } else {
+                console.warn("Dữ liệu API không đúng định dạng:", response.data);
+                setProducts([]);
+            }
         } catch (error) {
-            console.error('API call error:', error);
+            console.error('Lỗi khi gọi API:', error);
+        } finally {
             setRefreshing(false);
         }
     };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         fetchProducts();
@@ -55,9 +71,8 @@ const HomeScreen = (props) => {
     }, [currentIndex]);
 
     const renderProductItem = ({ item }) => {
-        const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
-        const { navigation } = props;
-
+        const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
+    
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -66,25 +81,22 @@ const HomeScreen = (props) => {
                         name: item.name,
                         oum: item.oum,
                         origin: item.origin,
-                        preserve: item.preserve,
+                        preserve: item.preserve?.preserve_name,
                         uses: item.uses,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,
                         images: item.images || [imageUri],
                     };
-                    if (selectedCategory === 5 || selectedCategory === 6) {
-                        navigation.navigate('Detailbottle', { product: Detail });
+                    if (selectedCategory === "5" || selectedCategory === "6") {
+                        props.navigation.navigate('Detailbottle', { product: Detail });
                     } else {
-                        navigation.navigate('Detail', { product: Detail });
+                        props.navigation.navigate('Detail', { product: Detail });
                     }
                 }}
             >
                 <View style={HomeStyle.productContainer}>
-                    <Image
-                        style={{ width: 100, height: 80 }}
-                        source={{ uri: imageUri }}
-                    />
+                    <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
                     <View style={HomeStyle.productDetails}>
                         <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
@@ -97,6 +109,7 @@ const HomeScreen = (props) => {
             </TouchableOpacity>
         );
     };
+    
 
     return (
         <View>
@@ -116,7 +129,7 @@ const HomeScreen = (props) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/chat.png')}
+                                source={require('../../../src/assets/Chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
@@ -146,21 +159,21 @@ const HomeScreen = (props) => {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={HomeStyle.categoryContainer}>
-                    {categories.map((category, index) => (
+                    {categories.map((category) => (
                         <TouchableOpacity
-                            key={index}
-                            style={[HomeStyle.categoryButton, selectedCategory === index && HomeStyle.selectedCategoryButton]}
-                            onPress={() => setSelectedCategory(index)}
+                            key={category._id}
+                            style={[HomeStyle.categoryButton, selectedCategory === category._id && HomeStyle.selectedCategoryButton]}
+                            onPress={() => setSelectedCategory(category._id)}
                         >
                             <Text style={{
-                                fontSize: selectedCategory === index ? 20 : 18,
-                                fontWeight: selectedCategory === index ? 'bold' : 'normal',
-                                textDecorationLine: selectedCategory === index ? 'underline' : 'none',
+                                fontSize: selectedCategory === category._id ? 20 : 18,
+                                fontWeight: selectedCategory === category._id ? 'bold' : 'normal',
+                                textDecorationLine: selectedCategory === category._id ? 'underline' : 'none',
                                 marginHorizontal: 5,
                                 marginTop: 7,
-                                color: selectedCategory === index ? 'black' : '#8B8B8B',
+                                color: selectedCategory === category._id ? 'black' : '#8B8B8B',
                             }}>
-                                {category}
+                                {category.name}
                             </Text>
                         </TouchableOpacity>
                     ))}
