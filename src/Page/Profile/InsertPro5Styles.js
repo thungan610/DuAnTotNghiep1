@@ -1,11 +1,10 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const InsertPro5Styles = StyleSheet.create({
   textH: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'black',
-    marginLeft: 98,
   },
   iconback: {
     width: 24,
@@ -14,10 +13,9 @@ const InsertPro5Styles = StyleSheet.create({
   },
   headers: {
     flexDirection: 'row',
-    marginLeft: 15,
-    marginTop: 20,
     width: '100%',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   imgPro5: {
     width: 120,
@@ -30,9 +28,6 @@ const InsertPro5Styles = StyleSheet.create({
   textPro5: {
     color: 'black',
     fontSize: 17,
-  },
-  body: {
-    padding: 20,
   },
   name: {
     flexDirection: 'row',
@@ -54,22 +49,23 @@ const InsertPro5Styles = StyleSheet.create({
     width: 24,
     height: 24,
     position: 'absolute',
-    marginLeft: 186,
     marginTop: -25,
   },
-  btnLogoutText:{
+  btnLogoutText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  btnLogout:{
+  btnLogout: {
     backgroundColor: '#FF3434',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
-    width: 300,
-    marginLeft: 45,
-    marginTop: 100,
-},
+    width: "100%",
+    marginTop: 150,
+  },
+  imgphotoContainer:{
+    alignItems: 'center',
+  }
 });
 export default InsertPro5Styles;
