@@ -118,6 +118,7 @@ const InsertPro5 = (prop) => {
         keyExtractor={(item) => item.id.toString()} // Đảm bảo id là một chuỗi
         renderItem={renderPro5}
       />
+
     </View>
   );
 };
