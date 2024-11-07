@@ -1,9 +1,10 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import SmsStyle from './style';
-import axios from 'axios';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const SMS = ({ prop, route }) => {
+const SMS = ({ route }) => {
+    const navigation = useNavigation(); // Sử dụng useNavigation để lấy navigation
     const { phoneNumber } = route.params; // Nhận số điện thoại từ params
     const [code, setCode] = useState(["", "", "", ""]);
     const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -47,36 +48,26 @@ const SMS = ({ prop, route }) => {
         }
     };
 
-    const handleConfirm = async () => {
+    const handleConfirm = () => {
         if (code.some(digit => digit === "")) {
             Alert.alert("Thông báo", "Vui lòng nhập đầy đủ mã xác nhận!");
             return;
         }
-    
+
         if (timeLeft <= 0) {
             Alert.alert("Thông báo", "Mã xác nhận đã hết hạn. Vui lòng yêu cầu mã mới.");
             return;
         }
-    
-        const inputCode = code.join(''); // Kết hợp các chữ số thành một chuỗi
-    
-        try {
-            const response = await axios.post('https://api-h89c.onrender.com/users/register', { phone: phoneNumber, verificationCode: inputCode });
-            if (response.data.success) {
-                Alert.alert("Thông báo", response.data.message, [
-                    {
-                        text: 'OK',
-                        onPress: () => prop.navigation.navigate('Registration_successful'),
-                    },
-                ]);
-            } else {
-                Alert.alert("Thông báo", response.data.message);
-            }
-        } catch (error) {
-            Alert.alert("Thông báo", "Xác nhận thất bại: " + (error.response ? error.response.data.message : error.message));
-        }
+
+        // Logic giả lập cho bước xác nhận thành công
+        Alert.alert("Thông báo", "Xác nhận thành công", [
+            {
+                text: 'OK',
+                onPress: () => navigation.navigate('Registration_successful'), // Dùng navigation để điều hướng
+            },
+        ]);
     };
-    
+
     return (
         <View style={SmsStyle.container}>
             <Image style={SmsStyle.goctren} source={require("../../../src/assets/goctren.png")} />
@@ -89,8 +80,8 @@ const SMS = ({ prop, route }) => {
             </View>
 
             <Text style={{
-                marginTop:10,
-                marginBottom:10
+                marginTop: 10,
+                marginBottom: 10
             }}>
                 {timeLeft} giây còn lại
             </Text>
