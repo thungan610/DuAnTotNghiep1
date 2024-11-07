@@ -1,17 +1,24 @@
 import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import LoginStyle from './style';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import clearUser from '../Reducers/userReducers';
+import { useNavigation } from '@react-navigation/native';
+import { setEmail } from '../Reducers/userReducers';
+import { setPassword } from '../Reducers/userReducers';
+import { setUser } from '../Reducers/userReducers';
 
-const Login = (prop) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const Login = () => { 
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const [email, setEmailText] = useState('');
+    const [password, setPasswordText] = useState('');
+    const [rememberAccount,setRememberAccount] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
-    const [rememberAccount, setRememberAccount] = useState(false);
 
     const BtnLogin = async () => {
         let hasError = false;
@@ -40,78 +47,63 @@ const Login = (prop) => {
             }
         }
     
-        if (hasError) return;  // Dừng nếu có lỗi
-    
-        try {
-            const response = await axios.post('https://api-h89c.onrender.com/users/login', {
-                email: email,
-                password: password,
-            });
-    
-            if (response.data) {
-                Alert.alert("Thông báo", "Đăng nhập thành công!");
-    
-                if (rememberAccount) {
-                    await AsyncStorage.setItem('savedEmail', email);
-                    await AsyncStorage.setItem('savedPassword', password);
-                }
-    
-                setTimeout(() => {
-                    prop.navigation.navigate('NextPayment');
-                }, 1000);
-            }
-        } catch (error) {
-            console.log(error.response?.data || error.message);
-            Alert.alert("Thông báo", error.response?.data?.message || "Đăng nhập thất bại!");
+        if (hasError) {
+            return; 
         }
-    };
+    
+            try {
+                const response = await axios.post('https://api-h89c.onrender.com/users/login', {
+                    email: email,
+                    password: password,
+                });
+        
+                if (response.data) {
+                    Alert.alert("Thông báo", "Đăng nhập thành công!");
+                    console.log(response.data)
+
+                    if (rememberAccount) {
+                        dispatch(setEmail(email));
+                        dispatch(setPassword(password));
+                    }
+        
+                    const userData = response.data.data;
+                    if (userData) {
+                        dispatch(setUser(userData));
+                    } else {
+                        dispatch(clearUser());
+                    }
+        
+                    setTimeout(() => {
+                        navigation.navigate('Detail');
+                    }, 1000);
+                }
+            } catch (error) {
+                console.log(error.response?.data || error.message);
+                const errorMessage = error.response?.data?.message || "Đăng nhập thất bại!";
+                Alert.alert("Thông báo", errorMessage);
+            }
+        };
+    
     
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        setEmail('');
-        return emailRegex.test(email);  // Trả về true hoặc false
+        return emailRegex.test(email);
     };
 
     const validatePassword = (password) => {
         if (password.length < 8) {
-            setPassword('');
             return 'Phải có ít nhất 8 ký tự.';
-        }
-        else if (!/\d/.test(password)) {
-            setPassword('');
+        } else if (!/\d/.test(password)) {
             return 'Phải chứa ít nhất một số.';
-        }
-        else if (!/[!@#$%^&*]/.test(password)) {
-            setPassword('');
+        } else if (!/[!@#$%^&*]/.test(password)) {
             return 'Phải chứa ít nhất một ký tự đặc biệt.';
-        }
-        else if (!/[A-Z]/.test(password)) {
-            setPassword('');
+        } else if (!/[A-Z]/.test(password)) {
             return 'Phải chứa ít nhất một chữ cái in hoa.';
         }
         return '';
     };
-
-    useEffect(() => {
-        const loadAccount = async () => {
-            try {
-                const savedEmail = await AsyncStorage.getItem('savedEmail');
-                const savedPassword = await AsyncStorage.getItem('savedPassword');
-
-                if (savedEmail !== null && savedPassword !== null) {
-                    setEmail(savedEmail);
-                    setPassword(savedPassword);
-                    setRememberAccount(true);
-                }
-            } catch (error) {
-                console.error("Không thể tải tài khoản đã lưu", error);
-            }
-        };
-        loadAccount();
-    }, []);
-
     const handlePasswordChange = (text) => {
-        setPassword(text);
+        setPasswordText(text);
         setPasswordError('');
         setLoginError('');
     };
@@ -140,12 +132,13 @@ const Login = (prop) => {
                                 placeholder={emailError || "Nhập email"}
                                 placeholderTextColor={emailError ? 'red' : '#999'}
                                 onChangeText={(text) => {
-                                    setEmail(text);
+                                    setEmailText(text);
                                     setEmailError('');
                                     setLoginError('');
                                 }}
                                 style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
+                            
                         </View>
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
                         <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
@@ -191,7 +184,7 @@ const Login = (prop) => {
                         </TouchableOpacity>
                         <Text style={LoginStyle.checkboxLabel}>Nhớ tài khoản</Text>
                     </View>
-                    <Text onPress={() => prop.navigation.navigate('ForgotPassword')}
+                    <Text onPress={() => navigation.navigate('ForgotPassword')}
                         style={{
                             color: '#2CA9C0',
                             fontSize: 15,
@@ -211,13 +204,15 @@ const Login = (prop) => {
                         <Image style={LoginStyle.fb} source={require('../../../src/assets/fb.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={LoginStyle.buttongg}>
-                        <Image style={LoginStyle.gg} source={require("../../../src/assets/gg.png")} />
+                        <Image style={LoginStyle.gg} source={require('../../../src/assets/gg.png')} />
                     </TouchableOpacity>
                 </View>
+
                 <View style={LoginStyle.footer}>
                     <Text style={LoginStyle.footerdau}>Bạn chưa có tài khoản?</Text>
-                    <Text onPress={() => prop.navigation.navigate('Register')} style={LoginStyle.footerduoi}> Đăng ký</Text>
+                    <Text onPress={() => navigation.navigate('Register')} style={LoginStyle.footerduoi}> Đăng ký</Text>
                 </View>
+    
             </View>
         </View>
     );

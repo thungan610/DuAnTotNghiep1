@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://api-h89c.onrender.com/'
+    baseURL: 'http://192.168.1.131:6677'
 });
 
 // cmd -----> ipconfig -----> IPv4 Address (192.168.1.1)

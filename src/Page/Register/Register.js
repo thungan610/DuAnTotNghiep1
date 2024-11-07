@@ -25,7 +25,7 @@ const Register = (prop) => {
         setPhoneError('');
         setEmailError('');
         setPasswordError('');
-
+    
         const validatePassword = (password) => {
             if (password.length < 8) {
                 setPassword('');
@@ -45,7 +45,7 @@ const Register = (prop) => {
             }
             return '';
         };
-
+    
         if (FullName.trim() === '') {
             setFullNameError("Vui lòng nhập họ và tên");
             setFullName('');
@@ -79,34 +79,29 @@ const Register = (prop) => {
                 hasError = true;
             }
         }
-
+    
         if (!hasError) {
-            Alert.alert("Thông báo", "Đăng kí thành công!");
-            setTimeout(() => {
-                prop.navigation.navigate('SMS', { phoneNumber: phone });
-            }, 1000);
-        } try {
-            // Gọi API đăng ký
-            const response = await axios.post('https://api-h89c.onrender.com/users/register', {
-                email: email,
-                password: password,
-                name: FullName,
-                phone: phone
-            });
-
-            if (response.data) {
-                Alert.alert("Thông báo", "Đăng kí thành công!");
-
-                setTimeout(() => {
-                    prop.navigation.navigate('Login');
-                }, 1000);
+            try {
+                // Gọi API đăng ký
+                const response = await axios.post('https://api-h89c.onrender.com/users/register', {
+                    email: email,
+                    password: password,
+                    name: FullName,
+                    phone: phone
+                });
+    
+                if (response.data) {
+                    Alert.alert("Thông báo", "Đăng kí thành công!");
+                    setTimeout(() => {
+                        prop.navigation.navigate('Registration_successful');
+                    }, 1000);
+                }
+            } catch (error) {
+                Alert.alert("Thông báo", "Đăng ký thất bại!");
             }
-        } catch (error) {
-            Alert.alert("Thông báo", "Đăng ký thất bại!");
         }
     };
-
-
+    
     const validateEmail = (email) => {
         const re = /\S+@\S+\.\S+/;
         return re.test(email);
