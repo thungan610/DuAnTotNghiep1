@@ -40,7 +40,7 @@ import Preservation from "../src/Page/Policy/Preservation.js";
 import Detail from "../src/Page/Detail/Detail.js";
 import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
-
+import UpdateProfile from "../src/Page/Profile/UpdateProfile.js";
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -90,7 +90,7 @@ const MainStack = () => {
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
-
+            <Stack.Screen name="UpdateProfile" component={UpdateProfile}/>
         </Stack.Navigator >
     );
 };
