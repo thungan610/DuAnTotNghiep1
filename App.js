@@ -1,19 +1,17 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import store from './src/Page/store';
 import MainStack from './router/MainStack';
-import Order from './src/Page/Order/Order';
-import Policy from './src/Page/Policy/Policy';
-import { View } from 'react-native';
+
 const App = () => {
   return (
-    <NavigationContainer>
-        <MainStack/>
-    </NavigationContainer>
-    // <View>
-    //   <Order/>
-    // </View>
-
-  )  
+    <Provider store={store}>
+      <NavigationContainer>
+        <MainStack />
+      </NavigationContainer>
+    </Provider>
+  )
 };
 
 export default App;

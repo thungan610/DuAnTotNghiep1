@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
-import AxiosInstance from "../api/AxiosInstance";
 import AxiosInstanceSP from "../api/AxiosInstanceSP";
 import HomeStyle from './style';
 
@@ -72,8 +71,8 @@ const HomeScreen = (props) => {
     }, [currentIndex]);
 
     const renderProductItem = ({ item }) => {
-        const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
-
+        const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
+    
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -110,6 +109,7 @@ const HomeScreen = (props) => {
             </TouchableOpacity>
         );
     };
+    
 
     return (
         <View>
@@ -129,7 +129,7 @@ const HomeScreen = (props) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/chat.png')}
+                                source={require('../../../src/assets/Chat.png')}
                             />
                         </View>
                     </TouchableOpacity>

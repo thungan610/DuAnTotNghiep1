@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import AxiosInstance from "../api/AxiosInstance";
+import AxiosInstanceSP from "../api/AxiosInstanceSP";
 
-const SearchScreen = ({ route, navigation }) => {
+const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [Detail, setProductDetail] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const defaultImageUri = 'https://res.cloudinary.com/imagesupload2024/image/upload/v1729583649/Rau%20c%E1%BB%A7/zjj0p3oqj0q1dfnta4z8.png';
 
   // Hàm lấy sản phẩm từ API dựa trên từ khóa
   const fetchProducts = async (keyword) => {
     try {
       setRefreshing(true);
-      const response = await AxiosInstance().get(`/products/search?key=${keyword}`);
+      const response = await AxiosInstanceSP().get(`/products/search?key=${keyword}`);
       console.log('Fetched products:', response.data);
 
       const productsData = Array.isArray(response.data) ? response.data : [];
-      setProducts(productsData); 
-      setFilteredProducts(productsData); // Cập nhật danh sách gợi ý
+      setProducts(productsData);
+      setFilteredProducts(productsData);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
@@ -27,31 +30,61 @@ const SearchScreen = ({ route, navigation }) => {
     }
   };
 
-  // Gọi API khi `searchText` thay đổi
+
   useEffect(() => {
     if (searchText.trim()) {
       fetchProducts(searchText);
     } else {
-      setFilteredProducts(products); // Hiển thị toàn bộ sản phẩm nếu không có từ khóa
+      setFilteredProducts(products);
     }
   }, [searchText]);
 
-  // Khi nhấn nút tìm kiếm hoặc `Enter`, hiển thị toàn bộ sản phẩm khớp
-  const handleSearch = () => {
-    fetchProducts(searchText); // Lấy toàn bộ sản phẩm khớp với từ khóa hiện tại
+  const handleSearch = async (key) => {
+    try {
+      const results = await findProductsByKey_App(key);
+      setProducts(results);
+    } catch (error) {
+      console.error("Lỗi tìm kiếm: ", error.message);
+    }
   };
 
-  // Hàm render từng sản phẩm trong FlatList
-  const renderProduct = ({ item }) => (
-    <View style={SearchStyle.productContainer}>
-      {/* <Image source={{ uri: item.images[0] }} style={SearchStyle.productImage} /> */}
-      <View style={SearchStyle.productDetails}>
-        <Text style={SearchStyle.productName}>{item.name}</Text>
-        <Text style={SearchStyle.productWeight}>{item.oum}</Text>
-        <Text style={SearchStyle.productPrice}>{item.price} VNĐ</Text>
-      </View>
-    </View>
-  );
+  const renderProduct = ({ item }) => {
+    const imageUri = item.images && item.images.length > 0 ? item.images[0] : defaultImageUri;
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          const Detail = {
+            id: item._id,
+            name: item.name,
+            oum: item.oum,
+            origin: item.origin,
+            preserve: item.preserve?.preserve_name,
+            uses: item.uses,
+            fiber: item.fiber,
+            description: item.description,
+            price: item.price,
+            images: item.images || [imageUri],
+            category: item.category,  // Lưu ý lấy category từ dữ liệu sản phẩm
+        };
+          if (Detail.category === "5" || Detail.category === "6") {
+            navigation.navigate('Detailbottle', { product: Detail });
+          } else {
+            navigation.navigate('Detail', { product: Detail });
+          }
+        }}
+      >
+        <View style={SearchStyle.productContainer}>
+          <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
+          <View style={SearchStyle.productDetails}>
+            <Text style={SearchStyle.productName}>{item.name || 'Không có tên sản phẩm'}</Text>
+            <Text style={SearchStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
+            <Text style={SearchStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={SearchStyle.container}>
@@ -78,7 +111,7 @@ const SearchScreen = ({ route, navigation }) => {
         renderItem={renderProduct}
         keyExtractor={item => item._id.toString()}
         numColumns={2}
-contentContainerStyle={SearchStyle.productList}
+        contentContainerStyle={SearchStyle.productList}
         refreshing={refreshing}
         onRefresh={() => fetchProducts(searchText)}
         ListEmptyComponent={() => (
@@ -150,6 +183,7 @@ const SearchStyle = StyleSheet.create({
   productName: {
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
   productWeight: {
     fontSize: 16,

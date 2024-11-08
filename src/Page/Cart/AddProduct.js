@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
-import { useDispatch } from 'react-redux'; // Ensure useDispatch is imported
+import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert } from 'react-native';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
-import AxiosInstance from "../api/AxiosInstance";
+import AxiosInstance from '../../../src/Page/api/AxiosInstance'
 
-const CartItem = ({ item, toggleSelect, updateQuantity }) => {
+const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
+    if (!item) {
+        return null;
+    }
+
     const imageUri = item.images && item.images.length > 0 ? item.images[0] : null;
 
     return (
@@ -21,7 +24,7 @@ const CartItem = ({ item, toggleSelect, updateQuantity }) => {
             </View>
             <View style={AddProductStyle.itemDetails}>
                 <Text style={AddProductStyle.itemName}>{item.name}</Text>
-                <Text style={AddProductStyle.itemCategory}>{item.category.category_name}</Text>
+                <Text style={AddProductStyle.itemCategory}>{item.category}</Text>
                 <Text style={AddProductStyle.itemPrice}>
                     {((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()}.000đ
                 </Text>
@@ -37,7 +40,7 @@ const CartItem = ({ item, toggleSelect, updateQuantity }) => {
             </View>
         </View>
     );
-};
+});
 
 const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     <Modal transparent={true} animationType="slide" visible={visible}>
@@ -59,14 +62,15 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 );
 
 const AddProduct = ({ route }) => {
-    const dispatch = useDispatch(); // useDispatch hook
-    const { data } = route.params;
+    const { data } = route.params || {};
     const [modalVisible, setModalVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (data) {
+        console.log(data); // Log data để kiểm tra
+        if (data && typeof data === 'object') {
             setCartItems(prevItems => [
                 ...prevItems,
                 {
@@ -77,6 +81,32 @@ const AddProduct = ({ route }) => {
             ]);
         }
     }, [data]);
+
+    useEffect(() => {
+        const fetchCartData = async () => {
+            setLoading(true); // Start loading
+            try {
+                const response = await AxiosInstance.get('/carts/addCart_App');
+                if (response.data && response.data.length > 0) {
+                    const items = response.data.map(item => ({
+                        ...item,
+                        quantity: item.quantity || 1,
+                        selected: false,
+                    }));
+                    setCartItems(items);
+                } else {
+                    Alert.alert("Thông báo", "Không có sản phẩm trong giỏ hàng.");
+                }
+            } catch (error) {
+                Alert.alert("Lỗi", "Không thể tải dữ liệu giỏ hàng");
+            } finally {
+                setLoading(false); // End loading
+            }
+        };
+    
+        fetchCartData();
+    }, []);
+    
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems =>
@@ -89,6 +119,9 @@ const AddProduct = ({ route }) => {
             prevItems.map(item => {
                 if (item.id === id) {
                     const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+                    if (newQuantity === 1 && action === 'decrease') {
+                        Alert.alert("Thông báo", "Số lượng không thể thấp hơn 1.");
+                    }
                     return {
                         ...item,
                         quantity: newQuantity,
@@ -98,10 +131,9 @@ const AddProduct = ({ route }) => {
             })
         );
     };
-
     useEffect(() => {
         const calculatedTotal = cartItems.reduce(
-            (total, item) => total + (item.price * (item.quantity || 1)),
+            (total, item) => total + ((item.price || 0) * (item.quantity || 1)),
             0
         );
         setTotalAmount(calculatedTotal);
@@ -137,13 +169,13 @@ const AddProduct = ({ route }) => {
             ) : (
                 <FlatList
                     data={cartItems}
-                    renderItem={({ item }) => (
-                        <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
-                    )}
+                    renderItem={({ item }) => {
+                        console.log(item); // Log item để kiểm tra
+                        return (
+                            <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
+                        );
+                    }}
                     keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
-                    contentContainerStyle={AddProductStyle.list}
-                    initialNumToRender={10}
-                    maxToRenderPerBatch={5}
                 />
             )}
 
