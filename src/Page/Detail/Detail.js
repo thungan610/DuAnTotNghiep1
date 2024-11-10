@@ -4,13 +4,14 @@ import PagerView from 'react-native-pager-view';
 import AxiosInstance from '../../../src/Page/api/AxiosInstance';
 import { useSelector, useDispatch } from 'react-redux';
 import styleDetail from './style';
+import { addToCart } from '../Action/cartActions';
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
-   
+    const dispatch = useDispatch();
+    const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
-    const [selectedIndex, setSelectedIndex] = useState();
-    // const [selectedQuantity, setselectedQuantity] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
     const [unitPrice, setUnitPrice] = useState(product?.price || 0);
@@ -20,8 +21,34 @@ const Detail = ({ route, navigation }) => {
 
     // Lấy thông tin người dùng từ Redux
     const user = useSelector(state => state.user);
-    console.log(user);
-    const dispatch = useDispatch();
+    const cart = useSelector(state => state.items);
+
+    useEffect(() => {
+        if (product) {
+            setProductDetails(product);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        const fetchProductDetails = async () => {
+            try {
+                const response = await AxiosInstance.get(`/products/getProductDetailById_App/${product.id}`);
+                if (response?.data) {
+                    setProductDetails(response.data);
+                    setUnitPrice(response.data.price || 0);
+                    setPrice(response.data.price || 0);
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
+                Alert.alert("Thông báo", "Không thể tải thông tin sản phẩm");
+            }
+        };
+
+        if (product?.id) {
+            fetchProductDetails();
+        }
+    }, [product]);
+
 
     useEffect(() => {
         if (product) {
@@ -33,8 +60,8 @@ const Detail = ({ route, navigation }) => {
     }, [product]);
 
     useEffect(() => {
-        setPrice(quantity * unitPrice);
-    }, [quantity, unitPrice]);
+        setPrice(quantity * productDetails.price);
+    }, [quantity, productDetails.price]);
 
     useEffect(() => {
         const getCategoriesAndPreserves = async () => {
@@ -52,6 +79,7 @@ const Detail = ({ route, navigation }) => {
         getCategoriesAndPreserves();
     }, []);
 
+
     const increaseQuantity = () => setQuantity(prevQuantity => prevQuantity + 1);
 
     const decreaseQuantity = () => {
@@ -62,7 +90,8 @@ const Detail = ({ route, navigation }) => {
         }
     };
 
-    const addToCart = async () => {
+    const addToCartHandler = async () => {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
         if (!user?.email) {
             Alert.alert(
                 'Thông báo',
@@ -71,7 +100,7 @@ const Detail = ({ route, navigation }) => {
                     {
                         text: 'Đăng nhập',
                         onPress: () => {
-                            navigation.navigate('Login'); // Chuyển màn hình nếu người dùng nhấn "Đăng nhập"
+                            navigation.navigate('Login');
                         }
                     },
                     {
@@ -80,24 +109,37 @@ const Detail = ({ route, navigation }) => {
                     }
                 ]
             );
-            return; // Dừng hàm nếu người dùng chưa đăng nhập
+            return;
         }
-        console.log(product);
+
         const productToAdd = {
-            id: product.id,
+            id: productDetails.id,
             name: product.name,
             price: unitPrice,
             quantity,
             images: product.images,
+            selected: true,
         };
+
         try {
+            // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
                 user: user.userData._id,
                 products: [productToAdd]
             });
 
-            Alert.alert("Thông báo", response.data.message || "Thêm sản phẩm thành công!");
-            navigation.navigate('AddProduct'); // Điều hướng đến màn hình giỏ hàng
+            // Kiểm tra phản hồi từ server
+            if (response.data.error) {
+                Alert.alert('Lỗi', response.data.error);
+            } else {
+                // Thông báo thành công và điều hướng tới màn hình AddProduct
+                Alert.alert("Thông báo", response.data.message || "Thêm sản phẩm thành công!");
+
+                // Dispatch Redux action để thêm sản phẩm vào Redux store (giỏ hàng)
+                dispatch(addToCart(productToAdd));
+
+                navigation.navigate('AddProduct', { data: productToAdd });
+            }
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
             Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
@@ -180,7 +222,7 @@ const Detail = ({ route, navigation }) => {
                                 </View>
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
-                                <TouchableOpacity onPress={addToCart} style={styleDetail.headerFooter}>
+                                <TouchableOpacity onPress={addToCartHandler} style={styleDetail.headerFooter}>
                                     <Text style={styleDetail.textFooter}>Thêm vào giỏ hàng</Text>
                                 </TouchableOpacity>
                             </View>

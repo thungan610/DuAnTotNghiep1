@@ -1,17 +1,16 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://192.168.1.131:6677'
+    baseURL: 'http://192.168.1.69:6677'
 });
 
-// cmd -----> ipconfig -----> IPv4 Address (192.168.1.1)
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const token = ''; // Lưu token nếu cần
+        const token = ''; 
         config.headers = {
             'Authorization': `Bearer ${token}`,
             'Accept': 'application/json',
-            'Content-Type': 'application/json' // Có thể thiết lập mặc định
+            'Content-Type': 'application/json' 
         }
         
         return config;
