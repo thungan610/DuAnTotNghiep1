@@ -19,7 +19,7 @@ const Login = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
-
+    
     const BtnLogin = async () => {
         let hasError = false;
         setLoginError('');
@@ -74,7 +74,7 @@ const Login = () => {
                     }
         
                     setTimeout(() => {
-                        navigation.navigate('Detail');
+                        navigation.goBack();
                     }, 1000);
                 }
             } catch (error) {

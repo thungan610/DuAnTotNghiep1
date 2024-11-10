@@ -7,19 +7,15 @@ import { StyleSheet } from "react-native";
             backgroundColor: 'white',
         },
         header: {
-            justifyContent: 'center',
-            alignItems: 'center',
+            alignItems:'center',
+            justifyContent:'space-between',     
+            flexDirection: 'row',
+            paddingBottom: 20
         },
         title: {
             fontSize: 24,
             fontWeight: 'bold',
-            marginBottom: 20,
             color: 'black',
-        },
-        iconTrash: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
         },
         itemContainer: {
             flexDirection: 'row',

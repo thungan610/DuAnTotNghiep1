@@ -54,7 +54,8 @@ const HomeStyle = StyleSheet.create({
     },
     productTitle:{
         fontSize: 18,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        textAlign:'center'
     },
     productWeight:{
         fontSize: 16

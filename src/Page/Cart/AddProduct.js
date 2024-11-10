@@ -61,8 +61,9 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     </Modal>
 );
 
-const AddProduct = ({ route }) => {
+const AddProduct = ({ route, navigation}) => {
     const { data } = route.params || {};
+    console.log(data);
     const [modalVisible, setModalVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
@@ -84,12 +85,12 @@ const AddProduct = ({ route }) => {
 
     useEffect(() => {
         const fetchCartData = async () => {
-            setLoading(true); // Start loading
+            setLoading(true); // Bắt đầu tải
             try {
-                const response = await AxiosInstance.get('/carts/addCart_App');
+                const response = await AxiosInstance.get('/carts/getCart/:userId');
                 if (response.data && response.data.length > 0) {
                     const items = response.data.map(item => ({
-                        ...item,
+                        ...item,    
                         quantity: item.quantity || 1,
                         selected: false,
                     }));
@@ -100,10 +101,10 @@ const AddProduct = ({ route }) => {
             } catch (error) {
                 Alert.alert("Lỗi", "Không thể tải dữ liệu giỏ hàng");
             } finally {
-                setLoading(false); // End loading
+                setLoading(false); // Kết thúc tải
             }
         };
-    
+        
         fetchCartData();
     }, []);
     
@@ -156,6 +157,9 @@ const AddProduct = ({ route }) => {
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
+                <TouchableOpacity onPress={() => navigation.goBack() }>
+                <Image source={require("../../../src/assets/notifi/backright.png")}/>
+                </TouchableOpacity>
                 <Text style={AddProductStyle.title}>Giỏ hàng</Text>
                 <TouchableOpacity style={AddProductStyle.iconTrash} onPress={confirmDelete}>
                     <Image source={require("../../../src/assets/Trash.png")} />

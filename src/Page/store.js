@@ -1,18 +1,20 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer } from 'redux-persist'; 
-import userReducer from './Reducers/userReducers'; // Đảm bảo bạn nhập đúng đường dẫn
+import userReducer from './Reducers/userReducers';
+import cartReducer from './Reducers/cartReducers';
 
 // Cấu hình persist
 const persistConfig = {
   key: 'store',
   storage: AsyncStorage,
-  whitelist: ['user'], // Chỉ lưu trữ dữ liệu của user
+  whitelist: ['user', 'cart'], 
 };
 
 // Kết hợp các reducers
 const rootReducer = combineReducers({
-  user: userReducer, // Reducer của user
+  user: userReducer, 
+  cart: cartReducer,  
 });
 
 // Tạo persisted reducer
