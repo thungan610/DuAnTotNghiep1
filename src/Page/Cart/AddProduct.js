@@ -61,9 +61,9 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     </Modal>
 );
 
-const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
-    const [modalVisible, setModalVisible] = useState(false);
+    console.log(data);
+    const [modalVisible, setModalVisible] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
     const [setUserId] = useState(null);
@@ -94,26 +94,6 @@ const AddProduct = ({ route, navigation }) => {
 
     // Tải dữ liệu giỏ hàng từ AsyncStorage khi mở màn hình
     useEffect(() => {
-        const loadCart = async () => {
-            const storedItems = await AsyncStorage.getItem('cartItems');
-            if (storedItems) setCartItems(JSON.parse(storedItems));
-        };
-        loadCart();
-    }, []);
-
-    // Thêm sản phẩm mới vào đầu danh sách và lưu vào AsyncStorage
-    useEffect(() => {
-        const loadCartItems = async () => {
-            try {
-                const savedCart = await AsyncStorage.getItem('cartItems');
-                if (savedCart) {
-                    setCartItems(JSON.parse(savedCart));
-                }
-            } catch (error) {
-                console.error("Lỗi khi tải giỏ hàng:", error);
-            }
-        };
-        loadCartItems();
     }, []);
 
     // Cập nhật tổng giá trị khi giỏ hàng thay đổi và lưu lại giỏ hàng vào AsyncStorage
@@ -186,8 +166,6 @@ const AddProduct = ({ route, navigation }) => {
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Image source={require("../../../src/assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={AddProductStyle.title}>Giỏ hàng</Text>
                 <TouchableOpacity style={AddProductStyle.iconTrash} onPress={confirmDelete}>
