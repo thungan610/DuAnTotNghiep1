@@ -4,7 +4,7 @@ import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert } from 'rea
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
-import axiosInstance from '../api/AxiosInstance';
+import AxiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
@@ -61,8 +61,8 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     </Modal>
 );
 
+const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
-    console.log(data);
     const [modalVisible, setModalVisible] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
@@ -72,7 +72,7 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 
     const getCart = async (id) => {
         try {
-            const response = await axiosInstance.get('/carts/getCart/' + id);
+            const response = await AxiosInstance.get('/carts/getCart/' + id);
             const cartData = response.data;
 
             setCartItems(cartData.products);
@@ -92,8 +92,29 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
         }
     }, [userId]);
 
+
     // Tải dữ liệu giỏ hàng từ AsyncStorage khi mở màn hình
     useEffect(() => {
+        const loadCart = async () => {
+            const storedItems = await AsyncStorage.getItem('cartItems');
+            if (storedItems) setCartItems(JSON.parse(storedItems));
+        };
+        loadCart();
+    }, []);
+
+    // Thêm sản phẩm mới vào đầu danh sách và lưu vào AsyncStorage
+    useEffect(() => {
+        const loadCartItems = async () => {
+            try {
+                const savedCart = await AsyncStorage.getItem('cartItems');
+                if (savedCart) {
+                    setCartItems(JSON.parse(savedCart));
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải giỏ hàng:", error);
+            }
+        };
+        loadCartItems();
     }, []);
 
     // Cập nhật tổng giá trị khi giỏ hàng thay đổi và lưu lại giỏ hàng vào AsyncStorage
@@ -110,29 +131,29 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems => {
-            const updatedItems = prevItems.map(item => 
+            const updatedItems = prevItems.map(item =>
                 item.id === id ? { ...item, selected: !item.selected } : item
             );
-            
+
             // Cập nhật totalAmount sau khi thay đổi trạng thái sản phẩm
             const newTotal = updatedItems
                 .filter(item => item.selected)
                 .reduce((total, item) => total + (item.price * item.quantity), 0);
-    
+
             setTotalAmount(newTotal); // Cập nhật tổng số tiền
-    
+
             return updatedItems;
         });
     };
-    
+
     useEffect(() => {
         const total = cartItems
             .filter(item => item.selected)
             .reduce((total, item) => total + (item.price * item.quantity), 0);
-        
+
         setTotalAmount(total);
-    }, [cartItems]); 
-    
+    }, [cartItems]);
+
 
     const updateQuantity = (id, action) => {
         setCartItems(prevItems =>
@@ -166,6 +187,9 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
+
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image source={require("../../../src/assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={AddProductStyle.title}>Giỏ hàng</Text>
                 <TouchableOpacity style={AddProductStyle.iconTrash} onPress={confirmDelete}>
