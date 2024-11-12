@@ -21,6 +21,7 @@ const Detail = ({ route, navigation }) => {
 
     // Lấy thông tin người dùng từ Redux
     const user = useSelector(state => state.user);
+    const cart = useSelector(state => state.items);
 
     useEffect(() => {
         if (product) {
