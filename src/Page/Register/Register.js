@@ -1,9 +1,11 @@
 import { Text, View, Image, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState } from 'react'
 import RegisterStyle from './style'
-import axios from 'axios'
+import { useNavigation } from '@react-navigation/native';
+import axiosInstance from '../api/AxiosInstance'
 
-const Register = (prop) => {
+const Register = () => {
+    const navigation = useNavigation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,7 +18,7 @@ const Register = (prop) => {
     const [rememberAccount, setRememberAccount] = useState(false);
 
     const NextLogin = () => {
-        prop.navigation.navigate('Login')
+        navigation.navigate('Login')
     }
 
     const BtnRegister = async () => {
@@ -83,7 +85,7 @@ const Register = (prop) => {
         if (!hasError) {
             try {
                 // Gọi API đăng ký
-                const response = await axios.post('https://api-h89c.onrender.com/users/register', {
+                const response = await axiosInstance.post('/users/register', {
                     email: email,
                     password: password,
                     name: FullName,
@@ -93,7 +95,7 @@ const Register = (prop) => {
                 if (response.data) {
                     Alert.alert("Thông báo", "Đăng kí thành công!");
                     setTimeout(() => {
-                        prop.navigation.navigate('Registration_successful');
+                        navigation.navigate('Login')
                     }, 1000);
                 }
             } catch (error) {
