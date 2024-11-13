@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import UpdateProfileStyle from "./UpdateProfileStyle";
 import InsertPro5Styles from "../Profile/InsertPro5Styles";
-import axios from "axios";
+// import axios from "axios";
+import AxiosInstanceSP from "../api/AxiosInstanceSP";
 const UpdateProfile = (props) => {
     const BackRight = () => {
         props.navigation.goBack();
@@ -17,7 +18,7 @@ const UpdateProfile = (props) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://192.168.1.3:6677/users/671b544f7e165147f9d6cd6e/updateProfile', {
+            const response = await AxiosInstanceSP().put('http://192.168.1.3:6677/users/671b544f7e165147f9d6cd6e/updateProfile', {
                 name,
                 bio,
                 gender,
@@ -26,7 +27,9 @@ const UpdateProfile = (props) => {
                 email,
             });
             if (response.status === 200) {
+                Alert.alert(" thông báo", "Bạn đã sửa hồ sơ thành công");
                 console.log('Update thành công rồi nha');
+                props.navigation.navigate('ProfileDetail');
             } else {
                 console.log("error", 'Update không được á nheng');
             }
