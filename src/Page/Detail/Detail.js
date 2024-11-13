@@ -116,15 +116,17 @@ const Detail = ({ route, navigation }) => {
             name: product.name,
             price: unitPrice,
             quantity,
-            images: product.images,
+            image: product.images,
             selected: true,
         };
+        
+        console.log('Product to add:', productToAdd);        
 
         try {
             // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
                 user: user.userData._id,
-                products: [productToAdd]
+                products: [productToAdd],
             });
 
             // Kiểm tra phản hồi từ server
@@ -136,7 +138,7 @@ const Detail = ({ route, navigation }) => {
 
                 // Dispatch Redux action để thêm sản phẩm vào Redux store (giỏ hàng)
                 dispatch(addToCart(productToAdd));
-                navigation.navigate('AddProduct', { data: productToAdd });
+                navigation.navigate('AddProductsScreen', { data: productToAdd });
             }
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
