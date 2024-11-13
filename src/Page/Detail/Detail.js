@@ -21,6 +21,7 @@ const Detail = ({ route, navigation }) => {
 
     // Lấy thông tin người dùng từ Redux
     const user = useSelector(state => state.user);
+    const cart = useSelector(state => state.items);
 
     useEffect(() => {
         if (product) {
@@ -47,7 +48,6 @@ const Detail = ({ route, navigation }) => {
             fetchProductDetails();
         }
     }, [product]);
-
 
     useEffect(() => {
         if (product) {
@@ -203,19 +203,19 @@ const Detail = ({ route, navigation }) => {
                             </View>
                             <View style={styleDetail.origin}>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Xuất xứ:</Text>
+                                    <Text style={styleDetail.textorigin}>Xuất xứ: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Chất sơ:</Text>
+                                    <Text style={styleDetail.textorigin}>Chất sơ: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Bảo quản:</Text>
+                                    <Text style={styleDetail.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
-                                    <Text style={styleDetail.textorigin}>Công dụng:</Text>
+                                    <Text style={styleDetail.textorigin}>Công dụng: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
                                 </View>
                             </View>
