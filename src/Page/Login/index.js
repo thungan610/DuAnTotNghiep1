@@ -2,24 +2,24 @@ import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-nat
 import React, { useState, useEffect } from 'react';
 import LoginStyle from './style';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import clearUser from '../Reducers/userReducers';
 import { useNavigation } from '@react-navigation/native';
 import { setEmail } from '../Reducers/userReducers';
 import { setPassword } from '../Reducers/userReducers';
 import { setUser } from '../Reducers/userReducers';
+import axiosInstance from '../api/AxiosInstance';
 
-const Login = () => { 
+const Login = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [email, setEmailText] = useState('');
     const [password, setPasswordText] = useState('');
-    const [rememberAccount,setRememberAccount] = useState('');
+    const [rememberAccount, setRememberAccount] = useState(false); // Set default as false
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
-    
+
     const BtnLogin = async () => {
         let hasError = false;
         setLoginError('');
@@ -48,42 +48,49 @@ const Login = () => {
         }
     
         if (hasError) {
-            return; 
+            return;
         }
     
-            try {
-                const response = await axios.post('https://api-h89c.onrender.com/users/login', {
-                    email: email,
-                    password: password,
-                });
+        try {
+            const response = await axiosInstance.post('/users/login', {
+                email: email,
+                password: password,
+            });
         
-                if (response.data) {
-                    Alert.alert("Thông báo", "Đăng nhập thành công!");
-                    console.log(response.data)
-
-                    if (rememberAccount) {
-                        dispatch(setEmail(email));
-                        dispatch(setPassword(password));
-                    }
+            // Log cấu trúc dữ liệu để kiểm tra phản hồi API
+            console.log(response.data); // Kiểm tra cấu trúc của đối tượng phản hồi
         
-                    const userData = response.data.data;
-                    if (userData) {
-                        dispatch(setUser(userData));
-                    } else {
-                        dispatch(clearUser());
-                    }
+            // Kiểm tra sự tồn tại của user data trong phản hồi
+            if (response.data && response.data._id) {  // Kiểm tra _id trong response.data
+                // Đăng nhập thành công
+                Alert.alert("Thông báo", "Đăng nhập thành công!");
         
-                    setTimeout(() => {
-                        navigation.goBack();
-                    }, 1000);
+                if (rememberAccount) {
+                    dispatch(setEmail(email));
+                    dispatch(setPassword(password));
                 }
-            } catch (error) {
-                console.log(error.response?.data || error.message);
-                const errorMessage = error.response?.data?.message || "Đăng nhập thất bại!";
-                Alert.alert("Thông báo", errorMessage);
+        
+                const userData = response.data;  // Dữ liệu người dùng trực tiếp từ response.data
+                if (userData) {
+                    dispatch(setUser(userData));
+                } else {
+                    dispatch(clearUser());
+                }
+        
+                setTimeout(() => {
+                    navigation.goBack();
+                }, 1000);
+            } else {
+                // Nếu không có user data trong response
+                throw new Error("Đăng nhập thất bại");
             }
-        };
-    
+        
+        } catch (error) {
+            console.log(error.response?.data || error.message); // Kiểm tra lỗi
+            const errorMessage = error.response?.data?.message || "Đăng nhập thất bại!";
+            Alert.alert("Thông báo", errorMessage); // Hiển thị thông báo lỗi
+        }        
+    };
     
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,6 +109,7 @@ const Login = () => {
         }
         return '';
     };
+
     const handlePasswordChange = (text) => {
         setPasswordText(text);
         setPasswordError('');
@@ -138,7 +146,6 @@ const Login = () => {
                                 }}
                                 style={[LoginStyle.input, emailError ? { color: 'red' } : {}]}
                             />
-                            
                         </View>
                         <Text style={LoginStyle.tieudeinput}>Mật khẩu</Text>
                         <View style={[LoginStyle.anhinput, passwordError ? { borderColor: 'red', borderWidth: 1 } : {}]}>
@@ -161,36 +168,19 @@ const Login = () => {
                         </View>
                     </View>
                 </View>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginLeft: 20
-                }}>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginTop: 10
-                    }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                         <TouchableOpacity onPress={handleRememberAccount} style={{
-                            width: 20,
-                            height: 20,
-                            borderWidth: 1,
-                            borderColor: '#2CA9C0',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginRight: 10,
+                            width: 20, height: 20, borderWidth: 1, borderColor: '#2CA9C0',
+                            justifyContent: 'center', alignItems: 'center', marginRight: 10,
                         }}>
                             {rememberAccount && <Image source={require("../../../src/assets/check.png")} />}
                         </TouchableOpacity>
                         <Text style={LoginStyle.checkboxLabel}>Nhớ tài khoản</Text>
                     </View>
-                    <Text onPress={() => navigation.navigate('ForgotPassword')}
-                        style={{
-                            color: '#2CA9C0',
-                            fontSize: 15,
-                            marginTop: 10,
-                            marginLeft: 120
-                        }}> Quên mật khẩu ?</Text>
+                    <Text onPress={() => navigation.navigate('ForgotPassword')} style={{
+                        color: '#2CA9C0', fontSize: 15, marginTop: 10, marginLeft: 120
+                    }}> Quên mật khẩu ?</Text>
                 </View>
 
                 <View style={LoginStyle.button}>
@@ -212,7 +202,6 @@ const Login = () => {
                     <Text style={LoginStyle.footerdau}>Bạn chưa có tài khoản?</Text>
                     <Text onPress={() => navigation.navigate('Register')} style={LoginStyle.footerduoi}> Đăng ký</Text>
                 </View>
-    
             </View>
         </View>
     );

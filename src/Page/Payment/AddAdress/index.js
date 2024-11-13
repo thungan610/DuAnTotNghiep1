@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
-import axios from "axios";
+import AxiosInstance from "../../api/AxiosInstance";
 
 const AddAdress = (prop) => {
     // const [name, setName] = useState('');
@@ -24,7 +24,7 @@ const AddAdress = (prop) => {
         }
 
         try {
-            const response = await axios.post('https://localhost:6677/addresses/addAddress', {
+            const response = await AxiosInstance.post('/addresses/addAddress', {
                 // name,
                 // phone,
                 alley,
