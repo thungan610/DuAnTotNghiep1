@@ -116,7 +116,8 @@ const Detail = ({ route, navigation }) => {
             name: product.name,
             price: unitPrice,
             quantity,
-            image: product.images,
+            category: product.category,
+            images: product.images,
             selected: true,
         };
         
@@ -125,7 +126,7 @@ const Detail = ({ route, navigation }) => {
         try {
             // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
-                user: user.userData._id,
+                user: user.userData._id, 
                 products: [productToAdd],
             });
 
