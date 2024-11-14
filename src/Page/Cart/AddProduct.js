@@ -8,7 +8,7 @@ import AxiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
-    const imageUri = item.image ? item.image : 'https://res.cloudinary.com/imagesupload2024/image/upload/v1729969967/Th%E1%BB%8Bt/%C4%90%C3%B9i%20g%C3%A0%20t%E1%BB%8Fi.png';
+    const imageUri = Array.isArray(item.images) ? item.images[0] : item.images;
     return (
         <View style={AddProductStyle.itemContainer}>
             <TouchableOpacity onPress={() => toggleSelect(item.id)}>
@@ -41,7 +41,6 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
         </View>
     );
 });
-
 
 const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     <Modal transparent={true} animationType="slide" visible={visible}>
@@ -83,7 +82,7 @@ const AddProduct = ({ route, navigation }) => {
                         category_name: product.category_name,
                         price: product.price,
                         quantity: product.quantity,
-                        image: product.image,
+                        images: product.images,
                         selected: true,
                     }));
                 } else {
@@ -101,22 +100,19 @@ const AddProduct = ({ route, navigation }) => {
     useEffect(() => {
         const loadCartFromAPI = async () => {
             try {
-                const cartData = await getCart();
-                console.log("Dữ liệu giỏ hàng:", cartData);
-
+                const userId = 'id_của_user'; 
+                const cartData = await getCart(userId);
                 if (Array.isArray(cartData)) {
                     setCartItems(cartData);
-                    console.log("Giỏ hàng được cập nhật:", cartData);
-                } else {
-                    console.error('Dữ liệu trả về không phải mảng');
                 }
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
             }
         };
-
+    
         loadCartFromAPI();
     }, []);
+    
 
 
     useEffect(() => {
