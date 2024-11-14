@@ -74,9 +74,9 @@ const AddProduct = ({ route, navigation }) => {
             const response = await AxiosInstance.get('/carts/getCarts');
             console.log('Dữ liệu giỏ hàng từ API:', response.data);
 
-            // Lặp qua từng giỏ hàng và hiển thị sản phẩm bên trong
             const cartData = response.data.map(cartItem => {
                 if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
+                    console.log(cartItem.products);
                     return cartItem.products.map(product => ({
                         id: product._id,
                         name: product.name,
@@ -86,8 +86,10 @@ const AddProduct = ({ route, navigation }) => {
                         image: product.image,
                         selected: true,
                     }));
+                } else {
+                    return [];
                 }
-            }).flat(); // Dùng flat để nối các mảng sản phẩm vào một mảng duy nhất
+            }).flat();
 
             return cartData;
         } catch (error) {
@@ -173,7 +175,7 @@ const AddProduct = ({ route, navigation }) => {
                 console.error('Invalid cart ID:', cartId);
                 return;
             }
-            
+
             const response = await AxiosInstance.delete(`/carts/deleteCart/${Id}`);
             console.log('Cart deleted:', response.data);
             return response.data;
@@ -182,8 +184,8 @@ const AddProduct = ({ route, navigation }) => {
             throw error;
         }
     };
-    
-    
+
+
     const removeSelectedItems = async () => {
         const selectedItems = cartItems.filter(item => item.selected);
         if (selectedItems.length === 0) {
@@ -231,7 +233,7 @@ const AddProduct = ({ route, navigation }) => {
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={(item) => item.id.toString()} 
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
                 />
 
             )}

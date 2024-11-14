@@ -14,7 +14,7 @@ const AddAdress = (prop) => {
     const [country, setcountry] = useState('');
 
     const BackRight = () => {
-        prop.navigation.navigate('ProfileDetail');
+        prop.navigation.navigate('AddProductsScreen');
     };
 
     const handleSubmit = async () => {
