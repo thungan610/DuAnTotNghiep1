@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
-import AxiosInstanceSP from "../../api/AxiosInstanceSP";
-// import axios from 'axios';
+
 const AddAdress = (prop) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -15,15 +14,9 @@ const AddAdress = (prop) => {
 
     const BackRight = () => {
         prop.navigation.navigate('AddProductsScreen');
-    };
+    };  
 
-    const handleSaveAddress = async () => {
-        try {
-            const response = await AxiosInstanceSP().post('http://192.168.1.3:6677/users/6736111a0ecd4fc261dbb286/addressNew', {
-                name,
-                phone,
-                country,
-                city,
+
                 district,
                 quarter,
                 alley,
@@ -41,6 +34,7 @@ const AddAdress = (prop) => {
             Alert.alert("Error", "Thêm không được rồi, lồi 500 kìa sửa đi.");
         }
     };
+
 
     return (
         <ScrollView style={AddAdressStyle.container}>
@@ -75,13 +69,11 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập quốc gia"
                         value={country}
-                        onChangeText={setCountry}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập khu vực"
                         value={city}
-                        onChangeText={setCity}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
@@ -93,19 +85,15 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập phường"
                         value={quarter}
-                        onChangeText={setQuarter}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập hẻm"
                         value={alley}
-                        onChangeText={setAlley}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập số nhà"
-                        value={homenumber}
-                        onChangeText={setHomenumber}
                     />
                 </View>
             </View>
