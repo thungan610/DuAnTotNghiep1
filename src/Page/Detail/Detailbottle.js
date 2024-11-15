@@ -3,7 +3,8 @@ import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-na
 import PagerView from 'react-native-pager-view';
 import styleDetailbottle from './style';
 
-const Detailbottle = (prop) => {
+const Detailbottle = (prop, route) => {
+    const { categoryId } = route.params;
     const { product } = prop.route.params || {};
     const [productDetails, setProductDetails] = useState(product);
     const [selectedProduct, setselectedProduct] = useState(product);
@@ -14,6 +15,20 @@ const Detailbottle = (prop) => {
     const [price, setPrice] = useState(product?.price || 0);
     const [hasNotification, setHasNotification] = useState(false);
 
+
+    useEffect(() => {
+        const fetchProductsByCategory = async () => {
+            try {
+                const response = await AxiosInstanceSP().get(`/products/filter/${categoryId}`);
+                setProducts(response.data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        fetchProductsByCategory();
+    }, [categoryId]);
+
     useEffect(() => {
         if (product) {
             setProductDetails(product);
@@ -22,6 +37,10 @@ const Detailbottle = (prop) => {
             setPrice(product.price || 0);
         }
     }, [product]);
+
+    useEffect(() => {
+        console.log('Category ID:', categoryId);
+    }, [categoryId]);
 
     useEffect(() => {
         setPrice(quantity * unitPrice);

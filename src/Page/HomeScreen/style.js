@@ -70,8 +70,5 @@ const HomeStyle = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold'
     },
-    price:{
-        marginRight: 5
-    },
 });
 export default HomeStyle

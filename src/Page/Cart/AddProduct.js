@@ -66,14 +66,14 @@ const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
     const [modalVisible, setModalVisible] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
+    const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
     const dispatch = useDispatch();
-
     const getCart = async () => {
         try {
             const response = await AxiosInstance.get('/carts/getCarts');
             console.log('Dữ liệu giỏ hàng từ API:', response.data);
-    
+
             const cartData = response.data.map(cartItem => {
                 if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
                     return cartItem.products.map(product => ({
@@ -86,30 +86,37 @@ const AddProduct = ({ route, navigation }) => {
                         selected: true,
                     }));
                 } else {
-                    return []; 
+                    return [];
                 }
-            }).flat(); 
-    
+            }).flat();
+
             if (cartData.length === 0) {
                 console.warn('Giỏ hàng trống!');
             }
-    
+
             return cartData;
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error);
             throw error;
         }
     };
-    
+
     useFocusEffect(
         React.useCallback(() => {
             const loadCartFromAPI = async () => {
                 try {
                     const cartData = await getCart();
                     console.log("Dữ liệu giỏ hàng:", cartData);
-        
+    
                     if (Array.isArray(cartData)) {
                         setCartItems(cartData);
+                        const selectedCount = cartData.filter(item => item.selected).length;
+                        setSelectedCount(selectedCount);
+    
+                        const total = cartData
+                            .filter(item => item.selected)
+                            .reduce((total, item) => total + (item.price * item.quantity), 0);
+                        setTotalAmount(total);
                         console.log("Giỏ hàng được cập nhật:", cartData);
                     } else {
                         console.error('Dữ liệu trả về không phải mảng');
@@ -122,7 +129,7 @@ const AddProduct = ({ route, navigation }) => {
             loadCartFromAPI();
         }, [])
     );
-    
+
     useEffect(() => {
         const saveCartToStorage = async () => {
             try {
@@ -131,19 +138,28 @@ const AddProduct = ({ route, navigation }) => {
                 console.error('Lỗi khi lưu giỏ hàng vào AsyncStorage:', error);
             }
         };
-    
+
         saveCartToStorage();
-    }, [cartItems]);  
-        
+    }, [cartItems]);
+
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems => {
-            const updatedItems = prevItems.map(item =>
-                item.id === id ? { ...item, selected: !item.selected } : item
-            );
+            const updatedItems = prevItems.map(item => {
+                if (item.id === id) {
+                    const newItem = { ...item, selected: !item.selected };
+                    return newItem;
+                }
+                return item;
+            });
+    
+            const newSelectedCount = updatedItems.filter(item => item.selected).length;
+            setSelectedCount(newSelectedCount);
+    
             const newTotal = updatedItems
                 .filter(item => item.selected)
                 .reduce((total, item) => total + (item.price * item.quantity), 0);
             setTotalAmount(newTotal);
+    
             return updatedItems;
         });
     };
@@ -152,25 +168,25 @@ const AddProduct = ({ route, navigation }) => {
         const total = cartItems
             .filter(item => item.selected)
             .reduce((total, item) => total + (item.price * item.quantity), 0);
-
         setTotalAmount(total);
     }, [cartItems]);
-
 
     const updateQuantity = (id, action) => {
         setCartItems(prevItems =>
             prevItems.map(item => {
                 if (item.id === id) {
-                    const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
-                    if (newQuantity === 1 && action === 'decrease') {
-                        Alert.alert("Thông báo", "Số lượng không thể thấp hơn 1.");
-                    }
+                    const currentQuantity = item.quantity;
+                    let newQuantity = currentQuantity;
+    
+                    newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
+    
                     return { ...item, quantity: newQuantity };
                 }
                 return item;
             })
         );
     };
+    
 
     const deleteItemsFromCart = async (cartId) => {
         try {
@@ -241,10 +257,25 @@ const AddProduct = ({ route, navigation }) => {
 
             )}
             {totalAmount > 0 && (
-                <View>
+                <View style={{
+                    borderColor: '#27AAE1',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    padding: 10,
+                }}>
                     <View style={AddProductStyle.total}>
-                        <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
-                        <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}.000đ</Text>
+                        <View style={{
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={AddProductStyle.totalPrice}>Tổng số lượng: </Text>
+                            <Text style={{
+                                fontSize: 24,
+                                fontWeight: 'bold',
+                                color: 'black',
+                                marginBottom: 10,
+                            }}>{selectedCount}</Text>
+                        </View>
+                        <Text style={AddProductStyle.totalPrice}>Tổng tiền: {totalAmount.toLocaleString()}.000đ</Text>
                     </View>
                     <TouchableOpacity onPress={() => navigation.navigate('NextPayment')} style={PayMethodStyle.BtnSuss}>
                         <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>

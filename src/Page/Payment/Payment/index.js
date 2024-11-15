@@ -19,7 +19,7 @@ const Payment = (prop) => {
         prop.navigation.navigate('PaySusses')
     }
     const BtnTabAddress = () => {
-        prop.navigation.navigate('InsertAddress')
+        prop.navigation.navigate('TabAddress')
     }
     return (
         <ScrollView style={PaymentStyle.container}>
@@ -69,25 +69,10 @@ const Payment = (prop) => {
             </TouchableOpacity>
 
             <View style={PaymentStyle.ViewBodyContainer}>
-                <View style={PaymentStyle.ViewBody}>
-                    <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
-                    <TextInput style={{
-                        width: '100%',
-                        height: 40,
-                        borderColor: '#ccc',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        marginLeft:5
-                    }} 
-                    placeholder="Để lại ghi chú" 
-                    multiline 
-                    numberOfLines={4} />
-                </View>
-                <Text style={PaymentStyle.Line} />
-                <View style={PaymentStyle.ViewBody}>
+                {/* <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Tổng tiền sản phẩm:</Text>
                     <Text style={PaymentStyle.txtPrice}>19.000đ</Text>
-                </View>
+                </View> */}
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Phương thúc thanh toán:</Text>
@@ -103,6 +88,23 @@ const Payment = (prop) => {
                         <Text style={PaymentStyle.txtDC}>Nhấp vào để chọn</Text>
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
+                </View>
+                <Text style={PaymentStyle.Line} />
+                <View style={PaymentStyle.ViewBodynote}>
+                    <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
+                    <TextInput style={{
+                        width: '100%',
+                        height: 72,
+                        borderColor: '#ccc',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        marginLeft:5,
+                        padding: 4,
+                        textAlignVertical: 'top'
+                    }} 
+                    placeholder="Để lại ghi chú" 
+                    multiline 
+                    numberOfLines={4} />
                 </View>
                 <Text style={PaymentStyle.Line} />
                 <View>
@@ -126,10 +128,6 @@ const Payment = (prop) => {
                 </View>
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
                 <View style={PaymentStyle.ViewFooter}>
-                    <View>
-                        <Text style={PaymentStyle.txtDC1}>Tổng thanh toán:</Text>
-                        <Text style={PaymentStyle.txtDC2}>29.000đ</Text>
-                    </View>
                     <TouchableOpacity onPress={HandPaySuccess} style={PaymentStyle.btnSubmit}>
                         <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
                     </TouchableOpacity>

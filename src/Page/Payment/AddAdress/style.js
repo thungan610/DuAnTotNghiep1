@@ -49,19 +49,18 @@ const AddAdressStyle = StyleSheet.create({
         color: 'black',
         fontFamily: 'Poppins',
         marginBottom: 10,
-        marginTop: 30,
+        marginTop: 20,
         marginLeft: 20
     },
     footer:{
         // flex: 1,
-        marginTop: 20
+        marginTop: 5
     },
     button:{
         backgroundColor: "#27AAE1",
         borderRadius: 10,
         padding: 15,
-        marginTop: 20,
-        marginBottom: 20,
+        paddingHorizontal:10,
         width: '100%',
     },
     buttonText:{
