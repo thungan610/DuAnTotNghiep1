@@ -66,6 +66,11 @@ const InsertPro5Styles = StyleSheet.create({
   },
   imgphotoContainer:{
     alignItems: 'center',
+  },
+  iconedit:{
+    width: 24,
+    height: 24,
+    tintColor: 'black',
   }
 });
 export default InsertPro5Styles;
