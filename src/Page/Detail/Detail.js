@@ -5,7 +5,7 @@ import AxiosInstance from '../../../src/Page/api/AxiosInstance';
 import { useSelector, useDispatch } from 'react-redux';
 import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
-import { getCart} from '../Cart/AddProduct'
+import Toast from 'react-native-toast-message';
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
@@ -85,8 +85,6 @@ const Detail = ({ route, navigation }) => {
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
-        } else {
-            Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
 
@@ -132,11 +130,15 @@ const Detail = ({ route, navigation }) => {
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
-                Alert.alert("Thông báo", response.data.message || "Thêm sản phẩm thành công!");
-
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
+                    visibilityTime: 2000,
+                    position: 'top'
+                  });
+                  
                 dispatch(addToCart(productToAdd));
-
-                navigation.navigate('AddProductsScreen', { data: productToAdd });
             }
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);

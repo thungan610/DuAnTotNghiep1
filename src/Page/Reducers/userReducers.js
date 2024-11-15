@@ -7,6 +7,7 @@ const userSlice = createSlice({
     password: '',
     rememberAccount: false,
     userData: null,
+    userId: null
   },
   reducers: {
     setUser: (state, action) => {
@@ -21,14 +22,18 @@ const userSlice = createSlice({
     setRememberAccount: (state, action) => {
       state.rememberAccount = action.payload;
     },
+    setUserId: (state, action) => { 
+      state.userId = action.payload;
+    },
     clearUser: (state) => {
       state.userData = null;
       state.email = '';
       state.password = '';
+      state.userId = null; 
     },
   },
 });
 
-export const { setUser, setEmail, setPassword, setRememberAccount, clearUser } = userSlice.actions;
+export const { setUser, setEmail, setPassword, setRememberAccount, setUserId, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

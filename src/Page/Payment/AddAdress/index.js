@@ -3,40 +3,84 @@ import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } fro
 import AddAdressStyle from "./style";
 import AxiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from "react-native-toast-message";
 
 const AddAdress = (prop) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const [country, setCountry] = useState('');
-    const [city, setCity] = useState('');
+    const [country, setCountry] = useState('Việt Nam');
+    const [city, setCity] = useState('TP. Hồ Chí Minh');
     const [district, setDistrict] = useState('');
     const [quarter, setQuarter] = useState('');
     const [alley, setAlley] = useState('');
     const [homenumber, setHomenumber] = useState('');
 
     const BackRight = () => {
-        prop.navigation.navigate('AddProductsScreen');
-    };  
+        prop.navigation.goBack();
+    };
 
-                district,
-                quarter,
-                alley,
-                homenumber
-            });
-            console.log(response.data);
-            if (response.status === 200) {
-                Alert.alert("Success", "Thêm địa chỉ thành công");
-                BackRight(); // Navigate back after saving
+    const getUserId = async () => {
+        try {
+            // Lấy userId từ AsyncStorage
+            const userId = await AsyncStorage.getItem('userId');
+
+            if (userId !== null) {
+                // Nếu có userId trong AsyncStorage
+                console.log('UserId:', userId);
+                return userId;
             } else {
-                Alert.alert("Error", "Thêm không thành công.");
+                // Nếu không tìm thấy userId
+                console.log('Không tìm thấy userId trong AsyncStorage');
+                return null;
             }
         } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "Thêm không được rồi, lồi 500 kìa sửa đi.");
+            // Xử lý lỗi nếu có
+            console.error('Error fetching userId from AsyncStorage:', error);
+            return null;
         }
     };
 
-
+    const handleSubmit = async () => {
+        const userId = await getUserId();
+        
+        if (!userId) {
+          // Nếu không có userId, bạn có thể thông báo lỗi
+          Alert.alert("Lỗi", "Không tìm thấy userId");
+          return;
+        }
+      
+        // Tiếp tục xử lý với userId
+        const address = {
+          name,
+          phone,
+          country,
+          city,
+          district,
+          quarter,
+          alley,
+          homenumber,
+        };
+      
+        try {
+          const response = await AxiosInstance.post(`/users/${userId}/addressNew`, address);
+          if (response.status === 200) {
+            Toast.show({
+              type: "success",
+              text1: "Thông báo",
+              text2: "Thêm địa chỉ thành công",
+              visibilityTime: 2000,
+              position: 'top',
+            });
+            prop.navigation.goBack();
+          } else {
+            Alert.alert("Lỗi", "Thêm không thành công.");
+          }
+        } catch (error) {
+          console.error(error);
+          Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm địa chỉ.");
+        }
+      };
+      
     return (
         <ScrollView style={AddAdressStyle.container}>
             <View style={AddAdressStyle.header}>
@@ -68,14 +112,12 @@ const AddAdress = (prop) => {
                 <View style={AddAdressStyle.body}>
                     <TextInput
                         style={AddAdressStyle.input}
-                        placeholder="Nhập quốc gia"
                         value={country}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
-                        placeholder="Nhập khu vực"
                         value={city}
-                      />
+                    />
 
                     <TextInput
                         style={AddAdressStyle.input}
@@ -87,20 +129,23 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập phường"
                         value={quarter}
+                        onChangeText={setQuarter}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập hẻm"
                         value={alley}
+                        onChangeText={setAlley}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập số nhà"
+                        onChangeText={setHomenumber}
                     />
                 </View>
             </View>
             <View style={AddAdressStyle.footer}>
-                <TouchableOpacity style={AddAdressStyle.button} onPress={handleSaveAddress}>
+                <TouchableOpacity style={AddAdressStyle.button} onPress={handleSubmit}>
                     <Text style={AddAdressStyle.buttonText}>LƯU</Text>
                 </TouchableOpacity>
             </View>
