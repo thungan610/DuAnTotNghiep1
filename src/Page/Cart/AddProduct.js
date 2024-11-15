@@ -4,6 +4,7 @@ import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert } from 'rea
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
+import { useFocusEffect } from '@react-navigation/native';
 import AxiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
@@ -72,10 +73,9 @@ const AddProduct = ({ route, navigation }) => {
         try {
             const response = await AxiosInstance.get('/carts/getCarts');
             console.log('Dữ liệu giỏ hàng từ API:', response.data);
-
+    
             const cartData = response.data.map(cartItem => {
                 if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
-                    console.log(cartItem.products);
                     return cartItem.products.map(product => ({
                         id: product._id,
                         name: product.name,
@@ -86,48 +86,55 @@ const AddProduct = ({ route, navigation }) => {
                         selected: true,
                     }));
                 } else {
-                    return [];
+                    return []; 
                 }
-            }).flat();
-
+            }).flat(); 
+    
+            if (cartData.length === 0) {
+                console.warn('Giỏ hàng trống!');
+            }
+    
             return cartData;
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error);
             throw error;
         }
     };
-
-    useEffect(() => {
-        const loadCartFromAPI = async () => {
-            try {
-                const userId = 'id_của_user'; 
-                const cartData = await getCart(userId);
-                if (Array.isArray(cartData)) {
-                    setCartItems(cartData);
+    
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadCartFromAPI = async () => {
+                try {
+                    const cartData = await getCart();
+                    console.log("Dữ liệu giỏ hàng:", cartData);
+        
+                    if (Array.isArray(cartData)) {
+                        setCartItems(cartData);
+                        console.log("Giỏ hàng được cập nhật:", cartData);
+                    } else {
+                        console.error('Dữ liệu trả về không phải mảng');
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
                 }
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
-            }
-        };
+            };
     
-        loadCartFromAPI();
-    }, []);
+            loadCartFromAPI();
+        }, [])
+    );
     
-
-
     useEffect(() => {
         const saveCartToStorage = async () => {
             try {
                 await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
             } catch (error) {
-                console.error('Error saving cart to AsyncStorage:', error);
+                console.error('Lỗi khi lưu giỏ hàng vào AsyncStorage:', error);
             }
         };
-        if (cartItems.length > 0) {
-            saveCartToStorage();
-        }
-    }, [cartItems]);
-
+    
+        saveCartToStorage();
+    }, [cartItems]);  
+        
     const toggleSelectProduct = (id) => {
         setCartItems(prevItems => {
             const updatedItems = prevItems.map(item =>

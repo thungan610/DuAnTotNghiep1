@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
 import AxiosInstance from "../../api/AxiosInstance";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddAdress = (prop) => {
     // const [name, setName] = useState('');
@@ -15,18 +16,23 @@ const AddAdress = (prop) => {
 
     const BackRight = () => {
         prop.navigation.navigate('AddProductsScreen');
-    };
+    };  
 
     const handleSubmit = async () => {
-        if (!alley || !district || !quarter || !houseNumber || !city || !country ) {
+        if (!alley || !district || !quarter || !houseNumber || !city || !country) {
             Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
             return;
         }
 
         try {
-            const response = await AxiosInstance.post('/addresses/addAddress', {
-                // name,
-                // phone,
+            const userId = await AsyncStorage.getItem('userId');
+
+            if (!userId) {
+                Alert.alert("Lỗi", "Không tìm thấy userId");
+                return;
+            }
+
+            const response = await AxiosInstance.post(`/users/${userId}/addressNew`, {
                 alley,
                 district,
                 quarter,
@@ -46,6 +52,7 @@ const AddAdress = (prop) => {
             Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại.");
         }
     };
+
 
     return (
         <ScrollView style={AddAdressStyle.container}>
@@ -77,41 +84,41 @@ const AddAdress = (prop) => {
             <View>
                 <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
                 <View style={AddAdressStyle.body}>
-                <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập quốc gia"
-                        value={country} 
+                        value={country}
                         onChangeText={setcountry}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập khu vực"
-                        value={city} 
+                        value={city}
                         onChangeText={setcity}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập quận"
-                        value={district} 
+                        value={district}
                         onChangeText={setDistrict}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập phường"
-                        value={quarter} 
-                        onChangeText={setquarter} 
+                        value={quarter}
+                        onChangeText={setquarter}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập hẻm"
-                        value={alley} 
-                        onChangeText={setalley} 
+                        value={alley}
+                        onChangeText={setalley}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Nhập số nhà"
-                        value={houseNumber} 
-                        onChangeText={sethouseNumber} 
+                        value={houseNumber}
+                        onChangeText={sethouseNumber}
                     />
                 </View>
             </View>

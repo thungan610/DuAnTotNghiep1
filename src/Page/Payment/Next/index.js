@@ -6,8 +6,9 @@ const NextPayment = (prop) => {
     const BackRight = () => {
         navigation.goBack()
     }
+
     const HandAddAddress = () => {
-        navigation.navigate('AddAdress')
+        navigation.navigate('TabAddress')
     }
     return (
         <View style={NextPaymentStyle.container}>
