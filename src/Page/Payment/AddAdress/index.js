@@ -5,51 +5,34 @@ import AxiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddAdress = (prop) => {
-    // const [name, setName] = useState('');
-    // const [phone, setPhone] = useState('');
-    const [alley, setalley] = useState('');
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [country, setCountry] = useState('');
+    const [city, setCity] = useState('');
     const [district, setDistrict] = useState('');
-    const [quarter, setquarter] = useState('');
-    const [houseNumber, sethouseNumber] = useState('');
-    const [city, setcity] = useState('');
-    const [country, setcountry] = useState('');
+    const [quarter, setQuarter] = useState('');
+    const [alley, setAlley] = useState('');
+    const [homenumber, setHomenumber] = useState('');
 
     const BackRight = () => {
         prop.navigation.navigate('AddProductsScreen');
     };  
 
-    const handleSubmit = async () => {
-        if (!alley || !district || !quarter || !houseNumber || !city || !country) {
-            Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
-
-        try {
-            const userId = await AsyncStorage.getItem('userId');
-
-            if (!userId) {
-                Alert.alert("Lỗi", "Không tìm thấy userId");
-                return;
-            }
-
-            const response = await AxiosInstance.post(`/users/${userId}/addressNew`, {
-                alley,
                 district,
                 quarter,
-                houseNumber,
-                city,
-                country,
+                alley,
+                homenumber
             });
-
+            console.log(response.data);
             if (response.status === 200) {
-                Alert.alert("Thành công", "Địa chỉ đã được thêm!");
-                prop.navigation.navigate('SubmitTrue');
+                Alert.alert("Success", "Thêm địa chỉ thành công");
+                BackRight(); // Navigate back after saving
             } else {
-                Alert.alert("Lỗi", "Không thể thêm địa chỉ.");
+                Alert.alert("Error", "Thêm không thành công.");
             }
         } catch (error) {
-            console.error('Error submitting address:', error);
-            Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại.");
+            console.error(error);
+            Alert.alert("Error", "Thêm không được rồi, lồi 500 kìa sửa đi.");
         }
     };
 
@@ -65,21 +48,20 @@ const AddAdress = (prop) => {
             </View>
             <View>
                 <Text style={AddAdressStyle.txtLH}>Thông tin liên hệ</Text>
-                {/* <View style={AddAdressStyle.body}>
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                <View style={AddAdressStyle.body}>
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Họ và tên"
-                        value={name} 
-                        onChangeText={setName} 
+                        value={name}
+                        onChangeText={setName}
                     />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
+                    <TextInput
+                        style={AddAdressStyle.input}
                         placeholder="Số điện thoại"
-                        value={phone} 
+                        value={phone}
                         onChangeText={setPhone}
-                        keyboardType="phone-pad"
                     />
-                </View> */}
+                </View>
             </View>
             <View>
                 <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
@@ -88,14 +70,13 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập quốc gia"
                         value={country}
-                        onChangeText={setcountry}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập khu vực"
                         value={city}
-                        onChangeText={setcity}
-                    />
+                      />
+
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập quận"
@@ -106,24 +87,20 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập phường"
                         value={quarter}
-                        onChangeText={setquarter}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập hẻm"
                         value={alley}
-                        onChangeText={setalley}
                     />
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập số nhà"
-                        value={houseNumber}
-                        onChangeText={sethouseNumber}
                     />
                 </View>
             </View>
             <View style={AddAdressStyle.footer}>
-                <TouchableOpacity onPress={handleSubmit} style={AddAdressStyle.button}>
+                <TouchableOpacity style={AddAdressStyle.button} onPress={handleSaveAddress}>
                     <Text style={AddAdressStyle.buttonText}>LƯU</Text>
                 </TouchableOpacity>
             </View>

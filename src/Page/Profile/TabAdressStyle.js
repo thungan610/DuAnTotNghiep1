@@ -16,12 +16,12 @@ const TabAddressStyle = StyleSheet.create({
     marginLeft: 5,
   },
   name: {
-    fontWeight: 'bold',
+    color: '#000',
     fontSize: 16
   },
   address: {
     fontSize: 14,
-    color: '#333',
+    color: '#000',
   },
   iconsContainer: {
     flexDirection: 'row',
