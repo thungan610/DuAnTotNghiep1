@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
+import AxiosInstance from "../../api/AxiosInstance";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddAdress = (prop) => {
     const [name, setName] = useState('');
@@ -15,7 +17,6 @@ const AddAdress = (prop) => {
     const BackRight = () => {
         prop.navigation.navigate('AddProductsScreen');
     };  
-
 
                 district,
                 quarter,
@@ -74,7 +75,8 @@ const AddAdress = (prop) => {
                         style={AddAdressStyle.input}
                         placeholder="Nhập khu vực"
                         value={city}
-                    />
+                      />
+
                     <TextInput
                         style={AddAdressStyle.input}
                         placeholder="Nhập quận"
