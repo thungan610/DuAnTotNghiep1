@@ -101,7 +101,6 @@ const HomeScreen = (props) => {
                         <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                         <View style={HomeStyle.priceall}>
-                            <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
                             <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
                         </View>
                     </View>
@@ -110,7 +109,6 @@ const HomeScreen = (props) => {
         );
     };
     
-
     return (
         <View>
             <ScrollView style={HomeStyle.container}>

@@ -1,11 +1,12 @@
 import { View, Text, TouchableOpacity, FlatList, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import AxiosInstanceSP from '../api/AxiosInstanceSP';
+import React, { useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import AxiosInstance from '../api/AxiosInstance';
 import TabAddressStyle from './TabAdressStyle';
 
 const TabAddress = (prop) => {
   const [data, setData] = useState([]);
-  
+
   const BtnInsertAddress = () => {
     prop.navigation.navigate('InsertAddress');
   };
@@ -19,18 +20,26 @@ const TabAddress = (prop) => {
   };
 
   // Fetch data from API when component mounts using axios
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstanceSP().get('/users/getAddress/6734b3846560a8c22d54f7d5');
-        setData(response.data); // Assuming the API response contains address data
-        console.log('Address data:', response.data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
+  const getAddress = async (userId) => {
+    try {
+      const response = await AxiosInstance.get(`users/getAddress/${userId}`);
+      if (response.status === 200) {
+        console.log("User Address: ", response.data.data);
+        setData(response.data.data);
       }
-    };
-    fetchData();
-  }, []); // Empty array ensures the API call runs only once when the component mounts
+    } catch (error) {
+      console.error("Error fetching address: ", error.message);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const userId = prop.userId;
+      if (userId) {
+        getAddress(userId);
+      }
+    }, [prop.userId]) 
+  );
 
   const renderAddressItem = ({ item }) => (
     <View>
@@ -46,7 +55,7 @@ const TabAddress = (prop) => {
           </Text>
           <Text style={TabAddressStyle.address}>
             {item.houseNumber},{item.alley}, {item.quarter}, {item.district}, {item.city}, {item.country}
-            </Text>
+          </Text>
         </View>
         <View style={TabAddressStyle.iconsContainer}>
           <TouchableOpacity onPress={BtnInsertAddress}>
@@ -80,7 +89,7 @@ const TabAddress = (prop) => {
       <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={TabAddressStyle.flatlist}>
         <FlatList
           data={data}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item._id} 
           renderItem={renderAddressItem}
         />
       </TouchableOpacity>

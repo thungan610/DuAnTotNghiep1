@@ -5,6 +5,7 @@ import AxiosInstance from '../../../src/Page/api/AxiosInstance';
 import { useSelector, useDispatch } from 'react-redux';
 import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
+import Toast from 'react-native-toast-message';
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
@@ -84,8 +85,6 @@ const Detail = ({ route, navigation }) => {
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
-        } else {
-            Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
 
@@ -120,26 +119,26 @@ const Detail = ({ route, navigation }) => {
             images: product.images,
             selected: true,
         };
-        
-        console.log('Product to add:', productToAdd);        
+
+        console.log('Product to add:', productToAdd);
 
         try {
-            // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
-                user: user.userData._id, 
+                user: user.userData._id,
                 products: [productToAdd],
             });
-
-            // Kiểm tra phản hồi từ server
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
-                // Thông báo thành công và điều hướng tới màn hình AddProduct
-                Alert.alert("Thông báo", response.data.message || "Thêm sản phẩm thành công!");
-
-                // Dispatch Redux action để thêm sản phẩm vào Redux store (giỏ hàng)
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
+                    visibilityTime: 2000,
+                    position: 'top'
+                  });
+                  
                 dispatch(addToCart(productToAdd));
-                navigation.navigate('AddProductsScreen', { data: productToAdd });
             }
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);

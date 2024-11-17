@@ -80,12 +80,19 @@ const PaymentStyle = StyleSheet.create({
         backgroundColor:'white',
     },
     ViewBody:{
-        height: 45,
+        height: 52,
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center',
         width:'100%',
         paddingHorizontal: 20
+    },
+    ViewBodynote:{
+        height: 80,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        width:'86%',
+        paddingHorizontal: 10
     },
     btnThem:{
         flexDirection:'row',
@@ -103,11 +110,11 @@ const PaymentStyle = StyleSheet.create({
     },
     ViewFooter:{
         flexDirection:'row',
-        justifyContent:'space-between',
+        justifyContent:'center',
         alignItems:'center',
         width:'100%',
         paddingHorizontal: 20,
-        marginTop: 10
+        marginTop: 22
     },
     txtDC2:{
         fontSize:20,
@@ -117,13 +124,15 @@ const PaymentStyle = StyleSheet.create({
     btnSubmit:{
         backgroundColor: "#27AAE1",
         padding: 15,
-        borderRadius: 10
+        borderRadius: 10,
+        width: '80%'
     },
     txtBtn:{
         color:'white',
+        textAlign:'center',
         fontFamily:'Poppins',
         fontWeight:'bold',
-        fontSize:16
+        fontSize:16,
     }
 })
 export default PaymentStyle

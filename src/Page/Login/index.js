@@ -8,6 +8,7 @@ import { setEmail } from '../Reducers/userReducers';
 import { setPassword } from '../Reducers/userReducers';
 import { setUser } from '../Reducers/userReducers';
 import axiosInstance from '../api/AxiosInstance';
+import Toast from 'react-native-toast-message';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -57,20 +58,24 @@ const Login = () => {
                 password: password,
             });
         
-            // Log cấu trúc dữ liệu để kiểm tra phản hồi API
-            console.log(response.data); // Kiểm tra cấu trúc của đối tượng phản hồi
-        
-            // Kiểm tra sự tồn tại của user data trong phản hồi
-            if (response.data && response.data._id) {  // Kiểm tra _id trong response.data
-                // Đăng nhập thành công
-                Alert.alert("Thông báo", "Đăng nhập thành công!");
+            console.log(response.data); 
+
+            if (response.data && response.data._id) {  
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Đăng nhập thành công!',
+                    visibilityTime: 2000,
+                    position: 'top',
+                  });
+                  
         
                 if (rememberAccount) {
                     dispatch(setEmail(email));
                     dispatch(setPassword(password));
                 }
         
-                const userData = response.data;  // Dữ liệu người dùng trực tiếp từ response.data
+                const userData = response.data;  
                 if (userData) {
                     dispatch(setUser(userData));
                 } else {
@@ -81,14 +86,13 @@ const Login = () => {
                     navigation.goBack();
                 }, 1000);
             } else {
-                // Nếu không có user data trong response
                 throw new Error("Đăng nhập thất bại");
             }
         
         } catch (error) {
-            console.log(error.response?.data || error.message); // Kiểm tra lỗi
+            console.log(error.response?.data || error.message);
             const errorMessage = error.response?.data?.message || "Đăng nhập thất bại!";
-            Alert.alert("Thông báo", errorMessage); // Hiển thị thông báo lỗi
+            Alert.alert("Thông báo", errorMessage); 
         }        
     };
     
