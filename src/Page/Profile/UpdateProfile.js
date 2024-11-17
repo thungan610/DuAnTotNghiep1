@@ -18,8 +18,8 @@ const UpdateProfile = (props) => {
 
         const handleSubmit = async () => {
             try {
-                // const response = await AxiosInstanceSP().put('http://192.168.1.3:6677/users/673377c326c2567cc8382e2d/updateProfile', {
-                    const response = await axios.put('http://192.168.1.3:6677/users/6733785726c2567cc8382e36/updateProfile', {
+                // const response = await AxiosInstanceSP().put('http://192.168.1.10:3000/users/673377c326c2567cc8382e2d/updateProfile', {
+                    const response = await axios.put('http://192.168.1.10:3000/users/6733785726c2567cc8382e36/updateProfile', {
                     name,
                     bio,
                     gender,

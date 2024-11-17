@@ -18,7 +18,7 @@ const InsertPro5 = (prop) => {
     // Fetch profile data from the API
     const fetchProfileData = async () => {
       try {
-        const response = await AxiosInstanceSP().get('http://192.168.1.3:6677/users/671b544f7e165147f9d6cd6e/getProfileApp');
+        const response = await AxiosInstanceSP().get('http://192.168.1.10:3000/users/671b544f7e165147f9d6cd6e/getProfileApp');
         console.log('Profile data:', response.data);
         setProfileData(response.data);
       } catch (error) {

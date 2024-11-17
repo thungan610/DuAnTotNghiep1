@@ -19,7 +19,7 @@ const AddAdress = (prop) => {
 
     const handleSaveAddress = async () => {
         try {
-            const response = await AxiosInstanceSP().post('http://192.168.1.3:6677/users/6736111a0ecd4fc261dbb286/addressNew', {
+            const response = await AxiosInstanceSP().post('http://192.168.1.10:3000/users/6736111a0ecd4fc261dbb286/addressNew', {
                 name,
                 phone,
                 country,
