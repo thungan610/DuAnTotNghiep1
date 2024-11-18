@@ -65,36 +65,38 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 
 const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
 
-    // Ensure the user selector is correctly fetching the user data
-    const user = useSelector(state => state.user);
-    const userId = user?.userData?._id || 'default_id';
 
     const dispatch = useDispatch();
 
-    const getCart = async (userId) => {
+    const getCart = async () => {
         try {
-            // Kiểm tra tính hợp lệ của userId
-            if (!userId || userId === 'default_id') {
-                console.error('Lỗi: userId không hợp lệ hoặc chưa được xác định');
-                throw new Error("userId is required");
-            }
-            // Gửi yêu cầu GET tới API để lấy giỏ hàng
-            const response = await AxiosInstance.get(`/carts/getCarts?userId=${userId}`);
-            const cartData = response.data; 
-            console.log('cartData', cartData);
-            // Ensure you extract data from the response
-    
+            const response = await AxiosInstance.get('/carts/getCarts');
+            const cartData = response.data.map(cartItem => {
+                if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
+                    return cartItem.products.map(product => ({
+                        cart_id: cartItem._id,
+                        product_id: product._id,
+                        name: product.name,
+                        category_name: product.category?.category_name || 'Không có danh mục',
+                        price: product.price,
+                        quantity: product.quantity,
+                        images: product.images,
+                        selected: true,
+                    }));
+                } else {
+                    return [];
+                }
+            }).flat();
+
             if (cartData.length === 0) {
                 console.warn('Giỏ hàng trống!');
             }
-    
-            // Cập nhật state với dữ liệu giỏ hàng đã lấy
-            setCartItems(cartData);
+
             return cartData;
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error);
@@ -106,8 +108,7 @@ const AddProduct = ({ route, navigation }) => {
         React.useCallback(() => {
             const loadCartFromAPI = async () => {
                 try {
-                    // Pass userId to getCart
-                    const cartData = await getCart(userId);
+                    const cartData = await getCart();
                     if (Array.isArray(cartData)) {
                         setCartItems(cartData);
                         const selectedCount = cartData.filter(item => item.selected).length;
@@ -126,8 +127,8 @@ const AddProduct = ({ route, navigation }) => {
             };
 
             loadCartFromAPI();
-        }, [userId]) // Add userId as a dependency
-    );
+        }, [])
+    )
 
     useEffect(() => {
         const saveCartToStorage = async () => {
@@ -165,8 +166,6 @@ const AddProduct = ({ route, navigation }) => {
         });
     };
 
-
-
     useEffect(() => {
         const total = cartItems
             .filter(item => item.selected)
@@ -196,18 +195,23 @@ const AddProduct = ({ route, navigation }) => {
                 console.error('Invalid cart_id:', cart_id);
                 return;
             }
+            console.log('cart_id', cart_id);
             const response = await AxiosInstance.delete(`/carts/deleteCart/${cart_id}`);
-            console.log('Deleted cart:', response.data);
-            return response.data;
+            if (response?.status === 200 && response.data?.success) {
+                console.log('Deleted cart successfully:', response.data);
+                return response.data;
+            }
         } catch (error) {
             if (error.response) {
                 console.error('Server error:', error.response.data);
                 Alert.alert('Lỗi', `Lỗi khi xóa sản phẩm: ${error.response.data.message}`);
             } else {
                 console.error('Error:', error.message);
+                Alert.alert('Lỗi', 'Có lỗi xảy ra.');
             }
         }
     };
+
 
     const removeSelectedItems = async () => {
         const selectedItems = cartItems.filter(item => item.selected);
@@ -224,11 +228,17 @@ const AddProduct = ({ route, navigation }) => {
                 }
                 setModalVisible(false);
                 Alert.alert('Thông báo', 'Xóa sản phẩm thành công');
+                console.log('Xóa sản phẩm thành công');
+
                 const updatedCartItems = await getCart();
+                console.log('Cập nhật giỏ hàng', updatedCartItems);
+
                 setCartItems(updatedCartItems);
 
             } catch (error) {
                 Alert.alert("Lỗi", "Có lỗi xảy ra khi xóa sản phẩm.");
+                console.log('Lỗi khi xóa sản phẩm', error);
+
             }
         }
     };
@@ -261,12 +271,12 @@ const AddProduct = ({ route, navigation }) => {
                 </View>
             ) : (
                 <FlatList
-                data={cartItems}
-                renderItem={({ item }) => (
-                    <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
-                )}
-                keyExtractor={(item) => `${item._id}`} // Use item._id as the key
-            />
+                    data={cartItems}
+                    renderItem={({ item }) => (
+                        <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
+                    )}
+                    keyExtractor={(item) => `${item.cart_id}`}
+                />
             )}
             {totalAmount > 0 && (
                 <View style={{
