@@ -6,7 +6,12 @@ import styleDetailbottle from './style';
 const Detailbottle = (prop, route) => {
     const { categoryId } = route.params;
     const { product } = prop.route.params || {};
+    console.log('producccct', product);
+    
     const [productDetails, setProductDetails] = useState(product);
+
+    console.log('productDetails', productDetails);
+    
     const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -233,7 +238,7 @@ const Detailbottle = (prop, route) => {
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
                                     <Text style={styleDetailbottle.textorigin}>Công dụng :</Text>
-                                    <Text style={styleDetailbottle.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetailbottle.textorigin}>{productDetails.description || 'Chưa có thông tin'}</Text>
                                 </View>
                             </View>
 

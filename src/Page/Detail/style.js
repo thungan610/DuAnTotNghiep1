@@ -120,6 +120,7 @@ const styleDetail = StyleSheet.create({
     textoriginRow: {
         flexDirection: 'row'
     },
+    
     headerFooter: {
         width: 300,
         height: 50,

@@ -2,23 +2,28 @@ import { View, Text, Image, TouchableOpacity, } from 'react-native';
 import {React, useEffect, useState} from 'react';
 import profileStyle from './ProfileDetailstyle';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
+  const user = useSelector(state => state.user);
+  console.log('userfff', user);
 
-  useEffect(() => {
-    // Fetch profile data from the API
-    const fetchProfileData = async () => {
-      try {
-        const response = await axios.get('http://192.168.1.10:3000/users/671b544f7e165147f9d6cd6e/getProfileApp');
-        console.log('Profile data:', response.data);
-        setProfileData(response.data);
-      } catch (error) {
-        console.error('Lấy lỗi rồi sửa đi:', error);
-      }
-    };
-    fetchProfileData();
-  }, []);
+  
+
+  // useEffect(() => {
+  //   // Fetch profile data from the API
+  //   const fetchProfileData = async () => {
+  //     try {
+  //       const response = await axios.get('http://192.168.1.10:3000/users/671b544f7e165147f9d6cd6e/getProfileApp');
+  //       console.log('Profile data:', response.data);
+  //       setProfileData(response.data);
+  //     } catch (error) {
+  //       console.error('Lấy lỗi rồi sửa đi:', error);
+  //     }
+  //   };
+  //   fetchProfileData();
+  // }, []);
 
   const OnViewHoSo = () => {
     prop.navigation.navigate('InsertPro5');
@@ -40,7 +45,7 @@ const ProfileDetail = (prop) => {
           </TouchableOpacity>
 
           <View style={profileStyle.undercontainer}>
-            <Text style={profileStyle.username}>{profileData?.data.name}</Text>
+            <Text style={profileStyle.username}>{user?.userData.name}</Text>
             <TouchableOpacity onPress={OnViewHoSo}>
               <View style={profileStyle.mid}>
                 <Text style={profileStyle.pro5small}>Hồ sơ</Text>

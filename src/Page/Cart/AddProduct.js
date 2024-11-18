@@ -9,10 +9,11 @@ import AxiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
-    const imageUri = Array.isArray(item.images) ? item.images[0] : item.images;
+    const imageUri = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : null;
+
     return (
         <View style={AddProductStyle.itemContainer}>
-            <TouchableOpacity onPress={() => toggleSelect(item.id)}>
+            <TouchableOpacity onPress={() => toggleSelect(item.cart_id)}>
                 <Image
                     source={item.selected ? require("../../../src/assets/check.png") : require("../../../src/assets/uncheck.png")}
                     style={AddProductStyle.checkbox}
@@ -31,11 +32,11 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
                 </Text>
             </View>
             <View style={AddProductStyle.quantityContainer}>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, 'decrease')} style={AddProductStyle.quantityButton}>
+                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'decrease')} style={AddProductStyle.quantityButton}>
                     <Text style={AddProductStyle.quantityText}>-</Text>
                 </TouchableOpacity>
                 <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, 'increase')} style={AddProductStyle.quantityButton}>
+                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'increase')} style={AddProductStyle.quantityButton}>
                     <Text style={AddProductStyle.quantityText}>+</Text>
                 </TouchableOpacity>
             </View>
@@ -64,36 +65,36 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 
 const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
-    const [modalVisible, setModalVisible] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
+
+    // Ensure the user selector is correctly fetching the user data
+    const user = useSelector(state => state.user);
+    const userId = user?.userData?._id || 'default_id';
+
     const dispatch = useDispatch();
-    const getCart = async () => {
+
+    const getCart = async (userId) => {
         try {
-            const response = await AxiosInstance.get('/carts/getCarts');
-            console.log('Dữ liệu giỏ hàng từ API:', response.data);
-
-            const cartData = response.data.map(cartItem => {
-                if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
-                    return cartItem.products.map(product => ({
-                        id: product._id,
-                        name: product.name,
-                        category_name: product.category_name,
-                        price: product.price,
-                        quantity: product.quantity,
-                        images: product.images,
-                        selected: true,
-                    }));
-                } else {
-                    return [];
-                }
-            }).flat();
-
+            // Kiểm tra tính hợp lệ của userId
+            if (!userId || userId === 'default_id') {
+                console.error('Lỗi: userId không hợp lệ hoặc chưa được xác định');
+                throw new Error("userId is required");
+            }
+            // Gửi yêu cầu GET tới API để lấy giỏ hàng
+            const response = await AxiosInstance.get(`/carts/getCarts?userId=${userId}`);
+            const cartData = response.data; 
+            console.log('cartData', cartData);
+            // Ensure you extract data from the response
+    
             if (cartData.length === 0) {
                 console.warn('Giỏ hàng trống!');
             }
-
+    
+            // Cập nhật state với dữ liệu giỏ hàng đã lấy
+            setCartItems(cartData);
             return cartData;
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error);
@@ -105,19 +106,17 @@ const AddProduct = ({ route, navigation }) => {
         React.useCallback(() => {
             const loadCartFromAPI = async () => {
                 try {
-                    const cartData = await getCart();
-                    console.log("Dữ liệu giỏ hàng:", cartData);
-    
+                    // Pass userId to getCart
+                    const cartData = await getCart(userId);
                     if (Array.isArray(cartData)) {
                         setCartItems(cartData);
                         const selectedCount = cartData.filter(item => item.selected).length;
                         setSelectedCount(selectedCount);
-    
+
                         const total = cartData
                             .filter(item => item.selected)
                             .reduce((total, item) => total + (item.price * item.quantity), 0);
                         setTotalAmount(total);
-                        console.log("Giỏ hàng được cập nhật:", cartData);
                     } else {
                         console.error('Dữ liệu trả về không phải mảng');
                     }
@@ -125,9 +124,9 @@ const AddProduct = ({ route, navigation }) => {
                     console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
                 }
             };
-    
+
             loadCartFromAPI();
-        }, [])
+        }, [userId]) // Add userId as a dependency
     );
 
     useEffect(() => {
@@ -142,27 +141,31 @@ const AddProduct = ({ route, navigation }) => {
         saveCartToStorage();
     }, [cartItems]);
 
-    const toggleSelectProduct = (id) => {
+    const toggleSelectProduct = (cart_id) => {
+        console.log('Toggle select product cart_id:', cart_id);
         setCartItems(prevItems => {
             const updatedItems = prevItems.map(item => {
-                if (item.id === id) {
+                if (item.cart_id === cart_id) { // Sử dụng cart_id thay vì id
                     const newItem = { ...item, selected: !item.selected };
                     return newItem;
                 }
                 return item;
             });
-    
+
             const newSelectedCount = updatedItems.filter(item => item.selected).length;
             setSelectedCount(newSelectedCount);
-    
+
             const newTotal = updatedItems
                 .filter(item => item.selected)
                 .reduce((total, item) => total + (item.price * item.quantity), 0);
             setTotalAmount(newTotal);
-    
+
+            console.log('Updated cart items:', updatedItems);
             return updatedItems;
         });
     };
+
+
 
     useEffect(() => {
         const total = cartItems
@@ -171,49 +174,59 @@ const AddProduct = ({ route, navigation }) => {
         setTotalAmount(total);
     }, [cartItems]);
 
-    const updateQuantity = (id, action) => {
+    const updateQuantity = (cart_id, action) => {
         setCartItems(prevItems =>
             prevItems.map(item => {
-                if (item.id === id) {
+                if (item.cart_id === cart_id) {
                     const currentQuantity = item.quantity;
                     let newQuantity = currentQuantity;
-    
+
                     newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
-    
+
+                    console.log(`New quantity for product cart_id: ${cart_id} is ${newQuantity}`);
                     return { ...item, quantity: newQuantity };
                 }
                 return item;
             })
         );
     };
-    
-
-    const deleteItemsFromCart = async (cartId) => {
+    const deleteItemsFromCart = async (cart_id) => {
         try {
-            if (!cartId || typeof cartId !== 'string') {
-                console.error('Invalid cart ID:', cartId);
+            if (!cart_id) {
+                console.error('Invalid cart_id:', cart_id);
                 return;
             }
-
-            const response = await AxiosInstance.delete(`/carts/deleteCart/${Id}`);
-            console.log('Cart deleted:', response.data);
+            const response = await AxiosInstance.delete(`/carts/deleteCart/${cart_id}`);
+            console.log('Deleted cart:', response.data);
             return response.data;
         } catch (error) {
-            console.error('Error deleting cart:', error);
-            throw error;
+            if (error.response) {
+                console.error('Server error:', error.response.data);
+                Alert.alert('Lỗi', `Lỗi khi xóa sản phẩm: ${error.response.data.message}`);
+            } else {
+                console.error('Error:', error.message);
+            }
         }
     };
 
-
     const removeSelectedItems = async () => {
         const selectedItems = cartItems.filter(item => item.selected);
+        console.log('Selected items to remove:', selectedItems);
         if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Không có sản phẩm để xóa");
         } else {
             try {
-                await deleteItemsFromCart(selectedItems);
-                setCartItems(prevItems => prevItems.filter(item => !item.selected));
+                for (const item of selectedItems) {
+                    const response = await deleteItemsFromCart(item.cart_id);
+                    if (response && response.success) {
+                        setCartItems(prevItems => prevItems.filter(cartItem => cartItem.cart_id !== item.cart_id));
+                    }
+                }
                 setModalVisible(false);
+                Alert.alert('Thông báo', 'Xóa sản phẩm thành công');
+                const updatedCartItems = await getCart();
+                setCartItems(updatedCartItems);
+
             } catch (error) {
                 Alert.alert("Lỗi", "Có lỗi xảy ra khi xóa sản phẩm.");
             }
@@ -222,8 +235,9 @@ const AddProduct = ({ route, navigation }) => {
 
     const confirmDelete = () => {
         const selectedItems = cartItems.filter(item => item.selected);
+        console.log('Items to confirm delete:', selectedItems);
         if (selectedItems.length === 0) {
-            Alert.alert("Thông báo", "Không có sản phẩm để xóa");
+            Alert.alert('Thông báo', 'Chưa chọn sản phẩm để xóa');
         } else {
             setModalVisible(true);
         }
@@ -232,7 +246,6 @@ const AddProduct = ({ route, navigation }) => {
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
-
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image source={require("../../../src/assets/notifi/backright.png")} />
                 </TouchableOpacity>
@@ -248,13 +261,12 @@ const AddProduct = ({ route, navigation }) => {
                 </View>
             ) : (
                 <FlatList
-                    data={cartItems}
-                    renderItem={({ item }) => (
-                        <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
-                    )}
-                    keyExtractor={(item, index) => `${item.id}-${index}`}
-                />
-
+                data={cartItems}
+                renderItem={({ item }) => (
+                    <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
+                )}
+                keyExtractor={(item) => `${item._id}`} // Use item._id as the key
+            />
             )}
             {totalAmount > 0 && (
                 <View style={{

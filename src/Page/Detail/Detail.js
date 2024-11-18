@@ -9,9 +9,15 @@ import Toast from 'react-native-toast-message';
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
+
+    console.log('product', product);
+
     const dispatch = useDispatch();
     const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
+
+    console.log('productDetails', productDetails.id);
+    
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
@@ -109,7 +115,7 @@ const Detail = ({ route, navigation }) => {
             );
             return;
         }
-
+    
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
@@ -119,14 +125,14 @@ const Detail = ({ route, navigation }) => {
             images: product.images,
             selected: true,
         };
-
-        console.log('Product to add:', productToAdd);
-
+        console.log('productToAdd', productToAdd);
+    
         try {
             const response = await AxiosInstance.post('/carts/addCart_App', {
-                user: user.userData._id,
+                user: user.userData._id, 
                 products: [productToAdd],
             });
+            
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
@@ -136,15 +142,16 @@ const Detail = ({ route, navigation }) => {
                     text2: 'Thêm sản phẩm thành công!',
                     visibilityTime: 2000,
                     position: 'top'
-                  });
-                  
-                dispatch(addToCart(productToAdd));
+                });
+    
+                dispatch(addToCart(productToAdd)); // Cập nhật giỏ hàng trong Redux
             }
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
             Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
         }
     };
+    
 
     const renderImages = () => images.map((item, index) => (
         <View key={index}>
@@ -216,9 +223,10 @@ const Detail = ({ route, navigation }) => {
                                     <Text style={styleDetail.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
-                                <View style={styleDetail.textoriginRow}>
+                                <View>
                                     <Text style={styleDetail.textorigin}>Công dụng: </Text>
-                                    <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetail.textorigin}>• {productDetails.description || 'Chưa có thông tin'}</Text>
+
                                 </View>
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
