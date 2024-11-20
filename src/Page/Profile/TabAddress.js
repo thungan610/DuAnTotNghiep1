@@ -1,48 +1,57 @@
-import { View, Text, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AxiosInstance from '../api/AxiosInstance';
 import TabAddressStyle from './TabAdressStyle';
+import { useSelector } from 'react-redux';
 
 const TabAddress = (prop) => {
   const [data, setData] = useState([]);
-
-  const BtnInsertAddress = () => {
-    prop.navigation.navigate('InsertAddress');
+  const user = useSelector(state => state.user);
+  const userId = user?.userData?._id;
+  console.log('userId', userId);
+  const BtnInsertAddress = (addressId) => {
+    prop.navigation.navigate('InsertAddress', { addressId: addressId });
   };
-
+  const BtnPayment = (addressId) => {
+    prop.navigation.navigate('Payment', { addressId: addressId });
+  };
   const BackRight = () => {
     prop.navigation.goBack();
   };
-
   const BtnAddAdress = () => {
     prop.navigation.navigate('AddAdress');
   };
 
-  // Fetch data from API when component mounts using axios
   const getAddress = async (userId) => {
     try {
       const response = await AxiosInstance.get(`users/getAddress/${userId}`);
-      if (response.status === 200) {
-        console.log("User Address: ", response.data.data);
-        setData(response.data.data);
+      if (!response) {
+        Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
+      } else {
+        const addresses = response.data;
+        console.log('addresses', addresses);
+        setData(addresses);
       }
     } catch (error) {
       console.error("Error fetching address: ", error.message);
+      console.error("Error details: ", error.response?.data || error);
     }
   };
-
   useFocusEffect(
     React.useCallback(() => {
-      const userId = prop.userId;
       if (userId) {
         getAddress(userId);
+      } else {
+        console.error("UserId is missing");
       }
-    }, [prop.userId]) 
+    }, [userId])
   );
 
+
+
   const renderAddressItem = ({ item }) => (
-    <View>
+    <TouchableOpacity onPress={() => BtnPayment(item._id)}>
       <View style={TabAddressStyle.addressContainer}>
         <Image
           style={TabAddressStyle.icon}
@@ -54,11 +63,11 @@ const TabAddress = (prop) => {
             {item.user.name}, {item.user.phone}
           </Text>
           <Text style={TabAddressStyle.address}>
-            {item.houseNumber},{item.alley}, {item.quarter}, {item.district}, {item.city}, {item.country}
+            {item.houseNumber}, {item.alley}, {item.quarter}, {item.district}, {item.city}, {item.country}
           </Text>
         </View>
         <View style={TabAddressStyle.iconsContainer}>
-          <TouchableOpacity onPress={BtnInsertAddress}>
+          <TouchableOpacity onPress={() => BtnInsertAddress(item._id)}>
             <Image
               style={TabAddressStyle.icon}
               source={require('../../../src/assets/edit.png')}
@@ -72,7 +81,7 @@ const TabAddress = (prop) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -86,13 +95,12 @@ const TabAddress = (prop) => {
         </TouchableOpacity>
         <Text style={TabAddressStyle.textH}>Địa chỉ</Text>
       </View>
-      <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={TabAddressStyle.flatlist}>
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item._id} 
-          renderItem={renderAddressItem}
-        />
-      </TouchableOpacity>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item._id}
+        renderItem={renderAddressItem}
+      />
+
       <TouchableOpacity onPress={BtnAddAdress}>
         <View style={TabAddressStyle.addAdress}>
           <Image

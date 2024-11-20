@@ -1,26 +1,229 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native"; 
 import PaymentStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
-const Payment = (prop) => {
+import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import axiosInstance from "../../api/AxiosInstance";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const Payment = ({ route, navigation }) => {
+    const { addressId } = route.params || {};
+    const [cartIds, setCartIds] = useState([]);
+    const user = useSelector(state => state.user);
+    const userId = user?.userData?._id || 'default_id';
+    const [data, setData] = useState([]);
+    const [address, setAddress] = useState(null);
+    const [cartData, setCartData] = useState([]);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
+    const [selectedMethod, setSelectedMethod] = useState(null); 
+
+    const getAddress = async (userId) => {
+        try {
+            const response = await axiosInstance.get(`users/getAddress/${userId}`);
+            if (response && response.data) {
+                setData(response.data);
+            } else {
+                Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
+            }
+        } catch (error) {
+            console.error("Error fetching address: ", error.message);
+        }
+    };
+
+    const fetchAddressById = async (addressId) => {
+        try {
+            const response = await axiosInstance.get(`/users/getAddressById/${addressId}`);
+            if (response) {
+                setAddress(response);
+            } else {
+                setAddress(null);
+            }
+        } catch (err) {
+            console.error('Error fetching address by ID:', err);
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (userId) {
+                getAddress(userId);
+            }
+        }, [userId])
+    );
+
+    useEffect(() => {
+        if (addressId) {
+            fetchAddressById(addressId);
+        } else {
+            if (data.length > 0) {
+                setAddress(data[0]);
+            } else {
+                setAddress(null);
+            }
+        }
+    }, [addressId, data]);
+
+    useEffect(() => {
+        if (route.params?.selectedMethod) {
+            const method = route.params.selectedMethod;
+            setSelectedMethod(method);
+        }
+    }, [route.params]);
+
+    const getCartIds = async () => {
+        try {
+            const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
+            if (storedCartIds !== null) {
+                const parsedCartIds = JSON.parse(storedCartIds);
+                setCartIds(parsedCartIds);
+            } else {
+                console.log('No cart IDs found in AsyncStorage');
+                setCartIds([]);
+            }
+        } catch (error) {
+            console.error('Error retrieving cart IDs:', error);
+        }
+    };
+
+    useEffect(() => {
+        getCartIds();
+    }, []);
+
+    const getCartsByIds = async (cartIds) => {
+        try {
+            const response = await axiosInstance.get('/carts/getCartById', {
+                params: {
+                    cartIds: cartIds.join(',')
+                }
+            });
+            setCartData(response);
+            console.log('Giỏ hàng:', response);
+        } catch (error) {
+            console.error('Lỗi khi lấy giỏ hàng:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (cartIds && cartIds.length > 0) {
+            getCartsByIds(cartIds);
+        }
+    }, [cartIds]);
+
     const BackRight = () => {
-        prop.navigation.goBack()
-    }
+        navigation.goBack();
+    };
+
     const HandMethod = () => {
-        prop.navigation.navigate('PayMethod')
-    }
+        navigation.navigate('PayMethod');
+    };
+
     const HandVoucher = () => {
-        prop.navigation.navigate('Voucher')
-    }
+        navigation.navigate('Voucher', { totalPrice });
+    };
+
     const HandTransfer = () => {
-        prop.navigation.navigate('AddTranfer')
-    }
-    const HandPaySuccess = () => {
-        prop.navigation.navigate('PaySusses')
-    }
+        navigation.navigate('AddTranfer', {
+            onSelectTransfer: (transfer) => setSelectedTransfer(transfer),
+        });
+    };
+
+    const HandPaySuccess = async () => {
+        if (selectedMethod === 'payos') {
+            await createPayment();
+        } else if (selectedMethod === 'cash') {
+            navigation.navigate('OrderSuccess');
+        }
+    };
+
     const BtnTabAddress = () => {
-        prop.navigation.navigate('TabAddress')
-    }
+        navigation.navigate('TabAddress');
+    };
+
+    const [selectedTransfer, setSelectedTransfer] = useState({
+        label: "Nhanh",
+        price: "10",
+        note: "Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn",
+    });
+
+    useEffect(() => {
+        if (route.params?.selectedTransfer) {
+            setSelectedTransfer(route.params.selectedTransfer);
+        }
+    }, [route.params]);
+
+    useEffect(() => {
+        if (route.params?.selectedVoucher) {
+            setSelectedVoucher(route.params.selectedVoucher);
+        }
+    }, [route.params]);
+
+    const totalPrice = cartData.reduce((total, cart) => {
+        return total + cart.products.reduce((cartTotal, product) => {
+            return cartTotal + product.price * product.quantity;
+        }, 0);
+    }, 0);
+
+    const totalPayment = (() => {
+        const transferCost = parseFloat(selectedTransfer.price);
+        let discount = 0;
+
+        if (selectedVoucher) {
+            if (selectedVoucher.price.includes('%')) {
+                const percentage = parseFloat(selectedVoucher.price) / 100;
+                discount = totalPrice * percentage;
+            } else {
+                discount = parseFloat(selectedVoucher.price);
+            }
+        }
+
+        return (totalPrice + transferCost) - discount;
+    })();
+
+    const createOrder = async () => {
+        try {
+            const orderData = {
+                cart: cartIds,
+                userId,
+                ship: selectedTransfer ? selectedTransfer.price : 1,
+                sale: selectedVoucher ? [selectedVoucher] : [],
+            };
+            const response = await axiosInstance.post('/oder/addOrder', orderData);
+
+            if (response && response.data) {
+                console.log('response', response);
+            } else {
+                Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
+            }
+        } catch (error) {
+            console.error('Error creating order:', error.message);
+            Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
+        }
+    };
+
+    const createPayment = async () => {
+        const orderId = Math.floor(100000 + Math.random() * 900000);
+        const paymentData = {
+            amount: totalPayment,
+            orderId,
+            description: 'Thanh toán đơn hàng',
+            user: userId,
+        };
+
+        try {
+            const response = await axiosInstance.post('/payment/create-payment-link', paymentData);
+            console.log('Full response:', response);
+
+            if (response) {
+                navigation.navigate('Payos', { url: response.paymentLink });
+            } else {
+                Alert.alert("Lỗi", "Không thể tạo thanh toán.");
+            }
+        } catch (error) {
+            console.error('Error creating payment:', error.message);
+            Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thanh toán. Vui lòng thử lại.");
+        }
+    };
     return (
         <ScrollView style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
@@ -30,62 +233,90 @@ const Payment = (prop) => {
                 <Text style={AddAdressStyle.title}>Thanh toán</Text>
                 <Text />
             </View>
+
             <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
                 <Image style={PaymentStyle.imgmap} source={require("../../../assets/notifi/map.png")} />
-                <View style={{marginRight:30}}>
+                <View style={{ marginRight: 30 }}>
                     <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
-                    <Text style={PaymentStyle.txtLH}>Bé phát, <Text style={PaymentStyle.txtLH}>0329 999 999</Text></Text>
-                    <Text style={PaymentStyle.txtLH}>Tân thới nhất, quận 12, Hồ Chí Minh</Text>
+                    {address ? (
+                        <View>
+                            <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
+                            <Text style={PaymentStyle.txtLH}>
+                                {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
+                            </Text>
+                        </View>
+                    ) : data.length > 0 ? (
+                        <View>
+                            <Text style={PaymentStyle.txtLH}>{data[0]?.user?.name}, <Text style={PaymentStyle.txtLH}>{data[0]?.user?.phone}</Text></Text>
+                            <Text style={PaymentStyle.txtLH}>
+                                {data[0]?.alley} {data[0]?.houseNumber}, {data[0]?.quarter}, {data[0]?.district}, {data[0]?.city}, {data[0]?.country}
+                            </Text>
+                        </View>
+                    ) : (
+                        <Text style={PaymentStyle.txtLH}>Không có địa chỉ</Text>
+                    )}
                 </View>
-
                 <Image source={require("../../../assets/notifi/expand_right.png")} />
-
             </TouchableOpacity>
+
             <Text style={PaymentStyle.Line} />
-            <View style={[PaymentStyle.body, PaymentStyle.Padding]}>
-                <View style={PaymentStyle.Viewimg}>
-                    <Image style={PaymentStyle.img} source={require("../../../assets/image/image1.png")} />
+            {cartData.map((cart, index) => (
+                <View key={cart._id} style={[PaymentStyle.body, PaymentStyle.Padding]}>
+                    {cart.products.map((product, productIndex) => (
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center', }} key={productIndex}>
+                            <View style={PaymentStyle.Viewimg}>
+                                <Image style={PaymentStyle.img} source={{ uri: product.images[0] }} />
+                            </View>
+                            <View>
+                                <Text style={PaymentStyle.txtDC}>{product.name}</Text>
+                                <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
+                                <View style={PaymentStyle.ViewPrice}>
+                                    <Image source={require("../../../assets/notifi/Dollar.png")} />
+                                    <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
+                                </View>
+                            </View>
+                            <View>
+                                <Text style={PaymentStyle.txtLH}>SL: {product.quantity}</Text>
+                            </View>
+                        </View>
+                    ))}
                 </View>
-                <View>
-                    <Text style={PaymentStyle.txtDC}>Bắp cải trắng</Text>
-                    <Text style={PaymentStyle.txtLH}>Rau củ</Text>
-                    <Text />
-                    <View style={PaymentStyle.ViewPrice}>
-                        <Image source={require("../../../assets/notifi/Dollar.png")} />
-                        <Text style={PaymentStyle.txtPrice}>19.000đ</Text>
-                    </View>
-                </View>
-                <View>
-                    <Text style={PaymentStyle.txtLH}>SL: 1</Text>
-                </View>
-            </View>
+            ))}
             <TouchableOpacity onPress={HandTransfer} style={PaymentStyle.BtnTranfer}>
                 <Text style={PaymentStyle.txtDC}>Phương thức vận chuyển (Nhấp để chọn)</Text>
-                <View style={PaymentStyle.ViewTranfer}>
-                    <Text style={PaymentStyle.txtPrice}>Nhanh</Text>
-                    <Text style={PaymentStyle.txtPrice}>10.000đ</Text>
-                </View>
-                <Text style={PaymentStyle.txtLH}>Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn</Text>
+                {selectedTransfer ? (
+                    <View style={PaymentStyle.ViewTranfer}>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}.000 đ</Text>
+                    </View>
+                ) : (
+                    <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>
+                )}
+                <Text style={PaymentStyle.txtLH}>{selectedTransfer.note}</Text>
             </TouchableOpacity>
-
             <View style={PaymentStyle.ViewBodyContainer}>
-                {/* <View style={PaymentStyle.ViewBody}>
-                    <Text style={PaymentStyle.txtDC}>Tổng tiền sản phẩm:</Text>
-                    <Text style={PaymentStyle.txtPrice}>19.000đ</Text>
-                </View> */}
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
-                    <Text style={PaymentStyle.txtDC}>Phương thúc thanh toán:</Text>
+                    <Text style={PaymentStyle.txtDC}>Phương thức thanh toán:</Text>
                     <TouchableOpacity onPress={HandMethod} style={PaymentStyle.btnThem}>
-                        <Text style={PaymentStyle.txtDC}>Khi nhận hàng</Text>
+                        <Text style={PaymentStyle.txtDC}>
+                            {selectedMethod ? (selectedMethod === 'payos' ? 'Payos' : 'Thanh toán khi nhận hàng') : 'Khi nhận hàng'}
+                        </Text>
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
                 </View>
+
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBody}>
                     <Text style={PaymentStyle.txtDC}>Chọn khuyến mãi:</Text>
                     <TouchableOpacity onPress={HandVoucher} style={PaymentStyle.btnThem}>
-                        <Text style={PaymentStyle.txtDC}>Nhấp vào để chọn</Text>
+                        {selectedVoucher ? (
+                            <View style={PaymentStyle.ViewTranfer}>
+                                <Text style={PaymentStyle.txtPrice}>{selectedVoucher.voucher}</Text>
+                            </View>
+                        ) : (
+                            <Text style={PaymentStyle.txtLH}>Chưa chọn khuyến mãi</Text>
+                        )}
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
                 </View>
@@ -98,32 +329,40 @@ const Payment = (prop) => {
                         borderColor: '#ccc',
                         borderWidth: 1,
                         borderRadius: 5,
-                        marginLeft:5,
+                        marginLeft: 5,
                         padding: 4,
                         textAlignVertical: 'top'
-                    }} 
-                    placeholder="Để lại ghi chú" 
-                    multiline 
-                    numberOfLines={4} />
+                    }}
+                        placeholder="Để lại ghi chú"
+                        multiline
+                        numberOfLines={4} />
                 </View>
                 <Text style={PaymentStyle.Line} />
                 <View>
                     <Text style={[PaymentStyle.txtDC, PaymentStyle.paddingHorizontal]}>Chi tiết thanh toán</Text>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>0đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>
+                            {selectedVoucher ?
+                                (selectedVoucher.price.includes('%') ?
+                                    `${selectedVoucher.price}` :
+                                    `${parseFloat(selectedVoucher.price).toLocaleString()}.000 đ`
+                                ) :
+                                '0đ'
+                            }
+                        </Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>19.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}.000đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>10.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}.000 đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
-                        <Text style={PaymentStyle.txtDC}>29.000đ</Text>
+                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}.000đ</Text>
                     </View>
                 </View>
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
@@ -134,8 +373,7 @@ const Payment = (prop) => {
                 </View>
             </View>
         </ScrollView>
-    )
+    );
+};
 
-}
-
-export default Payment
+export default Payment;

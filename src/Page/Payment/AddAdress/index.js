@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
 import AxiosInstance from "../../api/AxiosInstance";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
 
 const AddAddress = (prop) => {
   const [name, setName] = useState("");
@@ -19,44 +19,40 @@ const AddAddress = (prop) => {
     prop.navigation.goBack();
   };
 
-  const getUserId = async () => {
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      if (userId) {
-        console.log("UserId:", userId);
-        return userId;
-      } else {
-        console.log("Không tìm thấy userId trong AsyncStorage");
-        return null;
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy userId từ AsyncStorage:", error);
-      return null;
-    }
-  };
+  const user = useSelector(state => state.user);
+  const userId = user?.userData?._id;
 
   const handleSubmit = async () => {
-    const userId = await getUserId();
-
     if (!userId) {
       Alert.alert("Lỗi", "Không tìm thấy userId");
       return;
     }
 
+    if (!name || !phone || !district || !quarter || !alley || !homenumber) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
     const address = {
-      name,
-      phone,
-      country,
-      city,
-      district,
-      quarter,
+      user: {
+        name,
+        phone,
+      },
+      houseNumber: homenumber,
       alley,
-      homenumber,
+      quarter,
+      district,
+      city,
+      country,
     };
 
     try {
       const response = await AxiosInstance.post(`/users/${userId}/addressNew`, address);
-      if (response.status === 200) {
+
+      console.log("API Response:", response);
+      if (!response) {
+        Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
+      } else {
         Toast.show({
           type: "success",
           text1: "Thông báo",
@@ -65,15 +61,13 @@ const AddAddress = (prop) => {
           position: "top",
         });
         goBack();
-      } else {
-        Alert.alert("Lỗi", "Thêm không thành công.");
       }
     } catch (error) {
       console.error("Lỗi API:", error);
-      Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm địa chỉ.");
     }
-  };
 
+
+  }
   return (
     <ScrollView style={AddAdressStyle.container}>
       <View style={AddAdressStyle.header}>

@@ -3,52 +3,69 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import AddTranferStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 import PayMethodStyle from "../PayMethod/style";
+
 // Define the transfer options as a constant
 const transferOptions = [
-    { label: "Tiết kiệm", price: "8.000đ", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
-    { label: "Nhanh", price: "10.000đ", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
-    { label: "Hoả tốc", price: "20.000đ", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    { label: "Tiết kiệm", price: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+    { label: "Nhanh", price: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+    { label: "Hoả tốc", price: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
 ];
 
 const AddTranfer = (prop) => {
-    const [selectedIndex, setSelectedIndex] = useState(null); // State to track selected button index
+    const [selectedIndex, setSelectedIndex] = useState(null); 
+
     const BackRight = () => {
-        prop.navigation.goBack()
-    }
+        prop.navigation.goBack();
+    };
+
     const handlePress = (index) => {
         setSelectedIndex(index);
+    };
+
+    const handleConfirm = () => {
+        if (selectedIndex !== null) {
+            const selectedOption = transferOptions[selectedIndex];
+            prop.navigation.navigate("Payment", {
+                selectedTransfer: selectedOption
+            });
+        }
     };
 
     return (
         <View style={AddTranferStyle.container}>
             <View style={[AddAdressStyle.header, { padding: 20 }]}>
                 <TouchableOpacity onPress={BackRight}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    <Image
+                        style={AddAdressStyle.backright}
+                        source={require("../../../assets/notifi/backright.png")}
+                    />
                 </TouchableOpacity>
                 <Text style={AddAdressStyle.title}>Phương thức vận chuyển</Text>
                 <Text />
             </View>
-            {transferOptions.map((option, index) => (
-                <View style={AddTranferStyle.body} key={index}>
+
+            <View style={AddTranferStyle.body}>
+                {transferOptions.map((option, index) => (
                     <TouchableOpacity
-                        style={[
-                            AddTranferStyle.BtnPT,
-                            selectedIndex === index ? styles.selectedButton : styles.unselectedButton
-                        ]}
+                        key={index}
+                        style={[AddTranferStyle.BtnPT, selectedIndex === index ? styles.selectedButton : styles.unselectedButton]}
                         onPress={() => handlePress(index)}
                     >
                         <View style={AddTranferStyle.ViewVC}>
                             <Text style={AddTranferStyle.txtVC}>{option.label}</Text>
-                            <Text style={AddTranferStyle.txtVC}>{option.price}</Text>
+                            <Text style={AddTranferStyle.txtVC}>{option.price}.000đ</Text>
                         </View>
-                        <View>
-                            <Text style={AddTranferStyle.txtNote}>{option.note}</Text>
-                        </View>
+                        <Text style={AddTranferStyle.txtNote}>{option.note}</Text>
                     </TouchableOpacity>
-                </View>
-            ))}
+                ))}
+            </View>
+
             <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>
-                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
+                <TouchableOpacity
+                    onPress={handleConfirm}
+                    style={PayMethodStyle.BtnSuss}
+                    disabled={selectedIndex === null}
+                >
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>
@@ -56,21 +73,27 @@ const AddTranfer = (prop) => {
     );
 };
 
-// Styles for selected and unselected buttons
+
 const styles = StyleSheet.create({
     selectedButton: {
-        borderColor: '#27AAE1',
+        borderColor: "#27AAE1",
         borderWidth: 2,
-        shadowColor: '#27AAE1',
+        shadowColor: "#27AAE1",
         shadowOpacity: 0.5,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 5,
         elevation: 5,
+        backgroundColor: "#E6F7FF", 
     },
     unselectedButton: {
-        borderColor: '#8B8B8B',
+        borderColor: "#8B8B8B",
         borderWidth: 1,
-        shadowColor: '#8B8B8B',
+        shadowColor: "#8B8B8B",
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 1 },
+        shadowRadius: 3,
+        elevation: 2,
+        backgroundColor: "#FFFFFF",
     },
 });
 

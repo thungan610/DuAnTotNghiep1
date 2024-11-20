@@ -146,7 +146,7 @@ const AddProduct = ({ route, navigation }) => {
         console.log('Toggle select product cart_id:', cart_id);
         setCartItems(prevItems => {
             const updatedItems = prevItems.map(item => {
-                if (item.cart_id === cart_id) { // Sử dụng cart_id thay vì id
+                if (item.cart_id === cart_id) {
                     const newItem = { ...item, selected: !item.selected };
                     return newItem;
                 }
@@ -179,16 +179,20 @@ const AddProduct = ({ route, navigation }) => {
                 if (item.cart_id === cart_id) {
                     const currentQuantity = item.quantity;
                     let newQuantity = currentQuantity;
-
+                 
                     newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
-
+    
                     console.log(`New quantity for product cart_id: ${cart_id} is ${newQuantity}`);
                     return { ...item, quantity: newQuantity };
                 }
-                return item;
+                return item; 
             })
         );
+        console.log('Updated cart items:', cartItems); // Log updated cart items
     };
+    
+    console.log('updateQuantity', updateQuantity);
+    
     const deleteItemsFromCart = async (cart_id) => {
         try {
             if (!cart_id) {
@@ -253,6 +257,25 @@ const AddProduct = ({ route, navigation }) => {
         }
     };
 
+    const handlePayment = async () => {
+        const selectedCartIds = cartItems
+            .filter(item => item.selected)
+            .map(item => item.cart_id);
+    
+        console.log('Selected Cart IDs:', selectedCartIds);
+    
+        if (selectedCartIds.length > 0) {
+            await AsyncStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+            console.log('Cart IDs saved to AsyncStorage');
+            const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
+            console.log('Stored Cart IDs from AsyncStorage:', storedCartIds); 
+            navigation.navigate('NextPayment', { cartIds: selectedCartIds });
+        } else {
+            Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
+        }
+    };
+
+
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
@@ -299,7 +322,7 @@ const AddProduct = ({ route, navigation }) => {
                         </View>
                         <Text style={AddProductStyle.totalPrice}>Tổng tiền: {totalAmount.toLocaleString()}.000đ</Text>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('NextPayment')} style={PayMethodStyle.BtnSuss}>
+                    <TouchableOpacity onPress={handlePayment} style={PayMethodStyle.BtnSuss}>
                         <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>

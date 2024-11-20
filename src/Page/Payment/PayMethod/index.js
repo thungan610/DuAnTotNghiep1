@@ -3,48 +3,53 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import PayMethodStyle from "./style";
 
 const PayMethod = (prop) => {
-
-    const [selectedMethod, setSelectedMethod] = useState(null); //Để xử lý trạng thái chọn hoặc không
+    const [selectedMethod, setSelectedMethod] = useState(null); 
 
     return (
         <View style={PayMethodStyle.container}>
             <View style={PayMethodStyle.container1}>
+                {/* Header */}
                 <View style={{
-                    flexDirection:'row',
-                    justifyContent:'space-between'
+                    flexDirection: 'row',
+                    justifyContent: 'space-between'
                 }}>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')}>
-                        <Image style={PayMethodStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    <TouchableOpacity onPress={() => prop.navigation.goBack()}>
+                        <Image
+                            style={PayMethodStyle.backright}
+                            source={require("../../../assets/notifi/backright.png")}
+                        />
                     </TouchableOpacity>
                     <Text style={{
-                        fontSize:24,
-                        fontWeight:'bold',
-                        color:'black'
-                    }}>Phương thức thanh toán</Text>
+                        fontSize: 24,
+                        fontWeight: 'bold',
+                        color: 'black'
+                    }}>
+                        Phương thức thanh toán
+                    </Text>
                     <Text />
                 </View>
 
+                {/* Body */}
                 <View style={PayMethodStyle.body}>
                     <TouchableOpacity
                         style={PayMethodStyle.ViewCheck}
-                        onPress={() => prop.navigation.navigate('ZaloPay')}
+                        onPress={() => setSelectedMethod('payos')} 
                         accessible={true}
-                        accessibilityLabel="Select Zalo Pay"
+                        accessibilityLabel="Select Payos"
                     >
-                        <Text style={PayMethodStyle.title}>Zalo Pay</Text>
+                        <Text style={PayMethodStyle.title}>Payos</Text>
                         <Image
                             style={PayMethodStyle.check}
-                            source={selectedMethod === 'zalopay'  // Hiện lên khi tick Zalo Pay
+                            source={selectedMethod === 'payos'
                                 ? require("../../../assets/notifi/Check_fill.png")
                                 : require("../../../assets/notifi/check_emty.jpg")}
                         />
                     </TouchableOpacity>
 
                     <Text style={PayMethodStyle.line} />
-
                     <TouchableOpacity
                         style={PayMethodStyle.ViewCheck}
-                        onPress={() => setSelectedMethod('payment')}
+                        onPress={() => setSelectedMethod('cash')} // Cập nhật trạng thái
                         accessible={true}
                         accessibilityLabel="Select Cash on Delivery"
                     >
@@ -59,10 +64,15 @@ const PayMethod = (prop) => {
 
                     <Text style={PayMethodStyle.line} />
                 </View>
-
             </View>
-            <View style={[PayMethodStyle.ViewSuss]}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={PayMethodStyle.BtnSuss}>
+
+            {/* Footer */}
+            <View style={PayMethodStyle.ViewSuss}>
+                <TouchableOpacity
+                    onPress={() => prop.navigation.navigate('Payment', { selectedMethod })} 
+                    style={PayMethodStyle.BtnSuss}
+                    disabled={!selectedMethod} 
+                >
                     <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>

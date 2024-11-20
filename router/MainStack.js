@@ -41,6 +41,8 @@ import Detail from "../src/Page/Detail/Detail.js";
 import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
 import UpdateProfile from "../src/Page/Profile/UpdateProfile.js";
+import Payos from "../src/Page/Payment/Payos/Payos.js";
+import OrderSuccess from "../src/Page/Payment/PaySusses/index.js";
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -91,6 +93,8 @@ const MainStack = () => {
             <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
             <Stack.Screen name="UpdateProfile" component={UpdateProfile}/>
+            <Stack.Screen name="Payos" component={Payos}/>
+            <Stack.Screen name="OrderSuccess" component={OrderSuccess}/>
         </Stack.Navigator >
     );
 };
