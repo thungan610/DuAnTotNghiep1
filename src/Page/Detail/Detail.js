@@ -8,14 +8,16 @@ import { addToCart } from '../Action/cartActions';
 import Toast from 'react-native-toast-message';
 
 const Detail = ({ route, navigation }) => {
-    const { categoryId } = route.params;
+    const { product } = route.params || {};
+
+    console.log('product', product);
 
     const dispatch = useDispatch();
     const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
 
     console.log('productDetails', productDetails.id);
-
+    
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
@@ -29,17 +31,30 @@ const Detail = ({ route, navigation }) => {
     const cart = useSelector(state => state.items);
 
     useEffect(() => {
-        const fetchProductsByCategory = async () => {
+        if (product) {
+            setProductDetails(product);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        const fetchProductDetails = async () => {
             try {
-                const response = await AxiosInstanceSP().get(`/products/filter/${categoryId}`);
-                setProducts(response.data);
+                const response = await AxiosInstance.get(`/products/getProductDetailById_App/${product.id}`);
+                if (response?.data) {
+                    setProductDetails(response.data);
+                    setUnitPrice(response.data.price || 0);
+                    setPrice(response.data.price || 0);
+                }
             } catch (error) {
-                console.error('Error fetching products:', error);
+                console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
+                Alert.alert("Thông báo", "Không thể tải thông tin sản phẩm");
             }
         };
 
-        fetchProductsByCategory();
-    }, [categoryId]);
+        if (product?.id) {
+            fetchProductDetails();
+        }
+    }, [product]);
 
     useEffect(() => {
         if (product) {
@@ -49,10 +64,6 @@ const Detail = ({ route, navigation }) => {
             setPrice(product.price || 0);
         }
     }, [product]);
-
-    useEffect(() => {
-        console.log('Category ID:', categoryId);
-    }, [categoryId]);
 
     useEffect(() => {
         setPrice(quantity * productDetails.price);
@@ -84,6 +95,7 @@ const Detail = ({ route, navigation }) => {
     };
 
     const addToCartHandler = async () => {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
         if (!user?.email) {
             Alert.alert(
                 'Thông báo',
@@ -103,7 +115,7 @@ const Detail = ({ route, navigation }) => {
             );
             return;
         }
-
+    
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
@@ -114,13 +126,13 @@ const Detail = ({ route, navigation }) => {
             selected: true,
         };
         console.log('productToAdd', productToAdd);
-
+    
         try {
             const response = await AxiosInstance.post('/carts/addCart_App', {
-                user: user.userData._id,
+                user: user.userData._id, 
                 products: [productToAdd],
             });
-
+            
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
@@ -131,7 +143,7 @@ const Detail = ({ route, navigation }) => {
                     visibilityTime: 2000,
                     position: 'top'
                 });
-
+    
                 dispatch(addToCart(productToAdd)); // Cập nhật giỏ hàng trong Redux
             }
         } catch (error) {
@@ -139,7 +151,7 @@ const Detail = ({ route, navigation }) => {
             Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
         }
     };
-
+    
 
     const renderImages = () => images.map((item, index) => (
         <View key={index}>
