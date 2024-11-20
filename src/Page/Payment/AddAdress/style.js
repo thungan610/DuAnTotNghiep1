@@ -70,8 +70,21 @@ const AddAdressStyle = StyleSheet.create({
         fontFamily: 'Poppins',
         fontWeight: 'bold',
         fontSize: 16
-    }
-   
+    },
+    cityListContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap', // Cho phép các mục tự động xuống dòng nếu không đủ không gian
+        marginVertical: 10,
+      },
+      cityItem: {
+        padding: 10,
+        margin: 5,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
+      },
+      cityText: {
+        fontSize: 16,
+      }
 
  });
 export default AddAdressStyle

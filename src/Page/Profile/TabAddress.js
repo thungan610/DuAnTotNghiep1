@@ -10,6 +10,7 @@ const TabAddress = (prop) => {
   const user = useSelector(state => state.user);
   const userId = user?.userData?._id;
   console.log('userId', userId);
+
   const BtnInsertAddress = (addressId) => {
     prop.navigation.navigate('InsertAddress', { addressId: addressId });
   };
@@ -26,18 +27,46 @@ const TabAddress = (prop) => {
   const getAddress = async (userId) => {
     try {
       const response = await AxiosInstance.get(`users/getAddress/${userId}`);
-      if (!response) {
-        Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
-      } else {
-        const addresses = response.data;
-        console.log('addresses', addresses);
-        setData(addresses);
+      if (response?.data) {
+        setData(response.data);
       }
     } catch (error) {
-      console.error("Error fetching address: ", error.message);
-      console.error("Error details: ", error.response?.data || error);
     }
   };
+
+  const deleteAddress = async (addressId) => {
+    console.log('addressId', addressId);
+    
+    try {
+      const response = await AxiosInstance.delete(`users/deleteAddress/${userId}/${addressId}`);
+      if (response) {
+        setData((prevData) => prevData.filter(item => item._id !== addressId));
+        Alert.alert('Thành công', 'Địa chỉ đã được xóa');
+      }
+    } catch (error) {
+      console.error('Error deleting address', error);
+      Alert.alert('Lỗi', 'Không thể xóa địa chỉ');
+    }
+  };
+
+  const handleDelete = (addressId) => {
+    Alert.alert(
+      'Xác nhận xóa',
+      'Bạn có chắc chắn muốn xóa địa chỉ này?',
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Xóa',
+          onPress: () => deleteAddress(addressId),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       if (userId) {
@@ -48,8 +77,6 @@ const TabAddress = (prop) => {
     }, [userId])
   );
 
-
-
   const renderAddressItem = ({ item }) => (
     <TouchableOpacity onPress={() => BtnPayment(item._id)}>
       <View style={TabAddressStyle.addressContainer}>
@@ -57,7 +84,6 @@ const TabAddress = (prop) => {
           style={TabAddressStyle.icon}
           source={require('../../../src/assets/address.png')}
         />
-
         <View style={TabAddressStyle.infoContainer}>
           <Text style={TabAddressStyle.name}>
             {item.user.name}, {item.user.phone}
@@ -73,7 +99,7 @@ const TabAddress = (prop) => {
               source={require('../../../src/assets/edit.png')}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDelete(item._id)}>
             <Image
               style={TabAddressStyle.icon}
               source={require('../../../src/assets/deleteR.png')}

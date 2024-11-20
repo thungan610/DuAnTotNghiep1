@@ -1,60 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-} from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import InsertAddressStyles from './InsertAddressStyles';
 import axiosInstance from '../api/AxiosInstance';
+import { useSelector } from 'react-redux';
 
 const InsertAddress = ({ navigation, route }) => {
   const [address, setAddress] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [updatedName, setUpdatedName] = useState('');
+  const [updatedPhone, setUpdatedPhone] = useState('');
+  const [updatedHouseNumber, setUpdatedHouseNumber] = useState('');
+  const [updatedAlley, setUpdatedAlley] = useState('');
+  const [updatedQuarter, setUpdatedQuarter] = useState('');
+  const [updatedDistrict, setUpdatedDistrict] = useState('');
+  const [updatedCity, setUpdatedCity] = useState('');
+  const [updatedCountry, setUpdatedCountry] = useState('');
+
   const { addressId } = route.params;
-  console.log('addressId', addressId);
+  console.log('');
+  
+  const user = useSelector(state => state.user);
+
+  const userid = user?.userData?._id || 'default_id';
+  console.log('userid', userid);
+
 
 
   const fetchAddress = async () => {
     try {
       const response = await axiosInstance.get(`/users/getAddressById/${addressId}`);
-      console.log('Full API response:', response); 
+      console.log('response', response);
+
       if (response) {
-        console.log('API data:', response);  
-        setAddress(response); 
-      } else {
-        console.log('No data found in the response');
+        setAddress(response);
+        setUpdatedName(response.user.name);
+        setUpdatedPhone(response.user.phone);
+        setUpdatedHouseNumber(response.houseNumber);
+        setUpdatedAlley(response.alley);
+        setUpdatedQuarter(response.quarter);
+        setUpdatedDistrict(response.district);
+        setUpdatedCity(response.city);
+        setUpdatedCountry(response.country);
       }
     } catch (err) {
-      console.log('Error fetching address:', err);
+      console.log('Error', err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log('addressId from route:', addressId);
     fetchAddress();
   }, [addressId]);
 
-  const BackRight = () => {
-    navigation.goBack();
+  const handleUpdateAddress = async () => {
+    if (!addressId) {
+      console.error("Error: addressId is missing");
+      return;
+    }
+  
+    try {
+      const updatedAddressData = {
+        user: { name: updatedName, phone: updatedPhone },
+        houseNumber: updatedHouseNumber,
+        alley: updatedAlley,
+        quarter: updatedQuarter,
+        district: updatedDistrict,
+        city: updatedCity,
+        country: updatedCountry,
+        userId: userid,
+      };
+      const response = await axiosInstance.put(`/users/updateAddress/${userid}/${addressId}`, updatedAddressData);
+      if (response) {
+        console.log('response', response);
+        navigation.goBack();
+      } else {
+        console.error('Error updating address: No addressId returned');
+      }
+    } catch (error) {
+    }
   };
+  
+  
 
   const renderAddressItem = ({ item }) => (
-    <View style={{alignItems: 'center', marginTop: 20}}>
+    <View style={{ alignItems: 'center', marginTop: 20 }}>
       <View style={InsertAddressStyles.infoFContainer}>
         <TextInput
           style={InsertAddressStyles.textInfo}
-          value={item.user.name || ''}
+          value={updatedName || ''}
+          onChangeText={setUpdatedName}
         />
         <TextInput
           style={InsertAddressStyles.phone}
-          value={item.user.phone || ''}
+          value={updatedPhone || ''}
+          onChangeText={setUpdatedPhone}
         />
       </View>
       <Text style={InsertAddressStyles.titleInfo}>Thông tin địa chỉ</Text>
@@ -62,24 +102,35 @@ const InsertAddress = ({ navigation, route }) => {
       <View style={InsertAddressStyles.infoFContainer2}>
         <TextInput
           style={InsertAddressStyles.textInfo}
-          value={item.country || ''}
+          value={updatedCountry || ''}
+          onChangeText={setUpdatedCountry}
         />
         <TextInput
           style={InsertAddressStyles.phone}
-          value={item.city || ''}
+          value={updatedCity || ''}
+          onChangeText={setUpdatedCity}
         />
         <TextInput
           style={InsertAddressStyles.phone}
-          value={item.district || ''}
+          value={updatedDistrict || ''}
+          onChangeText={setUpdatedDistrict}
         />
         <TextInput
           style={InsertAddressStyles.phone}
-          value={`${item.alley}\\${item.houseNumber}` || ''}
+          value={updatedQuarter || ''}
+          onChangeText={setUpdatedQuarter}
         />
         <TextInput
           style={InsertAddressStyles.phone}
-          value={item.quarter || ''}
+          value={updatedAlley || ''}
+          onChangeText={setUpdatedAlley}
         />
+        <TextInput
+          style={InsertAddressStyles.phone}
+          value={updatedHouseNumber || ''}
+          onChangeText={setUpdatedHouseNumber}
+        />
+
       </View>
     </View>
   );
@@ -87,9 +138,11 @@ const InsertAddress = ({ navigation, route }) => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
+      style={InsertAddressStyles.container}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={InsertAddressStyles.headers}>
-        <TouchableOpacity onPress={BackRight}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             style={InsertAddressStyles.iconback}
             source={require('../../../src/assets/back.png')}
@@ -104,7 +157,7 @@ const InsertAddress = ({ navigation, route }) => {
         ) : address ? (
           <FlatList
             data={[address]}
-            keyExtractor={item => item._id}
+            keyExtractor={(item) => item._id}
             renderItem={renderAddressItem}
           />
         ) : (
@@ -112,10 +165,11 @@ const InsertAddress = ({ navigation, route }) => {
         )}
       </View>
       <View style={InsertAddressStyles.footer}>
-        <TouchableOpacity onPress={BackRight} style={InsertAddressStyles.button}>
+        <TouchableOpacity onPress={handleUpdateAddress} style={InsertAddressStyles.button}>
           <Text style={InsertAddressStyles.buttonText}>LƯU</Text>
         </TouchableOpacity>
       </View>
+      <View style={{ height: 20 }}></View>
     </ScrollView>
   );
 };

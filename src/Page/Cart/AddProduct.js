@@ -70,39 +70,50 @@ const AddProduct = ({ route, navigation }) => {
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
 
+    const user = useSelector(state => state.user);
+
+    const userId = user?.userData?._id || 'default_id';
+
 
     const dispatch = useDispatch();
 
     const getCart = async () => {
         try {
-            const response = await AxiosInstance.get('/carts/getCarts');
-            const cartData = response.data.map(cartItem => {
-                if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
-                    return cartItem.products.map(product => ({
-                        cart_id: cartItem._id,
+            const response = await AxiosInstance.get(`/carts/getcartbyiduser/${userId}`);
+            console.log('response', response); 
+            console.log('response.data', response.data); 
+    
+            const cartData = Array.isArray(response) ? response : response.data;
+    
+            if (Array.isArray(cartData)) {
+                const productsData = cartData.map(cart => 
+                    cart.products.map(product => ({
+                        cart_id: cart._id, 
                         product_id: product._id,
                         name: product.name,
                         category_name: product.category?.category_name || 'Không có danh mục',
-                        price: product.price,
-                        quantity: product.quantity,
-                        images: product.images,
-                        selected: true,
-                    }));
-                } else {
-                    return [];
+                        price: product.price, 
+                        quantity: product.quantity, 
+                        images: product.images, 
+                        selected: true, 
+                    }))
+                ).flat(); 
+    
+                if (productsData.length === 0) {
+                    console.warn('Giỏ hàng trống!');
                 }
-            }).flat();
-
-            if (cartData.length === 0) {
-                console.warn('Giỏ hàng trống!');
+    
+                return productsData;
+            } else {
+                console.error('Dữ liệu trả về không phải mảng:', cartData);
+                throw new Error('Dữ liệu trả về không phải mảng');
             }
-
-            return cartData;
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error);
             throw error;
         }
     };
+    
 
     useFocusEffect(
         React.useCallback(() => {

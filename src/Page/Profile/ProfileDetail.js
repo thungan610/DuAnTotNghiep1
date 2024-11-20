@@ -92,9 +92,7 @@ const ProfileDetail = (prop) => {
                 style={profileStyle.loadimg2}
                 source={require('../../../src/assets/Book_open.png')}
               />
-
               <Text style={profileStyle.loadtext4}>Bảo quản</Text>
-
             </View>
           </TouchableOpacity>
         </View>

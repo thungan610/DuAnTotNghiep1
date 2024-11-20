@@ -1,19 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
 import AxiosInstance from "../../api/AxiosInstance";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
+import { Picker } from "@react-native-picker/picker";
 
 const AddAddress = (prop) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("Việt Nam");
-  const [city, setCity] = useState("TP. Hồ Chí Minh");
+  const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [quarter, setQuarter] = useState("");
   const [alley, setAlley] = useState("");
   const [homenumber, setHomenumber] = useState("");
+  const [cities, setCities] = useState([]);
+  const [isCityPickerVisible, setIsCityPickerVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("https://provinces.open-api.vn/api/");
+        const data = await response.json();
+        setCities(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách thành phố:", error);
+      }
+    };
+
+    fetchCities();
+  }, []);
 
   const goBack = () => {
     prop.navigation.goBack();
@@ -48,7 +65,6 @@ const AddAddress = (prop) => {
 
     try {
       const response = await AxiosInstance.post(`/users/${userId}/addressNew`, address);
-
       console.log("API Response:", response);
       if (!response) {
         Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
@@ -56,7 +72,7 @@ const AddAddress = (prop) => {
         Toast.show({
           type: "success",
           text1: "Thông báo",
-          text2: "Thêm địa chỉ thành công",
+          text2: "Thêm địa chỉ thành công.",
           visibilityTime: 2000,
           position: "top",
         });
@@ -65,9 +81,8 @@ const AddAddress = (prop) => {
     } catch (error) {
       console.error("Lỗi API:", error);
     }
+  };
 
-
-  }
   return (
     <ScrollView style={AddAdressStyle.container}>
       <View style={AddAdressStyle.header}>
@@ -78,7 +93,6 @@ const AddAddress = (prop) => {
           />
         </TouchableOpacity>
         <Text style={AddAdressStyle.title}>Thêm địa chỉ mới</Text>
-        <Text />
       </View>
       <View>
         <Text style={AddAdressStyle.txtLH}>Thông tin liên hệ</Text>
@@ -105,11 +119,21 @@ const AddAddress = (prop) => {
             value={country}
             editable={false}
           />
-          <TextInput
-            style={AddAdressStyle.input}
-            value={city}
-            editable={false}
-          />
+          <Picker
+            selectedValue={city}
+            style={[AddAdressStyle.input, { flex: 1 }]}
+            onValueChange={(itemValue) => setCity(itemValue)}
+          >
+            <Picker.Item label="Chọn thành phố" value="" />
+            {cities.map((cityItem) => (
+              <Picker.Item
+                key={cityItem.code}
+                label={cityItem.name}
+                value={cityItem.name}
+              />
+            ))}
+          </Picker>
+
           <TextInput
             style={AddAdressStyle.input}
             placeholder="Nhập quận"
@@ -141,6 +165,7 @@ const AddAddress = (prop) => {
           <Text style={AddAdressStyle.buttonText}>LƯU</Text>
         </TouchableOpacity>
       </View>
+      <View style={{ height: 50 }}></View>
     </ScrollView>
   );
 };

@@ -11,6 +11,9 @@ const scaleWidth = (size) => (width / baseWidth) * size;
 const scaleHeight = (size) => (height / baseHeight) * size;
 
 const InsertAddressStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   textH: {
     fontSize: scaleWidth(24),
     fontWeight: 'bold',
@@ -42,7 +45,7 @@ const InsertAddressStyles = StyleSheet.create({
     padding: scaleWidth(20),
     borderWidth: 1,
     width: scaleWidth(333),
-    height: scaleHeight(320),
+    height: scaleHeight(340),
     borderColor: '#C4C4C4',
     marginTop: scaleHeight(10),
     borderRadius: scaleWidth(10),
