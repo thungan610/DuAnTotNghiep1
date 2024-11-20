@@ -10,7 +10,7 @@ const HomeScreen = (props) => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("all");
-    console.log('setSelectedCategory', setSelectedCategory);
+
 
     const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;

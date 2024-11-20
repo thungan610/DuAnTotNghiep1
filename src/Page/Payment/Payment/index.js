@@ -130,9 +130,12 @@ const Payment = ({ route, navigation }) => {
 
     const HandPaySuccess = async () => {
         if (selectedMethod === 'payos') {
+            createOrder();
             await createPayment();
         } else if (selectedMethod === 'cash') {
+            createOrder();
             navigation.navigate('OrderSuccess');
+           
         }
     };
 

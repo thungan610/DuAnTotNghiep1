@@ -62,7 +62,7 @@ const InsertPro5 = (prop) => {
 
       <View style={InsertPro5Styles.imgPro5Container}>
         <Image
-          source={profileData.image ? { uri: profileData.image } : require('../../../src/assets/pro5img.png')}
+          source={profileData.avatar ? { uri: profileData.avatar } : require('../../../src/assets/pro5img.png')}
           style={InsertPro5Styles.imgPro5}
           accessibilityLabel="Hình ảnh hồ sơ"
         />
