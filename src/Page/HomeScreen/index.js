@@ -10,13 +10,15 @@ const HomeScreen = (props) => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("all");
+    console.log('setSelectedCategory', setSelectedCategory);
+
     const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
     const user = useSelector(state => state.user);
 
-    const userid = user?.userData?._id || 'default_id'; 
+    const userid = user?.userData?._id || 'default_id';
 
-    
+
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
         require('../../../src/assets/banner/baner2.jpg'),
@@ -75,10 +77,10 @@ const HomeScreen = (props) => {
         }
     }, [currentIndex]);
 
-    const renderProductItem = ({ item }) => {   
+    const renderProductItem = ({ item }) => {
         const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
-        
-    
+
+
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -94,14 +96,15 @@ const HomeScreen = (props) => {
                         price: item.price,
                         images: item.images || [imageUri],
                         category: item.category?.category_id || 'unknown',
-                        categoryName: item.category?.category_name || 'unknown', 
+                        categoryName: item.category?.category_name || 'unknown',
                     };
-    
-                    if (selectedCategory === "5" || selectedCategory === "6") {
+
+                    if (item.category?.category_id === "6606b733ccf861171c336d91") {
                         props.navigation.navigate('Detailbottle', { product: Detail });
                     } else {
                         props.navigation.navigate('Detail', { product: Detail });
                     }
+
                 }}
             >
                 <View style={HomeStyle.productContainer}>

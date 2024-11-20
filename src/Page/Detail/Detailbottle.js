@@ -2,106 +2,117 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styleDetailbottle from './style';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Detailbottle = (prop, route) => {
-    const { categoryId } = route.params;
-    const { product } = prop.route.params || {};
-    console.log('producccct', product);
-    
-    const [productDetails, setProductDetails] = useState(product);
+const Detailbottle = ({ route, navigation }) => {
+    const { categoryId, product } = route.params || {};
+    const dispatch = useDispatch()
 
-    console.log('productDetails', productDetails);
-    
-    const [selectedProduct, setselectedProduct] = useState(product);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [productDetails, setProductDetails] = useState(product || {});
     const [quantity, setQuantity] = useState(1);
-    const [images, setImages] = useState(product?.images || []);
-    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
     const [price, setPrice] = useState(product?.price || 0);
-    const [hasNotification, setHasNotification] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [preserves, setPreserves] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
+    const user = useSelector(state => state.user);
 
+    // Lấy thông tin danh mục và bảo quản từ API
     useEffect(() => {
-        const fetchProductsByCategory = async () => {
+        const fetchData = async () => {
             try {
-                const response = await AxiosInstanceSP().get(`/products/filter/${categoryId}`);
-                setProducts(response.data);
+                const categoryResponse = await AxiosInstance.get('/categories');
+                setCategories(categoryResponse.data.data);
+
+                const preserveResponse = await AxiosInstance.get('/preserves');
+                setPreserves(preserveResponse.data.data);
             } catch (error) {
-                console.error('Error fetching products:', error);
+                console.error('Lỗi khi lấy dữ liệu:', error);
             }
         };
+        fetchData();
+    }, []);
 
-        fetchProductsByCategory();
-    }, [categoryId]);
-
+    // Cập nhật giá dựa trên số lượng
     useEffect(() => {
-        if (product) {
-            setProductDetails(product);
-            setImages(product.images || []);
-            setUnitPrice(product.price || 0);
-            setPrice(product.price || 0);
-        }
-    }, [product]);
+        setPrice(quantity * (productDetails.price || 0));
+    }, [quantity, productDetails.price]);
 
-    useEffect(() => {
-        console.log('Category ID:', categoryId);
-    }, [categoryId]);
-
-    useEffect(() => {
-        setPrice(quantity * unitPrice);
-    }, [quantity, unitPrice]);
-
-    const updateQuantity = (value) => {
-        setQuantity((prevQuantity) => prevQuantity + value);
-        setPrice((prevQuantity) => (prevQuantity + value) * unitPrice);
-    };
-    
-
-    const increaseQuantity = () => {
-        setQuantity((prevQuantity) => prevQuantity + 1);
-        setPrice((quantity + 1) * unitPrice);
-    };
-
+    const increaseQuantity = () => setQuantity(prev => prev + 1);
     const decreaseQuantity = () => {
-        if (quantity > 1) {
-            setQuantity((prevQuantity) => prevQuantity - 1);
-            setPrice((quantity - 1) * unitPrice);
-        } else {
-            Alert.alert('Thông báo', ' Số lượng sản phẩm tối thiểu là 1 ')
-        }
-    };
-    const handleNotificationClick = () => {
-        setHasNotification(false); // Ẩn chấm đỏ
-        prop.navigation.navigate('NotifiScreen'); // Điều hướng đến màn hình thông báo
+        if (quantity > 1) setQuantity(prev => prev - 1);
     };
 
-    const renderImages = () => {
-        return images.map((item, index) => (
+    const addToCartHandler = async () => {
+        if (!user?.email) {
+            Alert.alert(
+                'Thông báo',
+                'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+                [
+                    {
+                        text: 'Đăng nhập',
+                        onPress: () => navigation.navigate('Login'),
+                    },
+                    {
+                        text: 'Hủy',
+                        style: 'cancel',
+                    },
+                ]
+            );
+            return;
+        }
+
+        const productToAdd = {
+            id: productDetails.id,
+            name: productDetails.name,
+            price: productDetails.price,
+            quantity,
+            images: productDetails.images,
+        };
+
+        try {
+            const response = await AxiosInstance.post('/carts/addCart_App', {
+                userId: user.userData._id,
+                products: [productToAdd],
+            });
+
+            if (response.data.error) {
+                Alert.alert('Lỗi', response.data.error);
+            } else {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thành công',
+                    text2: 'Đã thêm sản phẩm vào giỏ hàng!',
+                    visibilityTime: 2000,
+                });
+                dispatch(addToCart(productToAdd));
+            }
+        } catch (error) {
+            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
+            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng.');
+        }
+    };
+
+    const renderImages = () =>
+        (productDetails.images || []).map((item, index) => (
             <View key={index}>
-                <Image
-                    resizeMode='contain'
-                    source={{ uri: item }}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                />
+                <Image resizeMode="contain" source={{ uri: item }} style={{ width: '100%', height: '100%' }} />
             </View>
         ));
-    };
 
-    const renderDots = () => {
-        return images.map((_, index) => (
-            <View key={index} style={{
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                backgroundColor: selectedIndex === index ? 'black' : 'gray',
-                margin: 5,
-            }} />
+    const renderDots = () =>
+        (productDetails.images || []).map((_, index) => (
+            <View
+                key={index}
+                style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor: selectedIndex === index ? 'black' : 'gray',
+                    margin: 5,
+                }}
+            />
         ));
-    };
-
     return (
         <View style={styleDetailbottle.container}>
             <View style={styleDetailbottle.head}>
@@ -236,9 +247,10 @@ const Detailbottle = (prop, route) => {
                                     <Text style={styleDetailbottle.textorigin}>Bảo quản  :</Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
-                                <View style={styleDetailbottle.textoriginRow}>
-                                    <Text style={styleDetailbottle.textorigin}>Công dụng :</Text>
-                                    <Text style={styleDetailbottle.textorigin}>{productDetails.description || 'Chưa có thông tin'}</Text>
+                                <View>
+                                    <Text style={styleDetailbottle.textorigin}>Công dụng: </Text>
+                                    <Text style={styleDetailbottle.textorigin}>• {productDetails.description || 'Chưa có thông tin'}</Text>
+
                                 </View>
                             </View>
 
@@ -252,7 +264,6 @@ const Detailbottle = (prop, route) => {
                                 <TouchableOpacity onPress={() => updateQuantity(24)} style={styleDetailbottle.botertout}>
                                     <Text style={styleDetailbottle.textboter}>1 thùng</Text>
                                 </TouchableOpacity>
-
                             </View>
                             <View style={{
                                 alignItems: 'center',
