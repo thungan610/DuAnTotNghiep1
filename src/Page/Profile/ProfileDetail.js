@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert, } from 'react-native';
 import { React, useEffect, useState } from 'react';
 import profileStyle from './ProfileDetailstyle';
 import axios from 'axios';
@@ -11,7 +11,28 @@ const ProfileDetail = (prop) => {
   const userid = user?.userData?._id;
 
   console.log('profileData: ', profileData);
-  
+
+  if (!userid || userid === 'default_id') {
+    Alert.alert(
+      'Thông báo',
+      'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+      [
+        {
+          text: 'Đăng nhập',
+          onPress: () => {
+            navigation.navigate('Login');
+          }
+        },
+        {
+          text: 'Hủy',
+          style: 'cancel'
+        }
+      ]
+    );
+    return;
+  }
+
+
 
 
   useEffect(() => {
@@ -53,7 +74,7 @@ const ProfileDetail = (prop) => {
           </TouchableOpacity>
 
           <View style={profileStyle.undercontainer}>
-          <Text style={profileStyle.username}>{profileData ? profileData.name : 'Nguyễn Văn A'}</Text>
+            <Text style={profileStyle.username}>{profileData ? profileData.name : 'Nguyễn Văn A'}</Text>
             <TouchableOpacity onPress={OnViewHoSo}>
               <View style={profileStyle.mid}>
                 <Text style={profileStyle.pro5small}>Hồ sơ</Text>

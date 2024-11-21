@@ -75,6 +75,27 @@ const AddProduct = ({ route, navigation }) => {
     const userId = user?.userData?._id || 'default_id';
     console.log('userId', userId);
 
+
+    if (!userId || userId === 'default_id') {
+        Alert.alert(
+            'Thông báo',
+            'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+            [
+                {
+                    text: 'Đăng nhập',
+                    onPress: () => {
+                        navigation.navigate('Login');
+                    }
+                },
+                {
+                    text: 'Hủy',
+                    style: 'cancel'
+                }
+            ]
+        );
+        return; 
+    }
+    
     const getCart = async () => {
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
@@ -219,7 +240,7 @@ const AddProduct = ({ route, navigation }) => {
             if (error.response) {
 
             } else {
-              
+
             }
         }
     };
@@ -306,7 +327,7 @@ const AddProduct = ({ route, navigation }) => {
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={(item, index) => `${item.cart_id}-${index}`} 
+                    keyExtractor={(item, index) => `${item.cart_id}-${index}`}
                 />
             )}
             {totalAmount > 0 && (
