@@ -189,7 +189,6 @@ const UpdateProfile = (props) => {
 
             if (response.status === 200) {
                 Alert.alert("Thành công", "Cập nhật hồ sơ thành công!");
-                props.navigation.navigate('ProfileDetail');
             } else {
                 Alert.alert("Lỗi", "Cập nhật hồ sơ thất bại.");
             }
