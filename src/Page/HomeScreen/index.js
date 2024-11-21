@@ -110,7 +110,7 @@ const HomeScreen = (props) => {
                 <View style={HomeStyle.productContainer}>
                     <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
                     <View style={HomeStyle.productDetails}>
-                        <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
+                        <Text style={HomeStyle.productTitle} numberOfLines={1} >{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                         <View style={HomeStyle.priceall}>
                             <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
