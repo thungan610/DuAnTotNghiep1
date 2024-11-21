@@ -75,27 +75,20 @@ const AddProduct = ({ route, navigation }) => {
     const userId = user?.userData?._id || 'default_id';
     console.log('userId', userId);
 
+    useEffect(() => {
+        if (!user?.userData) {
+            Alert.alert(
+                "Thông báo",
+                "Bạn cần đăng nhập để truy cập giỏ hàng.",
+                [
+                    { text: "Đăng nhập", onPress: () => navigation.navigate('Login') },
+                    { text: "Hủy", style: "cancel" },
+                ]
+            );
+        }
+    }, [user, navigation]);
 
-    if (!userId || userId === 'default_id') {
-        Alert.alert(
-            'Thông báo',
-            'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
-            [
-                {
-                    text: 'Đăng nhập',
-                    onPress: () => {
-                        navigation.navigate('Login');
-                    }
-                },
-                {
-                    text: 'Hủy',
-                    style: 'cancel'
-                }
-            ]
-        );
-        return; 
-    }
-    
+
     const getCart = async () => {
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
