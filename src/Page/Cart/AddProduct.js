@@ -76,7 +76,7 @@ const AddProduct = ({ route, navigation }) => {
     console.log('userId', userId);
 
     useEffect(() => {
-        if (!user?.userData) {
+        if (!user?.userData?._id) {
             Alert.alert(
                 "Thông báo",
                 "Bạn cần đăng nhập để truy cập giỏ hàng.",
@@ -87,7 +87,7 @@ const AddProduct = ({ route, navigation }) => {
             );
         }
     }, [user, navigation]);
-
+    
 
     const getCart = async () => {
         try {
