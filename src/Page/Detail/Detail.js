@@ -26,7 +26,6 @@ const Detail = ({ route, navigation }) => {
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
 
-    // Lấy thông tin người dùng từ Redux
     const user = useSelector(state => state.user);
     const cart = useSelector(state => state.items);
 
@@ -95,7 +94,6 @@ const Detail = ({ route, navigation }) => {
     };
 
     const addToCartHandler = async () => {
-        // Kiểm tra xem người dùng đã đăng nhập chưa
         if (!user?.email) {
             Alert.alert(
                 'Thông báo',
@@ -144,11 +142,11 @@ const Detail = ({ route, navigation }) => {
                     position: 'top'
                 });
     
-                dispatch(addToCart(productToAdd)); // Cập nhật giỏ hàng trong Redux
+                dispatch(addToCart(productToAdd));
             }
         } catch (error) {
-            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
-            Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
+            Alert.alert('Thông báo', errorMessage);
         }
     };
     

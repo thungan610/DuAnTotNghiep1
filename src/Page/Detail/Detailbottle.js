@@ -1,46 +1,98 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import styleDetailbottle from './style';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart } from '../Action/cartActions';
+import Toast from 'react-native-toast-message';
+import styleDetailbottle from './styleDetailbottle';
+import axiosInstance from '../../../src/Page/api/AxiosInstance';
 
 const Detailbottle = ({ route, navigation }) => {
-    const { categoryId, product } = route.params || {};
-    const dispatch = useDispatch()
+    const { product } = route.params || {};
 
+    console.log('product', product);
+
+    const dispatch = useDispatch();
+    const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
+
+    console.log('productDetails', productDetails.id);
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [images, setImages] = useState(product?.images || []);
+    const [unitPrice, setUnitPrice] = useState(product?.price || 0);
     const [price, setPrice] = useState(product?.price || 0);
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
-    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const user = useSelector(state => state.user);
+    console.log('user', user);
+    
+    const cart = useSelector(state => state.items);
 
-    // Lấy thông tin danh mục và bảo quản từ API
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const categoryResponse = await AxiosInstance.get('/categories');
-                setCategories(categoryResponse.data.data);
+        if (product) {
+            setProductDetails(product);
+        }
+    }, [product]);
 
-                const preserveResponse = await AxiosInstance.get('/preserves');
-                setPreserves(preserveResponse.data.data);
+    useEffect(() => {
+        const fetchProductDetails = async () => {
+            try {
+                const response = await axiosInstance.get(`/products/getProductDetailById_App/${product.id}`);
+                if (response?.data) {
+                    setProductDetails(response.data);
+                    setUnitPrice(response.data.price || 0);
+                    setPrice(response.data.price || 0);
+                }
             } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu:', error);
+                console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
+                Alert.alert("Thông báo", "Không thể tải thông tin sản phẩm");
             }
         };
-        fetchData();
-    }, []);
 
-    // Cập nhật giá dựa trên số lượng
+        if (product?.id) {
+            fetchProductDetails();
+        }
+    }, [product]);
+
     useEffect(() => {
-        setPrice(quantity * (productDetails.price || 0));
+        if (product) {
+            setProductDetails(product);
+            setImages(product.images || []);
+            setUnitPrice(product.price || 0);
+            setPrice(product.price || 0);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        setPrice(quantity * productDetails.price);
     }, [quantity, productDetails.price]);
 
-    const increaseQuantity = () => setQuantity(prev => prev + 1);
+    useEffect(() => {
+        const getCategoriesAndPreserves = async () => {
+            try {
+                const categoryResponse = await axiosInstance.get("/categories");
+                setCategories(categoryResponse.data.data);
+
+                const preserveResponse = await axiosInstance.get("/preserves");
+                setPreserves(preserveResponse.data.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu:", error);
+            }
+        };
+
+        getCategoriesAndPreserves();
+    }, []);
+
+
+    const increaseQuantity = () => setQuantity(prevQuantity => prevQuantity + 1);
+
     const decreaseQuantity = () => {
-        if (quantity > 1) setQuantity(prev => prev - 1);
+        if (quantity > 1) {
+            setQuantity(prevQuantity => prevQuantity - 1);
+        }
     };
 
     const addToCartHandler = async () => {
@@ -51,200 +103,131 @@ const Detailbottle = ({ route, navigation }) => {
                 [
                     {
                         text: 'Đăng nhập',
-                        onPress: () => navigation.navigate('Login'),
+                        onPress: () => {
+                            navigation.navigate('Login');
+                        }
                     },
                     {
                         text: 'Hủy',
-                        style: 'cancel',
-                    },
+                        style: 'cancel'
+                    }
                 ]
             );
             return;
         }
-
+    
         const productToAdd = {
             id: productDetails.id,
-            name: productDetails.name,
-            price: productDetails.price,
+            name: product.name,
+            price: unitPrice,
             quantity,
-            images: productDetails.images,
+            category: product.category,
+            images: product.images,
+            selected: true,
         };
-
+        console.log('productToAdd', productToAdd);
+    
         try {
-            const response = await AxiosInstance.post('/carts/addCart_App', {
-                userId: user.userData._id,
+            const response = await axiosInstance.post('/carts/addCart_App', {
+                user: user.userData._id, 
                 products: [productToAdd],
             });
-
+            
+            // Kiểm tra phản hồi từ máy chủ
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
                 Toast.show({
                     type: 'success',
-                    text1: 'Thành công',
-                    text2: 'Đã thêm sản phẩm vào giỏ hàng!',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
                     visibilityTime: 2000,
+                    position: 'top'
                 });
-                dispatch(addToCart(productToAdd));
+    
+                dispatch(addToCart(productToAdd)); // Cập nhật giỏ hàng trong Redux
             }
         } catch (error) {
-            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
-            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng.');
+            const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
+            Alert.alert('Thông báo', errorMessage);
         }
+        
+    };
+    
+
+
+    const renderImages = () => images.map((item, index) => (
+        <View key={index}>
+            <Image resizeMode='contain' source={{ uri: item }} style={{ width: '100%', height: '100%' }} />
+        </View>
+    ));
+
+    const renderDots = () => images.map((_, index) => (
+        <View key={index} style={{
+            width: 10, height: 10, borderRadius: 5, backgroundColor: selectedIndex === index ? 'black' : 'gray', margin: 5,
+        }} />
+    ));
+    const updateQuantity = (newQuantity) => {
+        setQuantity(newQuantity);
     };
 
-    const renderImages = () =>
-        (productDetails.images || []).map((item, index) => (
-            <View key={index}>
-                <Image resizeMode="contain" source={{ uri: item }} style={{ width: '100%', height: '100%' }} />
-            </View>
-        ));
-
-    const renderDots = () =>
-        (productDetails.images || []).map((_, index) => (
-            <View
-                key={index}
-                style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: selectedIndex === index ? 'black' : 'gray',
-                    margin: 5,
-                }}
-            />
-        ));
     return (
         <View style={styleDetailbottle.container}>
             <View style={styleDetailbottle.head}>
-                <TouchableOpacity onPress={() => prop.navigation.navigate('BottomNav')}>
+                <TouchableOpacity onPress={() => navigation.navigate('BottomNav', { product: selectedProduct })}>
                     <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
-                <View style={{
-                    flexDirection: 'row'
-                }}>
-                    <TouchableOpacity style={{
-                        borderRadius: 20,
-                        backgroundColor: 'white',
-                        borderWidth: 1,
-                        borderColor: 'white',
-                        marginRight: 6
-                    }}
-                        onPress={() => prop.navigation.navigate('AddProduct')}>
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity style={{ borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: 'white', marginRight: 6 }} onPress={() => navigation.navigate('AddProductsScreen')}>
                         <Image style={styleDetailbottle.iconcart} source={require('../../assets/home/cart.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                        borderRadius: 20,
-                        backgroundColor: 'white',
-                        borderWidth: 1,
-                        borderColor: 'white',
-                        marginRight: 6
-                    }}
-                        onPress={() => prop.navigation.navigate('NewNotifi')}>
+                    <TouchableOpacity style={{ borderRadius: 20, backgroundColor: 'white', borderWidth: 1, borderColor: 'white' }} onPress={() => navigation.navigate('NotifiScreen')}>
                         <Image style={styleDetailbottle.iconnotifi} source={require('../../assets/home/notifi.png')} />
                     </TouchableOpacity>
                 </View>
             </View>
             <ScrollView>
                 <View style={styleDetailbottle.body}>
-                    <View>
-                        <PagerView
-                            style={styleDetailbottle.pagerView}
-                            initialPage={selectedIndex}
-                            onPageSelected={e => setSelectedIndex(e.nativeEvent.position)}
-                        >
-                            {renderImages()}
-                        </PagerView>
-
-                        <View style={{
-                            padding: 10,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            {renderDots()}
-                        </View>
+                    <PagerView style={styleDetailbottle.pagerView} initialPage={selectedIndex} onPageSelected={e => setSelectedIndex(e.nativeEvent.position)}>
+                        {renderImages()}
+                    </PagerView>
+                    <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        {renderDots()}
                     </View>
-
-                    <View
-                        style={{
-                            borderTopLeftRadius: 50,
-                            borderTopRightRadius: 50,
-                            backgroundColor: 'white',
-                            height: '100%',
-                            width: '100%',
-                        }}>
-                        <View
-                            style={{
-                                flexDirection: 'column',
-                            }} >
+                    <View style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50, backgroundColor: 'white', height: '100%', width: '100%' }}>
+                        <View style={{ flexDirection: 'column' }}>
                             <View style={styleDetailbottle.bodyText}>
-                                <Text style={styleDetailbottle.textBody}>
-                                    {productDetails.name || 'Tên sản phẩm'}
-                                </Text>
-                                <Text style={styleDetailbottle.textkg}>
-                                    {productDetails.oum ? `${productDetails.oum}` : 'Khối lượng sản phẩm'}
-                                </Text>
+                                <Text style={styleDetailbottle.textBody}>{productDetails.name || 'Tên sản phẩm'}</Text>
+                                <Text style={styleDetailbottle.textkg}>{productDetails.oum || 'Khối lượng sản phẩm'}</Text>
                             </View>
                             <View style={styleDetailbottle.butonView}>
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        backgroundColor: '#EAEAEA',
-                                        width: 100,
-                                        height: 44,
-                                        alignItems: 'center',
-                                        borderRadius: 14,
-                                        padding: 4,
-                                        justifyContent: 'space-between',
-                                    }}>
-                                    <TouchableOpacity style={{
-                                        marginLeft: 6
-                                    }} onPress={decreaseQuantity}>
-                                        <Text style={styleDetailbottle.textTout}>-</Text>
-                                    </TouchableOpacity>
-
+                                <View style={{ flexDirection: 'row', backgroundColor: '#EAEAEA', width: 100, height: 44, alignItems: 'center', borderRadius: 14, padding: 4, paddingHorizontal: 12, justifyContent: 'space-between' }}>
+                                    <TouchableOpacity onPress={decreaseQuantity}><Text style={styleDetailbottle.textTout}>-</Text></TouchableOpacity>
                                     <Text style={styleDetailbottle.toutText}>{quantity}</Text>
-
-                                    <TouchableOpacity style={{
-                                        marginRight: 6
-                                    }} onPress={increaseQuantity}>
-                                        <Text style={styleDetailbottle.textTout}>+</Text>
-                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={increaseQuantity}><Text style={styleDetailbottle.textTout}>+</Text></TouchableOpacity>
                                 </View>
-
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        padding: 5
-                                    }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
                                     <Image style={styleDetailbottle.dolar} source={require('../../assets/Dollar.png')} />
                                     <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>
                         </View>
-
-
                         <Text style={styleDetailbottle.textunderline}>Thông tin sản phẩm</Text>
-
                         <View style={styleDetailbottle.scroollview}>
                             <View style={styleDetailbottle.viewScroll}>
-                                <Text style={styleDetailbottle.scrollText}>
-                                    {productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}
-                                </Text>
+                                <Text style={styleDetailbottle.scrollText}>{productDetails.description || 'Mô tả sản phẩm chưa được cung cấp'}</Text>
                             </View>
-
                             <View style={styleDetailbottle.origin}>
                                 <View style={styleDetailbottle.textoriginRow}>
-                                    <Text style={styleDetailbottle.textorigin}>Xuất xứ  :</Text>
+                                    <Text style={styleDetailbottle.textorigin}>Xuất xứ: </Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
-                                    <Text style={styleDetailbottle.textorigin}>Chất sơ  :</Text>
+                                    <Text style={styleDetailbottle.textorigin}>Chất sơ: </Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
-                                    <Text style={styleDetailbottle.textorigin}>Bảo quản  :</Text>
+                                    <Text style={styleDetailbottle.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View>
@@ -253,7 +236,6 @@ const Detailbottle = ({ route, navigation }) => {
 
                                 </View>
                             </View>
-
                             <View style={styleDetailbottle.botter}>
                                 <TouchableOpacity onPress={() => updateQuantity(1)} style={styleDetailbottle.botertout}>
                                     <Text style={styleDetailbottle.textboter}>1 chai</Text>
@@ -265,12 +247,9 @@ const Detailbottle = ({ route, navigation }) => {
                                     <Text style={styleDetailbottle.textboter}>1 thùng</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                paddingVertical: 40
-                            }}>
-                                <TouchableOpacity style={styleDetailbottle.headerFooter}>
+
+                            <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 5 }}>
+                                <TouchableOpacity onPress={addToCartHandler} style={styleDetailbottle.headerFooter}>
                                     <Text style={styleDetailbottle.textFooter}>Thêm vào giỏ hàng</Text>
                                 </TouchableOpacity>
                             </View>
@@ -281,4 +260,5 @@ const Detailbottle = ({ route, navigation }) => {
         </View>
     );
 };
+
 export default Detailbottle;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native"; 
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import PaymentStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 import { useSelector } from "react-redux";
@@ -16,18 +16,16 @@ const Payment = ({ route, navigation }) => {
     const [address, setAddress] = useState(null);
     const [cartData, setCartData] = useState([]);
     const [selectedVoucher, setSelectedVoucher] = useState(null);
-    const [selectedMethod, setSelectedMethod] = useState(null); 
+    const [selectedMethod, setSelectedMethod] = useState(null);
 
     const getAddress = async (userId) => {
         try {
             const response = await axiosInstance.get(`users/getAddress/${userId}`);
             if (response && response.data) {
                 setData(response.data);
-            } else {
-                Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
             }
         } catch (error) {
-            console.error("Error fetching address: ", error.message);
+            console.error('Error fetching address:', error);
         }
     };
 
@@ -78,7 +76,6 @@ const Payment = ({ route, navigation }) => {
                 const parsedCartIds = JSON.parse(storedCartIds);
                 setCartIds(parsedCartIds);
             } else {
-                console.log('No cart IDs found in AsyncStorage');
                 setCartIds([]);
             }
         } catch (error) {
@@ -98,7 +95,6 @@ const Payment = ({ route, navigation }) => {
                 }
             });
             setCartData(response);
-            console.log('Giỏ hàng:', response);
         } catch (error) {
             console.error('Lỗi khi lấy giỏ hàng:', error.response ? error.response.data : error.message);
         }
@@ -128,14 +124,35 @@ const Payment = ({ route, navigation }) => {
         });
     };
 
+    const updateCartStatus = async (cartIds, status) => {
+        try {
+            const response = await axiosInstance.put('/carts/updatesatus', {
+                cartIds: cartIds,
+                status: status
+            });
+            console.log('Cập nhật trạng thái giỏ hàng thành công:', response);
+            return response; 
+        } catch (error) {
+            console.error('Lỗi khi cập nhật trạng thái giỏ hàng:', error.message);
+            throw new Error('Có lỗi xảy ra khi cập nhật trạng thái giỏ hàng.');
+        }
+    };
+
     const HandPaySuccess = async () => {
-        if (selectedMethod === 'payos') {
-            createOrder();
-            await createPayment();
-        } else if (selectedMethod === 'cash') {
-            createOrder();
-            navigation.navigate('OrderSuccess');
-           
+        try {
+            const idorder = await createOrder(); 
+            console.log('idorder', idorder);
+            
+
+            if (selectedMethod === 'cash') {
+                await updateCartStatus(cartIds, 0);
+                navigation.navigate('OrderSuccess');
+            } else {
+                await createPayment(idorder);
+            }
+        } catch (error) {
+            console.error('Lỗi khi thanh toán:', error.message);
+            Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
     };
 
@@ -191,10 +208,13 @@ const Payment = ({ route, navigation }) => {
                 ship: selectedTransfer ? selectedTransfer.price : 1,
                 sale: selectedVoucher ? [selectedVoucher] : [],
             };
+            
             const response = await axiosInstance.post('/oder/addOrder', orderData);
-
+            
             if (response && response.data) {
-                console.log('response', response);
+                const idorder = response.data._id;
+                console.log('Order ID:', idorder);
+                return idorder;
             } else {
                 Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
             }
@@ -203,8 +223,9 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
         }
     };
+    
 
-    const createPayment = async () => {
+    const createPayment = async (idorder) => {
         const orderId = Math.floor(100000 + Math.random() * 900000);
         const paymentData = {
             amount: totalPayment,
@@ -218,7 +239,7 @@ const Payment = ({ route, navigation }) => {
             console.log('Full response:', response);
 
             if (response) {
-                navigation.navigate('Payos', { url: response.paymentLink });
+                navigation.navigate('Payos', { url: response.paymentLink, idorder });
             } else {
                 Alert.alert("Lỗi", "Không thể tạo thanh toán.");
             }
@@ -227,6 +248,7 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thanh toán. Vui lòng thử lại.");
         }
     };
+
     return (
         <ScrollView style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>

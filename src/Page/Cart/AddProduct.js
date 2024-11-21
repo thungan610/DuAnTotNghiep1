@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import { useFocusEffect } from '@react-navigation/native';
-import AxiosInstance from '../api/AxiosInstance';
+import axiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
@@ -71,50 +71,39 @@ const AddProduct = ({ route, navigation }) => {
     const [cartItems, setCartItems] = useState([]);
 
     const user = useSelector(state => state.user);
-
+    console.log('user', user);
     const userId = user?.userData?._id || 'default_id';
-
-
-    const dispatch = useDispatch();
+    console.log('userId', userId);
 
     const getCart = async () => {
         try {
-            const response = await AxiosInstance.get(`/carts/getcartbyiduser/${userId}`);
-            console.log('response', response); 
-            console.log('response.data', response.data); 
-    
-            const cartData = Array.isArray(response) ? response : response.data;
-    
-            if (Array.isArray(cartData)) {
-                const productsData = cartData.map(cart => 
-                    cart.products.map(product => ({
-                        cart_id: cart._id, 
-                        product_id: product._id,
-                        name: product.name,
-                        category_name: product.category?.category_name || 'Không có danh mục',
-                        price: product.price, 
-                        quantity: product.quantity, 
-                        images: product.images, 
-                        selected: true, 
-                    }))
-                ).flat(); 
-    
-                if (productsData.length === 0) {
-                    console.warn('Giỏ hàng trống!');
-                }
-    
-                return productsData;
-            } else {
-                console.error('Dữ liệu trả về không phải mảng:', cartData);
-                throw new Error('Dữ liệu trả về không phải mảng');
+            const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
+            console.log('response', response);
+            const cartData = Array.isArray(response) ? response : []
+            console.log('cartData', cartData);
+
+            const activeCartData = cartData.filter(cart => cart.status === 1);
+            if (activeCartData.length === 0) {
+                console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
+                return [];
             }
+            const productsData = activeCartData.flatMap(cart =>
+                cart.products.map(product => ({
+                    cart_id: cart._id,
+                    product_id: product._id,
+                    name: product.name,
+                    category_name: product.category?.category_name || 'Không có danh mục',
+                    price: product.price,
+                    quantity: product.quantity,
+                    images: product.images,
+                    selected: true,
+                }))
+            );
+            return productsData;
         } catch (error) {
-            console.error('Lỗi khi lấy giỏ hàng:', error);
-            throw error;
+
         }
     };
-    
-
     useFocusEffect(
         React.useCallback(() => {
             const loadCartFromAPI = async () => {
@@ -130,10 +119,10 @@ const AddProduct = ({ route, navigation }) => {
                             .reduce((total, item) => total + (item.price * item.quantity), 0);
                         setTotalAmount(total);
                     } else {
-                        console.error('Dữ liệu trả về không phải mảng');
+
                     }
                 } catch (error) {
-                    console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
+
                 }
             };
 
@@ -184,26 +173,36 @@ const AddProduct = ({ route, navigation }) => {
         setTotalAmount(total);
     }, [cartItems]);
 
-    const updateQuantity = (cart_id, action) => {
-        setCartItems(prevItems =>
-            prevItems.map(item => {
+    const updateQuantityInCart = async (cart_id, product_id, quantity) => {
+        try {
+            const response = await axiosInstance.put(`/carts/updateQuantity/${cart_id}/${product_id}`, { quantity });
+            if (response) {
+                return response;
+            } else {
+                console.error('Failed to update quantity:', response.data || 'No data returned');
+                Alert.alert('Lỗi', 'Cập nhật số lượng không thành công.');
+            }
+        } catch (error) {
+
+        }
+    };
+
+    const updateQuantity = async (cart_id, action) => {
+        setCartItems(prevItems => {
+            return prevItems.map(item => {
                 if (item.cart_id === cart_id) {
                     const currentQuantity = item.quantity;
-                    let newQuantity = currentQuantity;
-                 
-                    newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
-    
-                    console.log(`New quantity for product cart_id: ${cart_id} is ${newQuantity}`);
+                    let newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
+                    updateQuantityInCart(cart_id, item.product_id, newQuantity);
                     return { ...item, quantity: newQuantity };
                 }
-                return item; 
-            })
-        );
-        console.log('Updated cart items:', cartItems); // Log updated cart items
+                return item;
+            });
+        });
     };
-    
+
     console.log('updateQuantity', updateQuantity);
-    
+
     const deleteItemsFromCart = async (cart_id) => {
         try {
             if (!cart_id) {
@@ -211,18 +210,16 @@ const AddProduct = ({ route, navigation }) => {
                 return;
             }
             console.log('cart_id', cart_id);
-            const response = await AxiosInstance.delete(`/carts/deleteCart/${cart_id}`);
-            if (response?.status === 200 && response.data?.success) {
+            const response = await axiosInstance.delete(`/carts/deleteCart/${cart_id}`);
+            if (response) {
                 console.log('Deleted cart successfully:', response.data);
                 return response.data;
             }
         } catch (error) {
             if (error.response) {
-                console.error('Server error:', error.response.data);
-                Alert.alert('Lỗi', `Lỗi khi xóa sản phẩm: ${error.response.data.message}`);
+
             } else {
-                console.error('Error:', error.message);
-                Alert.alert('Lỗi', 'Có lỗi xảy ra.');
+              
             }
         }
     };
@@ -272,14 +269,14 @@ const AddProduct = ({ route, navigation }) => {
         const selectedCartIds = cartItems
             .filter(item => item.selected)
             .map(item => item.cart_id);
-    
+
         console.log('Selected Cart IDs:', selectedCartIds);
-    
+
         if (selectedCartIds.length > 0) {
             await AsyncStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
             console.log('Cart IDs saved to AsyncStorage');
             const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
-            console.log('Stored Cart IDs from AsyncStorage:', storedCartIds); 
+            console.log('Stored Cart IDs from AsyncStorage:', storedCartIds);
             navigation.navigate('NextPayment', { cartIds: selectedCartIds });
         } else {
             Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
@@ -309,7 +306,7 @@ const AddProduct = ({ route, navigation }) => {
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={(item) => `${item.cart_id}`}
+                    keyExtractor={(item, index) => `${item.cart_id}-${index}`} 
                 />
             )}
             {totalAmount > 0 && (

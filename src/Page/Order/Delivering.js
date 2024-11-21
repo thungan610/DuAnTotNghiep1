@@ -2,7 +2,19 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Delivering = (prop) => {
+    const { order } = prop.route.params;
+    
+    console.log('order', order);
+    const transferOptions = [
+        { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+        { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+        { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    ];
 
+    const getShippingLabel = (ship) => {
+        const option = transferOptions.find(option => option.ship === ship.toString());
+        return option ? option.label : "Không xác định";
+    };
     return (
         <View style={DeliveringStyle.container}>
             <View style={DeliveringStyle.headertop}>
@@ -13,46 +25,44 @@ const Delivering = (prop) => {
             </View>
 
             <View style={DeliveringStyle.body}>
-
                 <View style={DeliveringStyle.banner}>
                     <Text style={DeliveringStyle.bannerText}>Đơn hàng đang giao</Text>
                 </View>
                 <View style={DeliveringStyle.header}>
                     <Text style={DeliveringStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={DeliveringStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={DeliveringStyle.subText}>
+                        {`${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getHours()}h${new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).getMinutes()}, Ngày ${new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).getDate()}/${new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).getMonth() + 1}/${new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).getFullYear()}`}
+                        , {getShippingLabel(order.ship)}
+                    </Text>
                 </View>
+
 
                 <View style={DeliveringStyle.address}>
                     <Text style={DeliveringStyle.label}>Địa chỉ:</Text>
-                    <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
-                    <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
+                    <Text>{`Số nhà ${order.address.houseNumber}, hẻm ${order.address.alley}, ${order.address.quarter}`}</Text>
+                    <Text>{`${order.address.district}, ${order.address.city}, ${order.address.country}`}</Text>
                 </View>
 
-                <View style={DeliveringStyle.product}>
-                    <Image
-                        source={require('../../assets/image/image1.png')}
-                        style={DeliveringStyle.productImage}
-                    />
-                    <View style={DeliveringStyle.productInfo}>
-                        <Text style={DeliveringStyle.productName}>Bắp cải trắng</Text>
-                        <Text style={DeliveringStyle.category}>Rau củ</Text>
-                        <Text style={DeliveringStyle.price}>$ 19.000đ</Text>
+                {order.products.map((product, index) => (
+                    <View key={index} style={DeliveringStyle.product}>
+                        <Image source={{ uri: product.images[0] }} style={DeliveringStyle.productImage} />
+                        <View style={DeliveringStyle.productInfo}>
+                            <Text style={DeliveringStyle.productName}>{product.name}</Text>
+                            <Text style={DeliveringStyle.category}>{product.category.category_name}</Text>
+                            <Text style={DeliveringStyle.price}>{`${product.price}.000 đ`}</Text>
+                        </View>
                     </View>
-                </View>
+                ))}
 
+       
                 <View style={DeliveringStyle.paymentInfo}>
                     <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>Tổng tiền sản phẩm: 19.000</Text>
-                    <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={DeliveringStyle.total}>Tổng thanh toán: 29.000</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
+                    <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
                 </View>
-
             </View>
-
-
-
-
         </View>
     );
 };

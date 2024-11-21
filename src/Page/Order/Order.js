@@ -1,32 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
+import axiosInstance from '../api/AxiosInstance';
+import Toast from 'react-native-toast-message';
 
 const Order = (prop) => {
   const [orders, setOrders] = useState([]);
   const [selectedTabs, setSelectedTabs] = useState(0);
   const [loading, setLoading] = useState(true);
+  const user = useSelector(state => state.user);
+
+  const userid = user?.userData?._id || 'default_id';
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
-  const apiUrls = {
-    'Chờ xác nhận': 'https://your-api-url.com/Processing',  
-    'Đang giao': 'https://your-api-url.com/Delivering',    
-    'Đã nhận': 'https://your-api-url.com/Done',      
-    'Đã hủy': 'https://your-api-url.com/Canceled',         
-  };
-
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true); // Bắt đầu tải dữ liệu
+      setLoading(true);
       try {
-        const currentTab = tabs[selectedTabs];
-        const response = await axios.get(apiUrls[currentTab]);
-        setOrders(response.data);
+        const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
+
+        const allOrders = response;
+
+        const filteredOrders = allOrders.filter(order => {
+          switch (tabs[selectedTabs]) {
+            case 'Chờ xác nhận':
+              return order.status === 1;
+            case 'Đang giao':
+              return order.status === 2;
+            case 'Đã nhận':
+              return order.status === 3;
+            case 'Đã hủy':
+              return order.status === 4;
+            default:
+              return true;
+          }
+        }).map(order => ({
+          ...order,
+          products: order.cart?.flatMap(cartItem => cartItem.products) || []
+        }));
+
+        setOrders(filteredOrders);
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
       } finally {
-        setLoading(false); // Kết thúc tải dữ liệu
+        setLoading(false);
       }
     };
 
@@ -51,9 +69,51 @@ const Order = (prop) => {
     }
   };
 
+  const addToCartHandler = async (order) => {
+    const productsToAdd = Array.isArray(order.products) ? order.products.map(product => ({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity,
+      category: product.category,
+      images: product.images,
+      selected: true,
+    })) : [];
+    try {
+      const response = await axiosInstance.post('/carts/addCart_App', {
+        user: userid,
+        products: productsToAdd,
+      });
+
+      if (response.data.error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Thông báo',
+          text2: 'Có lỗi xảy ra khi thêm sản phẩm!',
+          visibilityTime: 2000,
+          position: 'top'
+        });
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Thêm sản phẩm thành công!',
+          visibilityTime: 2000,
+          position: 'top'
+        });
+        prop.navigation.navigate('AddProduct');
+
+        productsToAdd.forEach(product => dispatch(addToCart(product)));
+      }
+    } catch (error) {
+    
+    }
+  };
+
   const renderOrderCard = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
+        const product = item.products[0];
         switch (tabs[selectedTabs]) {
           case 'Chờ xác nhận':
             prop.navigation.navigate('Processing1', { order: item });
@@ -79,8 +139,8 @@ const Order = (prop) => {
           alignItems: 'center',
         }}>
           <View style={OrderStyle.borderimage}>
-            {item.image ? (
-              <Image source={{ uri: item.image }} style={OrderStyle.image} />
+            {item.products.length > 0 && item.products[0].images?.length > 0 ? (
+              <Image source={{ uri: item.products[0].images[0] }} style={OrderStyle.image} />
             ) : (
               <View style={[OrderStyle.image, { backgroundColor: '#cccccc' }]} />
             )}
@@ -90,9 +150,9 @@ const Order = (prop) => {
           )}
         </View>
         <View style={OrderStyle.orderInfo}>
-          <Text style={OrderStyle.orderName}>{item.name}</Text>
-          <Text style={OrderStyle.orderQuantity}>SL: {item.quantity}</Text>
-          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.price).toLocaleString('vi-VN')}đ</Text>
+          <Text style={OrderStyle.orderName}>{item.products.length > 0 ? item.products[0].name : 'Không có sản phẩm'}</Text>
+          <Text style={OrderStyle.orderQuantity}>SL: {item.products.length > 0 ? item.products[0].quantity : 0}</Text>
+          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.totalOrder).toLocaleString('vi-VN')}.000 đ</Text>
   
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
@@ -100,7 +160,7 @@ const Order = (prop) => {
   
           {tabs[selectedTabs] === 'Đã nhận' && (
             <View style={OrderStyle.buttonContainer}>
-              <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={OrderStyle.buttonnhan}>
+              <TouchableOpacity onPress={() => addToCartHandler(item)} style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={OrderStyle.buttonhuy}>
@@ -149,9 +209,12 @@ const Order = (prop) => {
           data={orders}
           renderItem={renderOrderCard}
           keyExtractor={item => (item._id ? item._id.toString() : Math.random().toString())}
-          style={OrderStyle.orderContainer}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
         />
+
       )}
+
     </View>
   );
 };
@@ -195,7 +258,7 @@ const OrderStyle = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 14,
   },
-  completedText: { // Thêm style cho chữ "Hoàn thành"
+  completedText: {
     fontSize: 14,
     color: '#1976D2',
     marginTop: 10,

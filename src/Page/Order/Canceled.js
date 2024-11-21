@@ -1,7 +1,62 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import axiosInstance from '../api/AxiosInstance';
+import Toast from 'react-native-toast-message';
 
 const Canceled = (prop) => {
+    const { order } = prop.route.params;
+    const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const userid = user?.userData?._id || 'default_id';
+
+    console.log('order', order);
+    const transferOptions = [
+        { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+        { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+        { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    ];
+
+    const getShippingLabel = (ship) => {
+        const option = transferOptions.find(option => option.ship === ship.toString());
+        return option ? option.label : "Không xác định";
+    };
+
+    const addToCartHandler = async () => {
+        const productsToAdd = order.products.map(product => ({
+            id: product._id,
+            name: product.name,
+            price: product.price,
+            quantity: product.quantity,
+            category: product.category,
+            images: product.images,
+            selected: true,
+        }));
+
+        try {
+            const response = await axiosInstance.post('/carts/addCart_App', {
+                user: userid,
+                products: productsToAdd,
+            });
+
+            if (response.data.error) {
+
+            } else {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
+                    visibilityTime: 2000,
+                    position: 'top'
+                });
+                prop.navigation.navigate('AddProduct');
+
+                productsToAdd.forEach(product => dispatch(addToCart(product)));
+            }
+        } catch (error) {
+
+        }
+    };
 
     return (
         <View style={CanceledStyle.container}>
@@ -19,43 +74,43 @@ const Canceled = (prop) => {
                 </View>
                 <View style={CanceledStyle.header}>
                     <Text style={CanceledStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={CanceledStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={CanceledStyle.subText}>
+                        {`${new Date().getHours()}h${new Date().getMinutes()}, Ngày ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`}
+                        , {getShippingLabel(order.ship)}
+                    </Text>
                 </View>
+
 
                 <View style={CanceledStyle.address}>
                     <Text style={CanceledStyle.label}>Địa chỉ:</Text>
-                    <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
-                    <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
+                    <Text>{`Số nhà ${order.address.houseNumber}, hẻm ${order.address.alley}, ${order.address.quarter}`}</Text>
+                    <Text>{`${order.address.district}, ${order.address.city}, ${order.address.country}`}</Text>
                 </View>
 
-                <View style={CanceledStyle.product}>
-                    <Image
-                        source={require('../../assets/image/image1.png')}
-                        style={CanceledStyle.productImage}
-                    />
-                    <View style={CanceledStyle.productInfo}>
-                        <Text style={CanceledStyle.productName}>Bắp cải trắng</Text>
-                        <Text style={CanceledStyle.category}>Rau củ</Text>
-                        <Text style={CanceledStyle.price}>$ 19.000đ</Text>
+                {order.products.map((product, index) => (
+                    <View key={index} style={CanceledStyle.product}>
+                        <Image source={{ uri: product.images[0] }} style={CanceledStyle.productImage} />
+                        <View style={CanceledStyle.productInfo}>
+                            <Text style={CanceledStyle.productName}>{product.name}</Text>
+                            <Text style={CanceledStyle.category}>{product.category.category_name}</Text>
+                            <Text style={CanceledStyle.price}>{`${product.price}.000 đ`}</Text>
+                        </View>
                     </View>
-                </View>
+                ))}
+
 
                 <View style={CanceledStyle.paymentInfo}>
                     <Text style={CanceledStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>Tổng tiền sản phẩm: 19.000</Text>
-                    <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={CanceledStyle.total}>Tổng thanh toán: 29.000</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
+                    <Text style={CanceledStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
                 </View>
 
-                <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={CanceledStyle.cancelButton}>
+                <TouchableOpacity onPress={addToCartHandler} style={CanceledStyle.cancelButton}>
                     <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>
             </View>
-
-
-
-
         </View>
     );
 };
