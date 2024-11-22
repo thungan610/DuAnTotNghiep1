@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+const { width, height } = Dimensions.get('window');
 
 const HomeStyle = StyleSheet.create({
     container: {
@@ -8,70 +9,67 @@ const HomeStyle = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     avatar: {
         height: 50,
         width: 50,
     },
     searchall: {
-        flexDirection: 'row', // Đặt icon và input theo hàng ngang
-        alignItems: 'center', // Căn giữa icon và text theo chiều dọc
+        flexDirection: 'row',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: '#EAEAEA',
-        borderRadius: 25,
-        paddingHorizontal: 5,
-        marginLeft:10,
+        borderRadius: width * 0.06,
+        paddingHorizontal: width * 0.02,
+        marginLeft: width * 0.025,
         backgroundColor: '#EAEAEA',
-        height:45,
-        width:240
+        height: height * 0.06,
+        width: width * 0.61,
     },
     search: {
         height: 25,
         width: 25,
-        marginLeft:7
+        marginLeft: 7
     },
     input: {
         flex: 1,
         paddingVertical: 13,
     },
-    productContainer:{
+    productContainer: {
         borderColor: '#2CA9C0',
-        borderRadius: 10,
+        borderRadius: width * 0.02,
         borderWidth: 1,
-        justifyContent:'space-evenly',
-        alignItems:'center',
-        height:180,
-        marginHorizontal: 6,
-        width: 170,
-        marginTop: 15,
-        marginRight: 15,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        height: height * 0.22,
+        marginHorizontal: width * 0.015,
+        width: width * 0.44,
+        marginTop: height * 0.02,
+        marginRight: width * 0.03,
     },
-    productDetails:{
-        justifyContent:'center',
-        alignItems:'center'
+
+    productDetails: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    productTitle:{
+    productTitle: {
         fontSize: 18,
-        fontWeight:'bold',
-        textAlign:'center'
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
-    productWeight:{
+    productWeight: {
         fontSize: 16
     },
-    priceall:{
-        flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center'
+    priceall: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    productPrice:{
-        textAlign:"center",
+    productPrice: {
+        textAlign: "center",
         fontSize: 18,
         fontWeight: 'bold'
-    },
-    price:{
-        marginRight: 5
     },
 });
 export default HomeStyle

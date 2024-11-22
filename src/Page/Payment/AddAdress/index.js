@@ -1,127 +1,173 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import AddAdressStyle from "./style";
 import AxiosInstance from "../../api/AxiosInstance";
+import Toast from "react-native-toast-message";
+import { useSelector } from "react-redux";
+import { Picker } from "@react-native-picker/picker";
 
-const AddAdress = (prop) => {
-    // const [name, setName] = useState('');
-    // const [phone, setPhone] = useState('');
-    const [alley, setalley] = useState('');
-    const [district, setDistrict] = useState('');
-    const [quarter, setquarter] = useState('');
-    const [houseNumber, sethouseNumber] = useState('');
-    const [city, setcity] = useState('');
-    const [country, setcountry] = useState('');
+const AddAddress = (prop) => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("Việt Nam");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [quarter, setQuarter] = useState("");
+  const [alley, setAlley] = useState("");
+  const [homenumber, setHomenumber] = useState("");
+  const [cities, setCities] = useState([]);
+  const [isCityPickerVisible, setIsCityPickerVisible] = useState(false);
 
-    const BackRight = () => {
-        prop.navigation.navigate('ProfileDetail');
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("https://provinces.open-api.vn/api/");
+        const data = await response.json();
+        setCities(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách thành phố:", error);
+      }
     };
 
-    const handleSubmit = async () => {
-        if (!alley || !district || !quarter || !houseNumber || !city || !country ) {
-            Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
+    fetchCities();
+  }, []);
 
-        try {
-            const response = await AxiosInstance.post('/addresses/addAddress', {
-                // name,
-                // phone,
-                alley,
-                district,
-                quarter,
-                houseNumber,
-                city,
-                country,
-            });
+  const goBack = () => {
+    prop.navigation.goBack();
+  };
 
-            if (response.status === 200) {
-                Alert.alert("Thành công", "Địa chỉ đã được thêm!");
-                prop.navigation.navigate('SubmitTrue');
-            } else {
-                Alert.alert("Lỗi", "Không thể thêm địa chỉ.");
-            }
-        } catch (error) {
-            console.error('Error submitting address:', error);
-            Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại.");
-        }
+  const user = useSelector(state => state.user);
+  const userId = user?.userData?._id;
+
+  const handleSubmit = async () => {
+    if (!userId) {
+      Alert.alert("Lỗi", "Không tìm thấy userId");
+      return;
+    }
+
+    if (!name || !phone || !district || !quarter || !alley || !homenumber) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    const address = {
+      user: {
+        name,
+        phone,
+      },
+      houseNumber: homenumber,
+      alley,
+      quarter,
+      district,
+      city,
+      country,
     };
 
-    return (
-        <ScrollView style={AddAdressStyle.container}>
-            <View style={AddAdressStyle.header}>
-                <TouchableOpacity onPress={BackRight}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
-                </TouchableOpacity>
-                <Text style={AddAdressStyle.title}>Thêm địa chỉ mới</Text>
-                <Text />
-            </View>
-            <View>
-                <Text style={AddAdressStyle.txtLH}>Thông tin liên hệ</Text>
-                {/* <View style={AddAdressStyle.body}>
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Họ và tên"
-                        value={name} 
-                        onChangeText={setName} 
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Số điện thoại"
-                        value={phone} 
-                        onChangeText={setPhone}
-                        keyboardType="phone-pad"
-                    />
-                </View> */}
-            </View>
-            <View>
-                <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
-                <View style={AddAdressStyle.body}>
-                <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập quốc gia"
-                        value={country} 
-                        onChangeText={setcountry}
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập khu vực"
-                        value={city} 
-                        onChangeText={setcity}
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập quận"
-                        value={district} 
-                        onChangeText={setDistrict}
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập phường"
-                        value={quarter} 
-                        onChangeText={setquarter} 
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập hẻm"
-                        value={alley} 
-                        onChangeText={setalley} 
-                    />
-                    <TextInput 
-                        style={AddAdressStyle.input} 
-                        placeholder="Nhập số nhà"
-                        value={houseNumber} 
-                        onChangeText={sethouseNumber} 
-                    />
-                </View>
-            </View>
-            <View style={AddAdressStyle.footer}>
-                <TouchableOpacity onPress={handleSubmit} style={AddAdressStyle.button}>
-                    <Text style={AddAdressStyle.buttonText}>LƯU</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
-    );
+    try {
+      const response = await AxiosInstance.post(`/users/${userId}/addressNew`, address);
+      console.log("API Response:", response);
+      if (!response) {
+        Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Thông báo",
+          text2: "Thêm địa chỉ thành công.",
+          visibilityTime: 2000,
+          position: "top",
+        });
+        goBack();
+      }
+    } catch (error) {
+      console.error("Lỗi API:", error);
+    }
+  };
+
+  return (
+    <ScrollView style={AddAdressStyle.container}>
+      <View style={AddAdressStyle.header}>
+        <TouchableOpacity onPress={goBack}>
+          <Image
+            style={AddAdressStyle.backright}
+            source={require("../../../assets/notifi/backright.png")}
+          />
+        </TouchableOpacity>
+        <Text style={AddAdressStyle.title}>Thêm địa chỉ mới</Text>
+      </View>
+      <View>
+        <Text style={AddAdressStyle.txtLH}>Thông tin liên hệ</Text>
+        <View style={AddAdressStyle.body}>
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Họ và tên"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Số điện thoại"
+            value={phone}
+            onChangeText={setPhone}
+          />
+        </View>
+      </View>
+      <View>
+        <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
+        <View style={AddAdressStyle.body}>
+          <TextInput
+            style={AddAdressStyle.input}
+            value={country}
+            editable={false}
+          />
+          <Picker
+            selectedValue={city}
+            style={[AddAdressStyle.input, { flex: 1 }]}
+            onValueChange={(itemValue) => setCity(itemValue)}
+          >
+            <Picker.Item label="Chọn thành phố" value="" />
+            {cities.map((cityItem) => (
+              <Picker.Item
+                key={cityItem.code}
+                label={cityItem.name}
+                value={cityItem.name}
+              />
+            ))}
+          </Picker>
+
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Nhập quận"
+            value={district}
+            onChangeText={setDistrict}
+          />
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Nhập phường"
+            value={quarter}
+            onChangeText={setQuarter}
+          />
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Nhập hẻm"
+            value={alley}
+            onChangeText={setAlley}
+          />
+          <TextInput
+            style={AddAdressStyle.input}
+            placeholder="Nhập số nhà"
+            value={homenumber}
+            onChangeText={setHomenumber}
+          />
+        </View>
+      </View>
+      <View style={AddAdressStyle.footer}>
+        <TouchableOpacity style={AddAdressStyle.button} onPress={handleSubmit}>
+          <Text style={AddAdressStyle.buttonText}>LƯU</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ height: 50 }}></View>
+    </ScrollView>
+  );
 };
 
-export default AddAdress;
+export default AddAddress;

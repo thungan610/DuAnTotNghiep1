@@ -1,22 +1,32 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import ProductCancelStyle from './style';
+import axiosInstance from '../api/AxiosInstance';
 
 const ProductCancel = (prop) => {
+  const { order } = prop.route.params;
   const [description, setDescription] = useState('');
-  const orders = [
-    {
-      id: 1,
-      name: 'Bắp cải trắng',
-      quantity: 1,
-      price: 29000,
-      status: 'Đang xử lý',
-      image: require('../../../src/assets/image/image1.png'),
-    },
-  ];
+
+  const idorder = order._id
+  console.log('idorder', idorder);
+
 
   const BtnCancel = () => {
     prop.navigation.navigate('CancelTrue');
+    updateOrder(idorder, 4)
+  };
+
+  const updateOrder = async (idorder, status) => {
+    try {
+      const response = await axiosInstance.post(`/oder/${idorder}/updateOrder`, {
+        status: status,
+      });
+      console.log('Cập nhật trạng thái đơn hàng thành công:', response);
+      return response;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error.message);
+      throw new Error('Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.');
+    }
   };
 
   return (
@@ -26,23 +36,27 @@ const ProductCancel = (prop) => {
       </View>
 
       <View style={ProductCancelStyle.boxProduct}>
-        <View>
-          <ScrollView style={ProductCancelStyle.orderContainer}>
-            {orders.map((order) => (
-              <View key={order.id} style={ProductCancelStyle.orderCard}>
-                <View style={ProductCancelStyle.borderimage}>
-                  <Image source={order.image} style={ProductCancelStyle.image} />
-                </View>
-                <View style={ProductCancelStyle.orderInfo}>
-                  <Text style={ProductCancelStyle.orderName}>{order.name}</Text>
-                  <Text style={ProductCancelStyle.orderQuantity}>SL: {order.quantity}</Text>
-                  <Text style={ProductCancelStyle.orderPrice}>Tổng tiền: {order.price.toLocaleString('vi-VN')}đ</Text>
-                  <Text style={ProductCancelStyle.orderStatus}>{order.status}</Text>
-                </View>
+        <ScrollView style={ProductCancelStyle.orderContainer}>
+          {order.products.map((product, index) => (
+            <View key={product.id} style={ProductCancelStyle.orderCard}>
+              <View style={ProductCancelStyle.borderimage}>
+                <Image source={{ uri: product.images[0] }} style={ProductCancelStyle.image} />
               </View>
-            ))}
-          </ScrollView>
-        </View>
+              <View style={ProductCancelStyle.orderInfo}>
+                <Text style={ProductCancelStyle.orderName}>{product.name}</Text>
+                <Text style={ProductCancelStyle.orderQuantity}>SL: {product.quantity}</Text>
+                <Text style={ProductCancelStyle.orderPrice}>
+                  Tổng tiền: {(product.quantity * product.price).toLocaleString('vi-VN')}.000 đ
+                </Text>
+                <Text style={ProductCancelStyle.orderStatus}>
+                  Trạng thái: {order.status === 1 ? 'Chờ xác nhận' : order.status}
+                </Text>
+
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
         <View>
           <TextInput
             style={ProductCancelStyle.input}
@@ -55,7 +69,9 @@ const ProductCancel = (prop) => {
         </View>
 
         <View style={ProductCancelStyle.buttonContainer}>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('Processing1')} style={ProductCancelStyle.button}>
+          <TouchableOpacity
+            onPress={() => prop.navigation.navigate('Processing1', { order: order })}
+            style={ProductCancelStyle.button}>
             <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>

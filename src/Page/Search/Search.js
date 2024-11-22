@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, LogBox, Dimensions } from 'react-native';
 import AxiosInstanceSP from "../api/AxiosInstanceSP";
+import { useSelector } from 'react-redux';  // Redux selector
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from '../api/AxiosInstance';
 
 const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
@@ -9,74 +11,92 @@ const SearchScreen = ({ navigation }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
+
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
 
-  // Hàm lấy sản phẩm từ API dựa trên từ khóa
+  const user = useSelector(state => state.user);
+  console.log('user', user);
+
+  const userId = user?.userData?._id || 'default_id';
+  console.log('userId', userId);
+
+
+
   const fetchProducts = async (keyword) => {
     try {
+      console.log('Fetching products for keyword:', keyword);
       setRefreshing(true);
       const response = await AxiosInstanceSP().get(`/products/search?key=${keyword}`);
-      console.log('Fetched products:', response.data);
-  
       const productsData = Array.isArray(response.data) ? response.data : [];
+      console.log('Fetched products:', productsData);
       setProducts(productsData);
       setFilteredProducts(productsData);
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
-      setProducts([]); 
-      setFilteredProducts([]); 
+      console.log('Error fetching products:', error);
+      setProducts([]);
+      setFilteredProducts([]);
       setRefreshing(false);
     }
   };
-  
+
 
   const saveSearchHistory = async (keyword) => {
     try {
-      const currentHistory = await AsyncStorage.getItem('searchHistory');
-      const historyArray = currentHistory ? JSON.parse(currentHistory) : [];
-
-      // Thêm từ khóa vào lịch sử (kiểm tra và loại bỏ trùng lặp)
-      if (!historyArray.includes(keyword)) {
-        historyArray.push(keyword);
+      const response = await axiosInstance.post(`/search/search-history/save`, { userId, keyword });
+      if (response.status === 200) {
+        console.log('saved successfully');
       }
-
-      if (historyArray.length > 5) {
-        historyArray.shift();
-      }
-
-      // Lưu lại lịch sử tìm kiếm mới
-      await AsyncStorage.setItem('searchHistory', JSON.stringify(historyArray));
-      setSearchHistory(historyArray);
     } catch (error) {
-      console.log('Error saving search history:', error);
+      console.log('Error', error);
+    }
+  };
+
+
+  const fetchSearchHistory = async () => {
+    try {
+      console.log('Fetching search history for user:', userId);
+      const response = await axiosInstance.get(`/search/search-history/${userId}`);
+      if (!response) {
+        console.log('No data found in response');
+
+      } else {
+        setSearchHistory(response);
+      }
+    } catch (error) {
+      console.log('Error fetching search history:', error);
+    }
+  };
+
+  const handleDeleteHistory = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/search/search-history/delete/${id}`);
+      console.log('');
+
+      if (response) {
+        setSearchHistory(prev => prev.filter(item => item._id.$oid !== id));
+        console.log('deleted successfully');
+        await fetchSearchHistory()
+      }
+    } catch (error) {
+      console.log('Error deleting history:', error);
     }
   };
 
   useEffect(() => {
-    const fetchSearchHistory = async () => {
-      try {
-        const storedHistory = await AsyncStorage.getItem('searchHistory');
-        if (storedHistory) {
-          setSearchHistory(JSON.parse(storedHistory));
-        }
-      } catch (error) {
-        console.log('Error fetching search history:', error);
-      }
-    };
-
     fetchSearchHistory();
-  }, []);
+  }, [userId]);
+  useEffect(() => {
+    console.log('Updated searchHistory:', searchHistory);
+  }, [searchHistory]);
 
   useEffect(() => {
     if (searchText.trim()) {
       fetchProducts(searchText);
     } else {
-      setFilteredProducts(products); 
+      setFilteredProducts(products);
     }
-  }, [searchText]); 
-  
-  
+  }, [searchText]);
 
   const handleSearch = async (key) => {
     setSearchText(key);
@@ -86,27 +106,10 @@ const SearchScreen = ({ navigation }) => {
 
   const handleSearchSubmit = () => {
     const keyword = searchText.trim();
-    if (keyword && !searchHistory.includes(keyword)) {
-      setSearchHistory([keyword, ...searchHistory]);
-      saveSearchHistory(keyword); 
+    if (keyword) {
+      handleSearch(keyword);
     }
     setSearchText('');
-  };
-  
-  const handleDeleteHistory = async (keyword) => {
-    try {
-      const currentHistory = await AsyncStorage.getItem('searchHistory');
-      let historyArray = currentHistory ? JSON.parse(currentHistory) : [];
-
-      // Xóa từ khóa khỏi lịch sử
-      historyArray = historyArray.filter(item => item !== keyword);
-
-      // Lưu lại lịch sử mới
-      await AsyncStorage.setItem('searchHistory', JSON.stringify(historyArray));
-      setSearchHistory(historyArray); // Cập nhật trạng thái
-    } catch (error) {
-      console.log('Error deleting search history:', error);
-    }
   };
 
   const renderProduct = ({ item }) => {
@@ -146,64 +149,57 @@ const SearchScreen = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
   const renderHistoryItem = ({ item }) => (
     <View style={SearchStyle.historyItemContainer}>
-      <TouchableOpacity onPress={() => handleSearch(item)}>
-        <Text style={SearchStyle.historyItem}>{item}</Text>
+      <TouchableOpacity onPress={() => handleSearch(item.keyword)}>
+        <Text style={SearchStyle.historyItem}>{item.keyword}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleDeleteHistory(item)}>
-        <Text style={SearchStyle.deleteHistoryItem}>×</Text>
+      <TouchableOpacity onPress={() => {
+        console.log('Deleting ID:', item._id);
+        handleDeleteHistory(item._id);
+      }}>
+        <Text style={SearchStyle.deleteHistoryItem}>x</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={SearchStyle.container}>
-    <View style={SearchStyle.searchBar}>
-      <TextInput
-        style={SearchStyle.searchInput}
-        placeholder='Tìm kiếm...'
-        value={searchText}
-        onChangeText={setSearchText}
-        onSubmitEditing={handleSearchSubmit}
-      />
-      {searchText.length > 0 && (
-        <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
-          <Text style={SearchStyle.clearText}>×</Text>
+      <View style={SearchStyle.searchBar}>
+        <TextInput
+          style={SearchStyle.searchInput}
+          placeholder='Tìm kiếm...'
+          value={searchText}
+          onChangeText={setSearchText}
+          onSubmitEditing={handleSearchSubmit}
+        />
+        {searchText.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
+            <Text style={SearchStyle.clearText}>X</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={() => navigation.navigate('BottomNav')}>
+          <Text style={SearchStyle.cancelText}>Hủy</Text>
         </TouchableOpacity>
-      )}
-      <TouchableOpacity onPress={() => navigation.navigate('BottomNav')}>
-        <Text style={SearchStyle.cancelText}>Hủy</Text>
-      </TouchableOpacity>
-    </View>
+      </View>
 
-    {searchHistory.length > 0 && (
-      <View>
+      {searchHistory.length > 0 && (
         <FlatList
-          data={isHistoryExpanded ? searchHistory : searchHistory.slice(0, 3)} // Hiển thị tối đa 3 từ khóa
+          horizontal={true}
+          data={isHistoryExpanded ? searchHistory : searchHistory.slice(0, 5)}
           renderItem={renderHistoryItem}
           keyExtractor={(item, index) => index.toString()}
+
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={SearchStyle.historyList}
         />
-
-        {searchHistory.length > 3 && !isHistoryExpanded && (
-          <TouchableOpacity onPress={() => setIsHistoryExpanded(true)}>
-            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center' }}>
-            <Text style={SearchStyle.viewMoreText}>Xem thêm</Text>
-            <Image source={require('../../assets/Vector.png')}/>
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {isHistoryExpanded && (
-          <TouchableOpacity onPress={() => setIsHistoryExpanded(false)}>
-            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center' }}>
-            <Text style={SearchStyle.viewMoreText}>Thu gọn</Text>
-            <Image source={require('../../assets/Expand_up_light.png')}/>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-    )}
+      )}
+      {searchHistory.length > 5 && !isHistoryExpanded && (
+        <TouchableOpacity onPress={() => setIsHistoryExpanded(true)} style={SearchStyle.viewMoreText}>
+          <Text>Xem thêm...</Text>
+        </TouchableOpacity>
+      )}
       <FlatList
         data={filteredProducts}
         renderItem={renderProduct}
@@ -213,7 +209,7 @@ const SearchScreen = ({ navigation }) => {
         refreshing={refreshing}
         onRefresh={() => fetchProducts(searchText)}
         ListEmptyComponent={() => (
-          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+          <Text style={{ textAlign: 'center' }}>
             Không tìm thấy sản phẩm nào
           </Text>
         )}
@@ -221,10 +217,9 @@ const SearchScreen = ({ navigation }) => {
     </View>
   );
 };
-
-export default SearchScreen;
-
+const { width, height } = Dimensions.get('window');
 const SearchStyle = StyleSheet.create({
+  
   container: {
     flex: 1,
     paddingTop: 20,
@@ -269,49 +264,53 @@ const SearchStyle = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 180,
-    width: 170,
-    marginTop: 15,
-    marginHorizontal: 6,
+    height: height * 0.22, 
+    width: width * 0.43, 
+    margin: 7, 
   },
   productDetails: {
-    justifyContent: 'center',
     alignItems: 'center',
   },
   productName: {
-    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center'
+    color: '#2CA9C0',
+    fontSize: 14,
+    textAlign: 'center',
   },
   productWeight: {
-    fontSize: 16,
+    fontSize: 12,
+    color: 'gray',
   },
   productPrice: {
-    textAlign: 'center',
-    fontSize: 18,
+    color: 'red',
+    fontSize: 14,
     fontWeight: 'bold',
   },
-
   historyItemContainer: {
-    paddingHorizontal: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    padding: 10,
+    flexWrap: 'wrap',
     alignItems: 'center',
-    marginVertical: 5,
   },
   historyItem: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 16,
+    color: '#555',
+    marginEnd: 10,
   },
   deleteHistoryItem: {
-    fontSize: 16,
-    color: '#8B8B8B',
+    fontSize: 20,
+    color: 'red',
+    marginStart: 10,
   },
   viewMoreText: {
-    fontSize: 14,
-    color: '#8B8B8B',
-    textAlign: 'center',
-    marginVertical: 10,
-    paddingHorizontal:4
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  historyList: {
+    paddingLeft: 10,
+    height: 100,
   },
 });
+
+
+export default SearchScreen;

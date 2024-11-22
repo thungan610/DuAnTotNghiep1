@@ -49,19 +49,18 @@ const AddAdressStyle = StyleSheet.create({
         color: 'black',
         fontFamily: 'Poppins',
         marginBottom: 10,
-        marginTop: 30,
+        marginTop: 20,
         marginLeft: 20
     },
     footer:{
         // flex: 1,
-        marginTop: 20
+        marginTop: 5
     },
     button:{
         backgroundColor: "#27AAE1",
         borderRadius: 10,
         padding: 15,
-        marginTop: 20,
-        marginBottom: 20,
+        paddingHorizontal:10,
         width: '100%',
     },
     buttonText:{
@@ -71,8 +70,21 @@ const AddAdressStyle = StyleSheet.create({
         fontFamily: 'Poppins',
         fontWeight: 'bold',
         fontSize: 16
-    }
-   
+    },
+    cityListContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap', // Cho phép các mục tự động xuống dòng nếu không đủ không gian
+        marginVertical: 10,
+      },
+      cityItem: {
+        padding: 10,
+        margin: 5,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
+      },
+      cityText: {
+        fontSize: 16,
+      }
 
  });
 export default AddAdressStyle

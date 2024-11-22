@@ -16,8 +16,11 @@ const profileStyle = StyleSheet.create({
     marginTop: 20,  
   },
   pro5logo: {
-    marginTop: 40,
-    marginLeft: 25,
+    marginTop: 30,
+    marginLeft: 20,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
   },
   pro5logo1: {
     width: 30,

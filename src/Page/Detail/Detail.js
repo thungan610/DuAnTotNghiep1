@@ -5,12 +5,19 @@ import AxiosInstance from '../../../src/Page/api/AxiosInstance';
 import { useSelector, useDispatch } from 'react-redux';
 import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
+import Toast from 'react-native-toast-message';
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
+
+    console.log('product', product);
+
     const dispatch = useDispatch();
     const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
+
+    console.log('productDetails', productDetails.id);
+    
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
@@ -19,7 +26,6 @@ const Detail = ({ route, navigation }) => {
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
 
-    // Lấy thông tin người dùng từ Redux
     const user = useSelector(state => state.user);
     const cart = useSelector(state => state.items);
 
@@ -84,13 +90,10 @@ const Detail = ({ route, navigation }) => {
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
-        } else {
-            Alert.alert('Thông báo', 'Số lượng sản phẩm tối thiểu là 1');
         }
     };
 
     const addToCartHandler = async () => {
-        // Kiểm tra xem người dùng đã đăng nhập chưa
         if (!user?.email) {
             Alert.alert(
                 'Thông báo',
@@ -110,39 +113,43 @@ const Detail = ({ route, navigation }) => {
             );
             return;
         }
-
+    
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
             price: unitPrice,
             quantity,
+            category: product.category,
             images: product.images,
             selected: true,
         };
-
+        console.log('productToAdd', productToAdd);
+    
         try {
-            // Gửi yêu cầu thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
-                user: user.userData._id,
-                products: [productToAdd]
+                user: user.userData._id, 
+                products: [productToAdd],
             });
-
-            // Kiểm tra phản hồi từ server
+            
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
-                // Thông báo thành công và điều hướng tới màn hình AddProduct
-                Alert.alert("Thông báo", response.data.message || "Thêm sản phẩm thành công!");
-
-                // Dispatch Redux action để thêm sản phẩm vào Redux store (giỏ hàng)
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
+                    visibilityTime: 2000,
+                    position: 'top'
+                });
+    
                 dispatch(addToCart(productToAdd));
-                navigation.navigate('AddProduct', { data: productToAdd });
             }
         } catch (error) {
-            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
-            Alert.alert('Thông báo', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
+            Alert.alert('Thông báo', errorMessage);
         }
     };
+    
 
     const renderImages = () => images.map((item, index) => (
         <View key={index}>
@@ -214,9 +221,10 @@ const Detail = ({ route, navigation }) => {
                                     <Text style={styleDetail.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
-                                <View style={styleDetail.textoriginRow}>
+                                <View>
                                     <Text style={styleDetail.textorigin}>Công dụng: </Text>
-                                    <Text style={styleDetail.textorigin}>{productDetails.uses || 'Chưa có thông tin'}</Text>
+                                    <Text style={styleDetail.textorigin}>• {productDetails.description || 'Chưa có thông tin'}</Text>
+
                                 </View>
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>

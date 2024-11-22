@@ -4,14 +4,16 @@ import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert } from 'rea
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
-import AxiosInstance from '../api/AxiosInstance';
+import { useFocusEffect } from '@react-navigation/native';
+import axiosInstance from '../api/AxiosInstance';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
-    const imageUri = item.image ? item.image : 'https://res.cloudinary.com/imagesupload2024/image/upload/v1729969967/Th%E1%BB%8Bt/%C4%90%C3%B9i%20g%C3%A0%20t%E1%BB%8Fi.png';
+    const imageUri = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : null;
+
     return (
         <View style={AddProductStyle.itemContainer}>
-            <TouchableOpacity onPress={() => toggleSelect(item.id)}>
+            <TouchableOpacity onPress={() => toggleSelect(item.cart_id)}>
                 <Image
                     source={item.selected ? require("../../../src/assets/check.png") : require("../../../src/assets/uncheck.png")}
                     style={AddProductStyle.checkbox}
@@ -30,18 +32,17 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
                 </Text>
             </View>
             <View style={AddProductStyle.quantityContainer}>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, 'decrease')} style={AddProductStyle.quantityButton}>
+                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'decrease')} style={AddProductStyle.quantityButton}>
                     <Text style={AddProductStyle.quantityText}>-</Text>
                 </TouchableOpacity>
                 <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, 'increase')} style={AddProductStyle.quantityButton}>
+                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'increase')} style={AddProductStyle.quantityButton}>
                     <Text style={AddProductStyle.quantityText}>+</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 });
-
 
 const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
     <Modal transparent={true} animationType="slide" visible={visible}>
@@ -66,79 +67,102 @@ const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
     const [modalVisible, setModalVisible] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
+    const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
-    const dispatch = useDispatch();
+
+    const user = useSelector(state => state.user);
+    console.log('user', user);
+    const userId = user?.userData?._id ;
+    console.log('userId', userId);
+    
 
     const getCart = async () => {
         try {
-            const response = await AxiosInstance.get('/carts/getCarts');
-            console.log('Dữ liệu giỏ hàng từ API:', response.data);
+            const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
+            console.log('response', response);
+            const cartData = Array.isArray(response) ? response : []
+            console.log('cartData', cartData);
 
-            // Lặp qua từng giỏ hàng và hiển thị sản phẩm bên trong
-            const cartData = response.data.map(cartItem => {
-                if (Array.isArray(cartItem.products) && cartItem.products.length > 0) {
-                    return cartItem.products.map(product => ({
-                        id: product._id,
-                        name: product.name,
-                        category_name: product.category_name,
-                        price: product.price,
-                        quantity: product.quantity,
-                        image: product.image,
-                        selected: true,
-                    }));
-                }
-            }).flat(); // Dùng flat để nối các mảng sản phẩm vào một mảng duy nhất
-
-            return cartData;
+            const activeCartData = cartData.filter(cart => cart.status === 1);
+            if (activeCartData.length === 0) {
+                console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
+                return [];
+            }
+            const productsData = activeCartData.flatMap(cart =>
+                cart.products.map(product => ({
+                    cart_id: cart._id,
+                    product_id: product._id,
+                    name: product.name,
+                    category_name: product.category?.category_name || 'Không có danh mục',
+                    price: product.price,
+                    quantity: product.quantity,
+                    images: product.images,
+                    selected: true,
+                }))
+            );
+            return productsData;
         } catch (error) {
-            console.error('Lỗi khi lấy giỏ hàng:', error);
-            throw error;
+
         }
     };
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadCartFromAPI = async () => {
+                try {
+                    const cartData = await getCart();
+                    if (Array.isArray(cartData)) {
+                        setCartItems(cartData);
+                        const selectedCount = cartData.filter(item => item.selected).length;
+                        setSelectedCount(selectedCount);
 
-    useEffect(() => {
-        const loadCartFromAPI = async () => {
-            try {
-                const cartData = await getCart();
-                console.log("Dữ liệu giỏ hàng:", cartData);
+                        const total = cartData
+                            .filter(item => item.selected)
+                            .reduce((total, item) => total + (item.price * item.quantity), 0);
+                        setTotalAmount(total);
+                    } else {
 
-                if (Array.isArray(cartData)) {
-                    setCartItems(cartData);
-                    console.log("Giỏ hàng được cập nhật:", cartData);
-                } else {
-                    console.error('Dữ liệu trả về không phải mảng');
+                    }
+                } catch (error) {
+
                 }
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu giỏ hàng:", error);
-            }
-        };
+            };
 
-        loadCartFromAPI();
-    }, []);
-
+            loadCartFromAPI();
+        }, [])
+    )
 
     useEffect(() => {
         const saveCartToStorage = async () => {
             try {
                 await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
             } catch (error) {
-                console.error('Error saving cart to AsyncStorage:', error);
+                console.error('Lỗi khi lưu giỏ hàng vào AsyncStorage:', error);
             }
         };
-        if (cartItems.length > 0) {
-            saveCartToStorage();
-        }
+
+        saveCartToStorage();
     }, [cartItems]);
 
-    const toggleSelectProduct = (id) => {
+    const toggleSelectProduct = (cart_id) => {
+        console.log('Toggle select product cart_id:', cart_id);
         setCartItems(prevItems => {
-            const updatedItems = prevItems.map(item =>
-                item.id === id ? { ...item, selected: !item.selected } : item
-            );
+            const updatedItems = prevItems.map(item => {
+                if (item.cart_id === cart_id) {
+                    const newItem = { ...item, selected: !item.selected };
+                    return newItem;
+                }
+                return item;
+            });
+
+            const newSelectedCount = updatedItems.filter(item => item.selected).length;
+            setSelectedCount(newSelectedCount);
+
             const newTotal = updatedItems
                 .filter(item => item.selected)
                 .reduce((total, item) => total + (item.price * item.quantity), 0);
             setTotalAmount(newTotal);
+
+            console.log('Updated cart items:', updatedItems);
             return updatedItems;
         });
     };
@@ -147,71 +171,123 @@ const AddProduct = ({ route, navigation }) => {
         const total = cartItems
             .filter(item => item.selected)
             .reduce((total, item) => total + (item.price * item.quantity), 0);
-
         setTotalAmount(total);
     }, [cartItems]);
 
+    const updateQuantityInCart = async (cart_id, product_id, quantity) => {
+        try {
+            const response = await axiosInstance.put(`/carts/updateQuantity/${cart_id}/${product_id}`, { quantity });
+            if (response) {
+                return response;
+            } else {
+                console.error('Failed to update quantity:', response.data || 'No data returned');
+                Alert.alert('Lỗi', 'Cập nhật số lượng không thành công.');
+            }
+        } catch (error) {
 
-    const updateQuantity = (id, action) => {
-        setCartItems(prevItems =>
-            prevItems.map(item => {
-                if (item.id === id) {
-                    const newQuantity = action === 'increase' ? item.quantity + 1 : Math.max(1, item.quantity - 1);
-                    if (newQuantity === 1 && action === 'decrease') {
-                        Alert.alert("Thông báo", "Số lượng không thể thấp hơn 1.");
-                    }
+        }
+    };
+
+    const updateQuantity = async (cart_id, action) => {
+        setCartItems(prevItems => {
+            return prevItems.map(item => {
+                if (item.cart_id === cart_id) {
+                    const currentQuantity = item.quantity;
+                    let newQuantity = action === 'increase' ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
+                    updateQuantityInCart(cart_id, item.product_id, newQuantity);
                     return { ...item, quantity: newQuantity };
                 }
                 return item;
-            })
-        );
+            });
+        });
     };
 
-    const deleteItemsFromCart = async (cartId) => {
+    console.log('updateQuantity', updateQuantity);
+
+    const deleteItemsFromCart = async (cart_id) => {
         try {
-            if (!cartId || typeof cartId !== 'string') {
-                console.error('Invalid cart ID:', cartId);
+            if (!cart_id) {
+                console.error('Invalid cart_id:', cart_id);
                 return;
             }
-            
-            const response = await AxiosInstance.delete(`/carts/deleteCart/${Id}`);
-            console.log('Cart deleted:', response.data);
-            return response.data;
+            console.log('cart_id', cart_id);
+            const response = await axiosInstance.delete(`/carts/deleteCart/${cart_id}`);
+            if (response) {
+                console.log('Deleted cart successfully:', response.data);
+                return response.data;
+            }
         } catch (error) {
-            console.error('Error deleting cart:', error);
-            throw error;
+            if (error.response) {
+
+            } else {
+
+            }
         }
     };
-    
-    
+
+
     const removeSelectedItems = async () => {
         const selectedItems = cartItems.filter(item => item.selected);
+        console.log('Selected items to remove:', selectedItems);
         if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Không có sản phẩm để xóa");
         } else {
             try {
-                await deleteItemsFromCart(selectedItems);
-                setCartItems(prevItems => prevItems.filter(item => !item.selected));
+                for (const item of selectedItems) {
+                    const response = await deleteItemsFromCart(item.cart_id);
+                    if (response && response.success) {
+                        setCartItems(prevItems => prevItems.filter(cartItem => cartItem.cart_id !== item.cart_id));
+                    }
+                }
                 setModalVisible(false);
+                Alert.alert('Thông báo', 'Xóa sản phẩm thành công');
+                console.log('Xóa sản phẩm thành công');
+
+                const updatedCartItems = await getCart();
+                console.log('Cập nhật giỏ hàng', updatedCartItems);
+
+                setCartItems(updatedCartItems);
+
             } catch (error) {
                 Alert.alert("Lỗi", "Có lỗi xảy ra khi xóa sản phẩm.");
+                console.log('Lỗi khi xóa sản phẩm', error);
+
             }
         }
     };
 
     const confirmDelete = () => {
         const selectedItems = cartItems.filter(item => item.selected);
+        console.log('Items to confirm delete:', selectedItems);
         if (selectedItems.length === 0) {
-            Alert.alert("Thông báo", "Không có sản phẩm để xóa");
+            Alert.alert('Thông báo', 'Chưa chọn sản phẩm để xóa');
         } else {
             setModalVisible(true);
         }
     };
 
+    const handlePayment = async () => {
+        const selectedCartIds = cartItems
+            .filter(item => item.selected)
+            .map(item => item.cart_id);
+
+        console.log('Selected Cart IDs:', selectedCartIds);
+
+        if (selectedCartIds.length > 0) {
+            await AsyncStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+            console.log('Cart IDs saved to AsyncStorage');
+            const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
+            console.log('Stored Cart IDs from AsyncStorage:', storedCartIds);
+            navigation.navigate('NextPayment', { cartIds: selectedCartIds });
+        } else {
+            Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
+        }
+    };
+
+
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
-
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image source={require("../../../src/assets/notifi/backright.png")} />
                 </TouchableOpacity>
@@ -231,17 +307,31 @@ const AddProduct = ({ route, navigation }) => {
                     renderItem={({ item }) => (
                         <CartItem item={item} toggleSelect={toggleSelectProduct} updateQuantity={updateQuantity} />
                     )}
-                    keyExtractor={(item) => item.id.toString()} 
+                    keyExtractor={(item, index) => `${item.cart_id}-${index}`}
                 />
-
             )}
             {totalAmount > 0 && (
-                <View>
+                <View style={{
+                    borderColor: '#27AAE1',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    padding: 10,
+                }}>
                     <View style={AddProductStyle.total}>
-                        <Text style={AddProductStyle.totalPrice}>Tổng cộng:</Text>
-                        <Text style={AddProductStyle.totalPrice}>{totalAmount.toLocaleString()}.000đ</Text>
+                        <View style={{
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={AddProductStyle.totalPrice}>Tổng số lượng: </Text>
+                            <Text style={{
+                                fontSize: 24,
+                                fontWeight: 'bold',
+                                color: 'black',
+                                marginBottom: 10,
+                            }}>{selectedCount}</Text>
+                        </View>
+                        <Text style={AddProductStyle.totalPrice}>Tổng tiền: {totalAmount.toLocaleString()}.000đ</Text>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('NextPayment')} style={PayMethodStyle.BtnSuss}>
+                    <TouchableOpacity onPress={handlePayment} style={PayMethodStyle.BtnSuss}>
                         <Text style={PayMethodStyle.txtSuss}>THANH TOÁN</Text>
                     </TouchableOpacity>
                 </View>

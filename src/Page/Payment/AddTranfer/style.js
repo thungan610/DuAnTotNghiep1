@@ -14,6 +14,7 @@ export const AddTranferStyle = StyleSheet.create({
         padding: 10,
         borderColor: '#8B8B8B',
         borderWidth: 1,
+        marginTop: 10
     },
     ViewVC:{
         flexDirection: 'row',
@@ -38,6 +39,7 @@ export const AddTranferStyle = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         padding: 10
+        
     },
 
 })

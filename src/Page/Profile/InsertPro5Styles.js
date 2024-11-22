@@ -18,12 +18,20 @@ const InsertPro5Styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imgPro5: {
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
+    borderRadius:55,
   },
   imgPro5Container: {
     marginTop: 30,
     alignItems: 'center',
+  },
+  containerimage:{
+    width: 110,
+    height: 110,
+    borderRadius:60,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textPro5: {
     color: 'black',
@@ -66,6 +74,11 @@ const InsertPro5Styles = StyleSheet.create({
   },
   imgphotoContainer:{
     alignItems: 'center',
+  },
+  iconedit:{
+    width: 24,
+    height: 24,
+    tintColor: 'black',
   }
 });
 export default InsertPro5Styles;

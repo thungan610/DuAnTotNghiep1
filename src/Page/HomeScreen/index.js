@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
 import AxiosInstanceSP from "../api/AxiosInstanceSP";
 import HomeStyle from './style';
+import { useSelector } from 'react-redux';
 
 const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
@@ -9,8 +10,14 @@ const HomeScreen = (props) => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("all");
+
+
     const [refreshing, setRefreshing] = useState(false);
     const screenWidth = Dimensions.get('window').width;
+    const user = useSelector(state => state.user);
+
+    const userid = user?.userData?._id || 'default_id';
+
 
     const banners = [
         require('../../../src/assets/banner/baner1.jpg'),
@@ -30,8 +37,8 @@ const HomeScreen = (props) => {
     const fetchProducts = async () => {
         try {
             setRefreshing(true);
-            const endpoint = selectedCategory === "all" 
-                ? "/products/getProducts" 
+            const endpoint = selectedCategory === "all"
+                ? "/products/getProducts"
                 : `/products/filter/${selectedCategory}`;
             const response = await AxiosInstanceSP().get(endpoint);
 
@@ -72,7 +79,8 @@ const HomeScreen = (props) => {
 
     const renderProductItem = ({ item }) => {
         const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
-    
+
+
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -82,26 +90,29 @@ const HomeScreen = (props) => {
                         oum: item.oum,
                         origin: item.origin,
                         preserve: item.preserve?.preserve_name,
-                        uses: item.uses,
+                        uses: userid,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,
                         images: item.images || [imageUri],
+                        category: item.category?.category_id || 'unknown',
+                        categoryName: item.category?.category_name || 'unknown',
                     };
-                    if (selectedCategory === "5" || selectedCategory === "6") {
+
+                    if (item.category?.category_id === "6606b733ccf861171c336d91") {
                         props.navigation.navigate('Detailbottle', { product: Detail });
                     } else {
                         props.navigation.navigate('Detail', { product: Detail });
                     }
+
                 }}
             >
                 <View style={HomeStyle.productContainer}>
                     <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
                     <View style={HomeStyle.productDetails}>
-                        <Text style={HomeStyle.productTitle}>{item.name || 'Không có tên'}</Text>
+                        <Text style={HomeStyle.productTitle} numberOfLines={1} >{item.name || 'Không có tên'}</Text>
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                         <View style={HomeStyle.priceall}>
-                            <Image style={HomeStyle.price} source={require('../../../src/assets/Dollar.png')} />
                             <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
                         </View>
                     </View>
@@ -109,11 +120,12 @@ const HomeScreen = (props) => {
             </TouchableOpacity>
         );
     };
-    
 
     return (
         <View>
-            <ScrollView style={HomeStyle.container}>
+            <ScrollView style={HomeStyle.container}
+                showsVerticalScrollIndicator={false}  >
+
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
@@ -129,7 +141,7 @@ const HomeScreen = (props) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Chat.png')}
+                                source={require('../../../src/assets/chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
@@ -145,6 +157,7 @@ const HomeScreen = (props) => {
                 </View>
 
                 <ScrollView
+
                     ref={scrollViewRef}
                     horizontal
                     pagingEnabled
@@ -180,12 +193,15 @@ const HomeScreen = (props) => {
                 </ScrollView>
 
                 <FlatList
+
                     data={products}
                     renderItem={renderProductItem}
                     keyExtractor={item => item._id.toString()}
                     numColumns={2}
                     scrollEnabled={false}
+                    showsHorizontalScrollIndicator={false}
                 />
+                <View style={{ height: 40 }} />
             </ScrollView>
         </View>
     );

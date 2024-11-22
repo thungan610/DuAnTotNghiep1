@@ -83,9 +83,10 @@ import { StyleSheet } from "react-native";
             marginRight: 10,
         },
         total: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            borderColor: '#27AAE1',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            // alignItems: 'center',
         },
         totalPrice: {
             fontSize: 24,

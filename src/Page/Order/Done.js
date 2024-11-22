@@ -1,7 +1,62 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import axiosInstance from '../api/AxiosInstance';
+import { useDispatch, useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const Done = (prop) => {
+    const { order } = prop.route.params;
+    const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const userid = user?.userData?._id || 'default_id';
+
+    const transferOptions = [
+        { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+        { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+        { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    ];
+
+    const getShippingLabel = (ship) => {
+        const option = transferOptions.find(option => option.ship === ship.toString());
+        return option ? option.label : "Không xác định";
+    };
+
+    const addToCartHandler = async () => {
+        const productsToAdd = order.products.map(product => ({
+            id: product._id,
+            name: product.name,
+            price: product.price,
+            quantity: product.quantity,
+            category: product.category,
+            images: product.images,
+            selected: true,
+        }));
+
+        try {
+            const response = await axiosInstance.post('/carts/addCart_App', {
+                user: userid,
+                products: productsToAdd,
+            });
+
+            if (response.data.error) {
+
+            } else {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm thành công!',
+                    visibilityTime: 2000,
+                    position: 'top'
+                });
+                prop.navigation.navigate('AddProduct');
+
+                productsToAdd.forEach(product => dispatch(addToCart(product)));
+            }
+        } catch (error) {
+
+        }
+    };
+
 
     return (
         <View style={DoneStyle.container}>
@@ -19,47 +74,50 @@ const Done = (prop) => {
                 </View>
                 <View style={DoneStyle.header}>
                     <Text style={DoneStyle.headerText}>Thông tin vận chuyển</Text>
-                    <Text style={DoneStyle.subText}>17h00, Ngày 19/9/2024, Nhanh</Text>
+                    <Text style={DoneStyle.subText}>
+                        {`${new Date().getHours()}h${new Date().getMinutes()}, Ngày ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`}
+                        , {getShippingLabel(order.ship)}
+                    </Text>
                 </View>
+
 
                 <View style={DoneStyle.address}>
                     <Text style={DoneStyle.label}>Địa chỉ:</Text>
-                    <Text>Số nhà 123, hẻm 222, khu phố 4</Text>
-                    <Text>Hiệp Thành, quận 12, Hồ Chí Minh</Text>
+                    <Text>{`Số nhà ${order.address.houseNumber}, hẻm ${order.address.alley}, ${order.address.quarter}`}</Text>
+                    <Text>{`${order.address.district}, ${order.address.city}, ${order.address.country}`}</Text>
                 </View>
 
-                <View style={DoneStyle.product}>
-                    <Image
-                        source={require('../../assets/image/image1.png')}
-                        style={DoneStyle.productImage}
-                    />
-                    <View style={DoneStyle.productInfo}>
-                        <Text style={DoneStyle.productName}>Bắp cải trắng</Text>
-                        <Text style={DoneStyle.category}>Rau củ</Text>
-                        <Text style={DoneStyle.price}>$ 19.000đ</Text>
+                {order.products.map((product, index) => (
+                    <View key={index} style={DoneStyle.product}>
+                        <Image source={{ uri: product.images[0] }} style={DoneStyle.productImage} />
+                        <View style={DoneStyle.productInfo}>
+                            <Text style={DoneStyle.productName}>{product.name}</Text>
+                            <Text style={DoneStyle.category}>{product.category.category_name}</Text>
+                            <Text style={DoneStyle.price}>{`${product.price}.000 đ`}</Text>
+                        </View>
                     </View>
-                </View>
+                ))}
+
 
                 <View style={DoneStyle.paymentInfo}>
                     <Text style={DoneStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>Tổng tiền sản phẩm: 19.000</Text>
-                    <Text>Tiền vận chuyển: 10.000</Text>
-                    <Text style={DoneStyle.total}>Tổng thanh toán: 29.000</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
+                    <Text style={DoneStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
                 </View>
-
                 <View style={DoneStyle.buttonContainer}>
                     <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
-                    <Text style={DoneStyle.text}>Tôi muốn hoàn trả?</Text>
+                        <Text style={DoneStyle.text}>Tôi muốn hoàn trả?</Text>
 
                     </TouchableOpacity>
-              <TouchableOpacity onPress={() => prop.navigation.navigate('Payment')} style={DoneStyle.buttonnhan}>
-                <Text style={DoneStyle.buttonTextnhan}>Mua lại</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={DoneStyle.buttonhuy}>
-                <Text style={DoneStyle.buttonTexthuy}>Đánh giá</Text>
-              </TouchableOpacity>
-            </View>
+                    <TouchableOpacity onPress={addToCartHandler} style={DoneStyle.buttonnhan}>
+                        <Text style={DoneStyle.buttonTextnhan}>Mua lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={DoneStyle.buttonhuy}>
+                        <Text style={DoneStyle.buttonTexthuy}>Đánh giá</Text>
+                    </TouchableOpacity>
+                </View>
 
             </View>
 
@@ -97,8 +155,6 @@ const DoneStyle = StyleSheet.create({
         borderRadius: 10,
         borderColor: 'black',
         borderWidth: 1,
-        marginTop: 20,
-        height:450,
     },
     headertop: {
         flexDirection: 'row',
@@ -123,8 +179,6 @@ const DoneStyle = StyleSheet.create({
         marginBottom: 10,
         marginTop: 20,
         paddingLeft: 20,
-
-
     },
     headerText: {
         fontSize: 18,
@@ -190,10 +244,8 @@ const DoneStyle = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        flex: 1,
-        justifyContent: 'flex-end'
-      },
-      buttonnhan: {
+    },
+    buttonnhan: {
         backgroundColor: 'white',
         padding: 5,
         borderRadius: 5,
@@ -204,8 +256,8 @@ const DoneStyle = StyleSheet.create({
         borderColor: '#BBAFAF',
         justifyContent: 'center',
         alignItems: 'center'
-      },
-      buttonhuy: {
+    },
+    buttonhuy: {
         backgroundColor: 'white',
         padding: 5,
         borderWidth: 1,
@@ -216,20 +268,20 @@ const DoneStyle = StyleSheet.create({
         borderColor: '#FF7400',
         justifyContent: 'center',
         alignItems: 'center'
-      },
-      buttonTextnhan: {
+    },
+    buttonTextnhan: {
         color: 'black',
         fontSize: 16,
-      },
-      buttonTexthuy: {
+    },
+    buttonTexthuy: {
         color: '#FF7400',
         fontSize: 16,
-      },
-      text:{
+    },
+    text: {
         color: 'red',
-        marginTop:5,
-        marginRight:55,
-      }
+        marginTop: 5,
+        marginRight: 20,
+    }
 });
 
 export default Done;

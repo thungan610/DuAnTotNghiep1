@@ -1,32 +1,45 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import PaymentStyle from "./style";
 import VoucherStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 import PayMethodStyle from "../PayMethod/style";
+
 const VoucherData = [
     {
         id: 1,
         voucher: "Giảm 15.000đ",
+        price: "15",
         Dieukien: "Cho hoá đơn từ 80.000đ",
         time: "Vô thời hạn",
     },
     {
         id: 2,
         voucher: "Giảm 10%",
+        price: "10%",
         Dieukien: "Cho hoá đơn này 100.000đ",
         time: "Từ 00h-23h ngày 24 tháng 12 ngày lễ Noel",
     }
-]
+];
+
 const Voucher = (prop) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     const handlePress = (index) => {
-        setSelectedIndex(index)
-    }
+        const selectedVoucher = VoucherData[index];
+        const minOrderValue = parseFloat(selectedVoucher.Dieukien.match(/\d+/)[0]);
+        if (prop.route.params.totalPrice >= minOrderValue) {
+            setSelectedIndex(index);
+            prop.navigation.navigate("Payment", { selectedVoucher });
+        } else {
+            Alert.alert("Thông báo", `Tổng tiền sản phẩm phải từ ${minOrderValue.toLocaleString()}.000 đ để áp dụng khuyến mãi này.`);
+        }
+    };
+
     const BackRight = () => {
-        prop.navigation.goBack()
-    }
+        prop.navigation.goBack();
+    };
+
     return (
         <View style={VoucherStyle.container}>
             <View style={[AddAdressStyle.header, { padding: 20 }]}>
@@ -65,8 +78,8 @@ const Voucher = (prop) => {
                 </TouchableOpacity>
             </View>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     selectedButton: {
@@ -84,4 +97,5 @@ const styles = StyleSheet.create({
         shadowColor: '#8B8B8B',
     },
 });
+
 export default Voucher;

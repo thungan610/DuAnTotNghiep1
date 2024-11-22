@@ -1,93 +1,101 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const baseWidth = 375; 
+const baseHeight = 667;
+
+const scaleWidth = (size) => (width / baseWidth) * size;
+
+
+const scaleHeight = (size) => (height / baseHeight) * size;
 
 const InsertAddressStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   textH: {
-    fontSize: 24,
+    fontSize: scaleWidth(24),
     fontWeight: 'bold',
     color: 'black',
-    marginLeft: 95,
+    marginLeft: scaleWidth(95),
   },
   iconback: {
-    width: 24,
-    height: 30,
-    marginTop: 2,
+    width: scaleWidth(24),
+    height: scaleHeight(30),
+    marginTop: scaleHeight(2),
   },
   headers: {
     flexDirection: 'row',
-    marginLeft: 20,
-    marginTop: 20,
+    marginLeft: scaleWidth(20),
+    marginTop: scaleHeight(20),
     width: '100%',
     alignItems: 'center',
   },
   infoFContainer: {
-    padding: 20,
+    padding: scaleWidth(20),
     borderWidth: 1,
-    width: 333,
-    height: 160,
+    width: scaleWidth(333),
+    height: scaleHeight(160),
     borderColor: '#C4C4C4',
-    marginLeft: 30,
-    marginTop: 10,
-    borderRadius: 10,
+    marginTop: scaleHeight(10),
+    borderRadius: scaleWidth(10),
   },
   infoFContainer2: {
-    padding: 20,
+    padding: scaleWidth(20),
     borderWidth: 1,
-    width: 333,
-    height: 270,
+    width: scaleWidth(333),
+    height: scaleHeight(340),
     borderColor: '#C4C4C4',
-    marginLeft: 30,
-    marginTop: 10,
-    borderRadius: 10,
+    marginTop: scaleHeight(10),
+    borderRadius: scaleWidth(10),
   },
-  textInfo:{
+  textInfo: {
     color: 'black',
-    fontSize: 17,
+    fontSize: scaleWidth(17),
     borderColor: '#ABABAB',
     borderBottomWidth: 1,
-    height: 40,
+    height: scaleHeight(40),
   },
-  textInfoCountry:{
+  textInfoCountry: {
     color: 'black',
-    fontSize: 17,
+    fontSize: scaleWidth(17),
     borderColor: '#ABABAB',
     borderBottomWidth: 1,
-    height: 40,
+    height: scaleHeight(40),
   },
- 
-  phone:{
+  phone: {
     color: 'black',
-    fontSize: 17,
+    fontSize: scaleWidth(17),
     borderColor: '#ABABAB',
     borderBottomWidth: 1,
-    height: 40,
-    marginTop: 17,
+    height: scaleHeight(40),
+    marginTop: scaleHeight(17),
   },
-  titleInfo:{
+  titleInfo: {
     color: 'black',
-    fontSize: 20,
-    marginTop:10,
-    marginLeft: 40,
+    fontSize: scaleWidth(20),
+    marginTop: scaleHeight(10),
+    marginLeft: scaleWidth(40),
   },
-  footer:{
-    // flex: 1,
-    marginTop: 70,
-    padding:10,
-},
-button:{
-  backgroundColor: "#27AAE1",
-  borderRadius: 10,
-  padding: 15,
-  marginTop: 20,
-  width: '100%',
-
-},
-buttonText:{    
-  color: 'white',
-  textAlign: 'center',
-  fontFamily: 'Poppins',
-  fontWeight: 'bold',
-  fontSize: 16
-},
-
+  footer: {
+    marginTop: scaleHeight(30),
+    padding: scaleWidth(10),
+  },
+  button: {
+    backgroundColor: "#27AAE1",
+    borderRadius: scaleWidth(10),
+    padding: scaleHeight(15),
+    marginTop: scaleHeight(20),
+    width: '100%',
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontFamily: 'Poppins',
+    fontWeight: 'bold',
+    fontSize: scaleWidth(16),
+  },
 });
+
 export default InsertAddressStyles;
