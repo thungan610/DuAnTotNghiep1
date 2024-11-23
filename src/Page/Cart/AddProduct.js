@@ -72,10 +72,9 @@ const AddProduct = ({ route, navigation }) => {
 
     const user = useSelector(state => state.user);
     console.log('user', user);
-    const userId = user?.userData?._id || 'default_id';
+    const userId = user?.userData?._id ;
     console.log('userId', userId);
-
-   
+    
 
     const getCart = async () => {
         try {
