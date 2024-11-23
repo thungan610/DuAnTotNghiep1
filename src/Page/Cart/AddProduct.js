@@ -75,19 +75,7 @@ const AddProduct = ({ route, navigation }) => {
     const userId = user?.userData?._id || 'default_id';
     console.log('userId', userId);
 
-    useEffect(() => {
-        if (!user?.userData?._id) {
-            Alert.alert(
-                "Thông báo",
-                "Bạn cần đăng nhập để truy cập giỏ hàng.",
-                [
-                    { text: "Đăng nhập", onPress: () => navigation.navigate('Login') },
-                    { text: "Hủy", style: "cancel" },
-                ]
-            );
-        }
-    }, [user, navigation]);
-    
+   
 
     const getCart = async () => {
         try {
@@ -149,7 +137,7 @@ const AddProduct = ({ route, navigation }) => {
             try {
                 await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
             } catch (error) {
-                console.error('Lỗi khi lưu giỏ hàng vào AsyncStorage:', error);
+                
             }
         };
 

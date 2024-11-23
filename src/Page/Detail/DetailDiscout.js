@@ -238,7 +238,7 @@ const DetailDiscout = (prop) => {
                                             alignItems: 'center',
                                             padding: 5
                                         }}>
-                                        <Image style={styleDetailDiscout.dolar} source={require('../../assets/Dollar.png')} />
+                                        {/* <Image style={styleDetailDiscout.dolar} source={require('../../assets/Dollar.png')} /> */}
                                         <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
                                     </View>
                                 </View>

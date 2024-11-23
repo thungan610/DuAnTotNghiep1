@@ -145,8 +145,9 @@ const Payment = ({ route, navigation }) => {
             
 
             if (selectedMethod === 'cash') {
-                await updateCartStatus(cartIds, 0);
                 navigation.navigate('OrderSuccess');
+                await updateCartStatus(cartIds, 0);
+               
             } else {
                 await createPayment(idorder);
             }

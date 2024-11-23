@@ -1,16 +1,17 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
-const NewNotifi = (prop) => {
+const NewNotifi = ({ navigation }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Uncomment and replace 'YOUR_API_URL' with your API endpoint when you are ready to fetch notifications.
     // useEffect(() => {
     //     const fetchNotifications = async () => {
     //         try {
-    //             const response = await fetch('YOUR_API_URL'); // Thay thế YOUR_API_URL bằng API của bạn
+    //             const response = await fetch('YOUR_API_URL'); // Replace with your API endpoint
     //             const data = await response.json();
-    //             setNotifications(data); // Giả sử API trả về mảng thông báo
+    //             setNotifications(data); // Assuming the API returns an array of notifications
     //         } catch (error) {
     //             console.error('Error fetching notifications:', error);
     //         } finally {
@@ -30,8 +31,13 @@ const NewNotifi = (prop) => {
     return (
         <View style={NewnotifiStyle.container}>
             <View style={NewnotifiStyle.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={NewnotifiStyle.backButton}>
+                    <Image
+                        style={NewnotifiStyle.iconBack}
+                        source={require('../../assets/notifi/backright.png')}
+                    />
+                </TouchableOpacity>
                 <Text style={NewnotifiStyle.tieude}>Thông báo</Text>
-                <Text />
             </View>
 
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -43,7 +49,7 @@ const NewNotifi = (prop) => {
                             data={notifications}
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id.toString()}
-                            scrollEnabled={false} // Để `FlatList` không cuộn riêng, sử dụng `ScrollView`
+                            scrollEnabled={false}
                         />
                     )}
                 </View>
@@ -62,19 +68,25 @@ const NewnotifiStyle = StyleSheet.create({
         padding: 20,
     },
     header: {
-        justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+        padding: 10,
     },
     iconBack: {
         width: 34,
         height: 35,
-        tintColor: "black",
+        tintColor: 'black',
     },
     tieude: {
         fontSize: 24,
-        color: "black",
-        fontWeight: "bold",
-        fontFamily: "Poppins"
+        color: 'black',
+        fontWeight: 'bold',
+        fontFamily: 'Poppins',
     },
     body: {
         flex: 1,

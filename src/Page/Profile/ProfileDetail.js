@@ -9,6 +9,8 @@ const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id;
+  console.log('userid', userid);
+  
 
   console.log('profileData: ', profileData);
   
@@ -20,7 +22,8 @@ const ProfileDetail = (prop) => {
         return;
       }
       try {
-        const response = await axiosInstance.get(`http://192.168.1.10:3000/users/${userid}/getProfileApp`);
+        const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
+        
         console.log('Profile data:', response.data);
         setProfileData(response.data);
       } catch (error) {

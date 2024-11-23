@@ -7,17 +7,14 @@ import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
 import Toast from 'react-native-toast-message';
 
+const MAX_QUANTITY = 10; // Set maximum quantity limit
+
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
-
-    console.log('product', product);
 
     const dispatch = useDispatch();
     const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
-
-    console.log('productDetails', productDetails.id);
-    
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
@@ -84,8 +81,13 @@ const Detail = ({ route, navigation }) => {
         getCategoriesAndPreserves();
     }, []);
 
-
-    const increaseQuantity = () => setQuantity(prevQuantity => prevQuantity + 1);
+    const increaseQuantity = () => {
+        if (quantity < productDetails.quantity) {
+            setQuantity(prevQuantity => prevQuantity + 1);
+        } else {
+            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${productDetails.quantity} sản phẩm.`);
+        }
+    };
 
     const decreaseQuantity = () => {
         if (quantity > 1) {
@@ -113,7 +115,7 @@ const Detail = ({ route, navigation }) => {
             );
             return;
         }
-    
+
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
@@ -123,7 +125,6 @@ const Detail = ({ route, navigation }) => {
             images: product.images,
             selected: true,
         };
-        console.log('productToAdd', productToAdd);
     
         try {
             const response = await AxiosInstance.post('/carts/addCart_App', {
@@ -141,7 +142,7 @@ const Detail = ({ route, navigation }) => {
                     visibilityTime: 2000,
                     position: 'top'
                 });
-    
+
                 dispatch(addToCart(productToAdd));
             }
         } catch (error) {
@@ -149,7 +150,6 @@ const Detail = ({ route, navigation }) => {
             Alert.alert('Thông báo', errorMessage);
         }
     };
-    
 
     const renderImages = () => images.map((item, index) => (
         <View key={index}>
@@ -162,6 +162,7 @@ const Detail = ({ route, navigation }) => {
             width: 10, height: 10, borderRadius: 5, backgroundColor: selectedIndex === index ? 'black' : 'gray', margin: 5,
         }} />
     ));
+
     return (
         <View style={styleDetail.container}>
             <View style={styleDetail.head}>
@@ -198,7 +199,6 @@ const Detail = ({ route, navigation }) => {
                                     <TouchableOpacity onPress={increaseQuantity}><Text style={styleDetail.textTout}>+</Text></TouchableOpacity>
                                 </View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
-                                    <Image style={styleDetail.dolar} source={require('../../assets/Dollar.png')} />
                                     <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>
@@ -221,10 +221,13 @@ const Detail = ({ route, navigation }) => {
                                     <Text style={styleDetail.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
                                 </View>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Số lượng tồn kho: </Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.quantity || 'Chưa có thông tin'}</Text>
+                                </View>
                                 <View>
                                     <Text style={styleDetail.textorigin}>Công dụng: </Text>
                                     <Text style={styleDetail.textorigin}>• {productDetails.description || 'Chưa có thông tin'}</Text>
-
                                 </View>
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
