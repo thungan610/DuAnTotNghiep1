@@ -198,7 +198,7 @@ const Detail = ({ route, navigation }) => {
                                     <Text style={styleDetail.toutText}>{quantity}</Text>
                                     <TouchableOpacity onPress={increaseQuantity}><Text style={styleDetail.textTout}>+</Text></TouchableOpacity>
                                 </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}> 
                                     <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>

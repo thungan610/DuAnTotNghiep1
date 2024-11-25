@@ -13,7 +13,6 @@ import Payment from "../src/Page/Payment/Payment/index.js";
 import PayMethod from "../src/Page/Payment/PayMethod/index.js";
 import Voucher from "../src/Page/Payment/Voucher/index.js";
 import AddTranfer from "../src/Page/Payment/AddTranfer/index.js";
-import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 import Login_required from "../src/Page/Login/Login_required/index.js";
 import ForgotPassword from "../src/Page/ForgotPassword/index.js";
 import ResetPassword from "../src/Page/ForgotPassword/ResetPassword.js/index.js";
@@ -42,7 +41,7 @@ import DetailDiscout from "../src/Page/Detail/DetailDiscout.js";
 import Detailbottle from "../src/Page/Detail/Detailbottle.js";
 import UpdateProfile from "../src/Page/Profile/UpdateProfile.js";
 import Payos from "../src/Page/Payment/Payos/Payos.js";
-import OrderSuccess from "../src/Page/Payment/PaySusses/index.js";
+import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 import Done from "../src/Page/Order/Done.js";
 import Promotion from "../src/Page/Promotion/index.js";
 const Stack = createNativeStackNavigator();
@@ -96,7 +95,7 @@ const MainStack = () => {
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
             <Stack.Screen name="UpdateProfile" component={UpdateProfile}/>
             <Stack.Screen name="Payos" component={Payos}/>
-            <Stack.Screen name="OrderSuccess" component={OrderSuccess}/>
+            <Stack.Screen name="PaySussesScreen" component={PaySusses}/>
             <Stack.Screen name="Done" component={Done}/>
             <Stack.Screen name="Promotion" component={Promotion}/>
         </Stack.Navigator >

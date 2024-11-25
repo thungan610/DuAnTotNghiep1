@@ -19,7 +19,6 @@ const ProfileDetail = (prop) => {
       }
       try {
         const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
-        
         console.log('Profile data:', response.data);
         setProfileData(response.data);
       } catch (error) {
