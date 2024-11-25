@@ -121,6 +121,7 @@ const TabAddress = (prop) => {
         </TouchableOpacity>
         <Text style={TabAddressStyle.textH}>Địa chỉ</Text>
       </View>
+      <View>
       <FlatList
         data={data}
         keyExtractor={(item) => item._id}
@@ -136,6 +137,7 @@ const TabAddress = (prop) => {
           <Text style={TabAddressStyle.textA}>Địa chỉ nhận hàng</Text>
         </View>
       </TouchableOpacity>
+      </View>
     </View>
   );
 };

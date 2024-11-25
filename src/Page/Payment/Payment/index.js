@@ -145,8 +145,10 @@ const Payment = ({ route, navigation }) => {
             
 
             if (selectedMethod === 'cash') {
-                await updateCartStatus(cartIds, 0);
                 navigation.navigate('OrderSuccess');
+                await updateCartStatus(cartIds, 0);
+                await updateCartStatus(cartIds, 0);
+                navigation.navigate('PaySuccessScreen');
             } else {
                 await createPayment(idorder);
             }
@@ -296,7 +298,6 @@ const Payment = ({ route, navigation }) => {
                                 <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                 <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                 <View style={PaymentStyle.ViewPrice}>
-                                    <Image source={require("../../../assets/notifi/Dollar.png")} />
                                     <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
                                 </View>
                             </View>

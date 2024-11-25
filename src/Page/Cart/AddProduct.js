@@ -136,7 +136,7 @@ const AddProduct = ({ route, navigation }) => {
             try {
                 await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
             } catch (error) {
-                console.error('Lỗi khi lưu giỏ hàng vào AsyncStorage:', error);
+                
             }
         };
 

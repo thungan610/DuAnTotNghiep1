@@ -88,6 +88,7 @@ const HomeScreen = (props) => {
                         id: item._id,
                         name: item.name,
                         oum: item.oum,
+                        quantity: item.quantity,
                         origin: item.origin,
                         preserve: item.preserve?.preserve_name,
                         uses: userid,
@@ -109,13 +110,15 @@ const HomeScreen = (props) => {
             >
                 <View style={HomeStyle.productContainer}>
                     <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
-                    <View style={HomeStyle.productDetails}>
-                        <Text style={HomeStyle.productTitle} numberOfLines={1} >{item.name || 'Không có tên'}</Text>
+
+                        <Text style={HomeStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
+              
+
                         <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                         <View style={HomeStyle.priceall}>
                             <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
                         </View>
-                    </View>
+                    
                 </View>
             </TouchableOpacity>
         );
@@ -141,7 +144,7 @@ const HomeScreen = (props) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/chat.png')}
+                                source={require('../../../src/assets/Chat.png')}
                             />
                         </View>
                     </TouchableOpacity>

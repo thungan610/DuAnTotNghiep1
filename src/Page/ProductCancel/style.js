@@ -20,6 +20,7 @@
         padding:10,
         marginTop: 10,
         borderRadius:10,
+        marginBottom:40
     },
     boxProduct1:{
         flexDirection: 'row',
@@ -89,7 +90,8 @@
     buttonContainer:{
         flexDirection:'row',
         marginTop:10,
-        justifyContent:'flex-end'
+        justifyContent:'flex-end',
+        marginBottom:20
     },
     textButton:{
         fontSize:18,

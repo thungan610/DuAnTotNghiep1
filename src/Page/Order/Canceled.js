@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
 import Toast from 'react-native-toast-message';
@@ -67,7 +67,7 @@ const Canceled = (prop) => {
                 <Text style={CanceledStyle.title}>Đơn hàng</Text>
             </View>
 
-            <View style={CanceledStyle.body}>
+            <ScrollView style={CanceledStyle.body}>
 
                 <View style={CanceledStyle.banner}>
                     <Text style={CanceledStyle.bannerText}>Đơn hàng đã hủy</Text>
@@ -110,7 +110,7 @@ const Canceled = (prop) => {
                 <TouchableOpacity onPress={addToCartHandler} style={CanceledStyle.cancelButton}>
                     <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -150,6 +150,7 @@ const CanceledStyle = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         marginTop: 20,
+        marginBottom: 40
     },
     headertop: {
         flexDirection: 'row',

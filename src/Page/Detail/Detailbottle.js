@@ -207,7 +207,6 @@ const Detailbottle = ({ route, navigation }) => {
                                     <TouchableOpacity onPress={increaseQuantity}><Text style={styleDetailbottle.textTout}>+</Text></TouchableOpacity>
                                 </View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
-                                    <Image style={styleDetailbottle.dolar} source={require('../../assets/Dollar.png')} />
                                     <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
                                 </View>
                             </View>

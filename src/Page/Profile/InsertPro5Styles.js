@@ -20,7 +20,9 @@ const InsertPro5Styles = StyleSheet.create({
   imgPro5: {
     width: 110,
     height: 110,
-    borderRadius:55,
+    borderRadius: 55,
+    borderWidth:2,
+    borderColor:"#1C75BC"
   },
   imgPro5Container: {
     marginTop: 30,
