@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 const Delivering = (prop) => {
     const { order } = prop.route.params;
@@ -24,7 +24,7 @@ const Delivering = (prop) => {
                 <Text style={DeliveringStyle.title}>Đơn hàng</Text>
             </View>
 
-            <View style={DeliveringStyle.body}>
+            <ScrollView style={DeliveringStyle.body}>
                 <View style={DeliveringStyle.banner}>
                     <Text style={DeliveringStyle.bannerText}>Đơn hàng đang giao</Text>
                 </View>
@@ -62,7 +62,7 @@ const Delivering = (prop) => {
                     <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
                     <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -95,6 +95,7 @@ const DeliveringStyle = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         marginTop: 20,
+        marginBottom: 40
     },
     headertop: {
         flexDirection: 'row',

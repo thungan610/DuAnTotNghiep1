@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 const Processing1 = (prop) => {
     const { order } = prop.route.params;
@@ -24,7 +24,8 @@ const Processing1 = (prop) => {
                 </TouchableOpacity>
                 <Text style={ProcessingStyle.title}>Đơn hàng</Text>
             </View>
-            <View style={ProcessingStyle.body}>
+        
+            <ScrollView style={ProcessingStyle.body}>
                 <View style={ProcessingStyle.banner}>
                     <Text style={ProcessingStyle.bannerText}>Đơn hàng đang xử lý</Text>
                 </View>
@@ -69,8 +70,7 @@ const Processing1 = (prop) => {
                 >
                     <Text style={ProcessingStyle.cancelButtonText}>Hủy đơn</Text>
                 </TouchableOpacity>
-
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -109,6 +109,7 @@ const ProcessingStyle = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         marginTop: 20,
+        marginBottom:40
     },
     headertop: {
         flexDirection: 'row',
@@ -157,8 +158,8 @@ const ProcessingStyle = StyleSheet.create({
         paddingLeft: 10,
     },
     productImage: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         marginRight: 10,
         borderWidth: 1,
         borderRadius: 5,
@@ -166,21 +167,20 @@ const ProcessingStyle = StyleSheet.create({
     },
     productInfo: {
         justifyContent: 'center',
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     productName: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         marginLeft: '10'
     },
     category: {
         color: '#777',
-        marginVertical: 2,
-        marginLeft: 10
+        // marginLeft: 10
     },
     price: {
         color: '#000',
-        marginLeft: 10
+        // marginLeft: 10
     },
     paymentInfo: {
         marginVertical: 10,

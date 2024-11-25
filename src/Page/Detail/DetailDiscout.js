@@ -107,7 +107,6 @@ const DetailDiscout = (prop) => {
                         <Text style={styleDiscout.textTout}>+</Text>
                     </TouchableOpacity>
                     <Text style={styleDiscout.under}>45.000d</Text>
-                    <Image style={styleDiscout.dolar} source={require('../../assets/Dollar.png')} />
                      <Text style={styleDiscout.price}>19.000d</Text>
                     <Text style={styleDiscout.price}>19.000d</Text>
                 </View>
@@ -238,7 +237,6 @@ const DetailDiscout = (prop) => {
                                             alignItems: 'center',
                                             padding: 5
                                         }}>
-                                        {/* <Image style={styleDetailDiscout.dolar} source={require('../../assets/Dollar.png')} /> */}
                                         <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
                                     </View>
                                 </View>

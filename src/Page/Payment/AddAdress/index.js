@@ -86,7 +86,12 @@ const AddAddress = (prop) => {
   return (
     <ScrollView style={AddAdressStyle.container}>
       <View style={AddAdressStyle.header}>
-        <TouchableOpacity onPress={goBack}>
+        <TouchableOpacity onPress={goBack}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+          }} >
           <Image
             style={AddAdressStyle.backright}
             source={require("../../../assets/notifi/backright.png")}

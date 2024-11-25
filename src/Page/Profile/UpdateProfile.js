@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, Alert, PermissionsAndroid } from "react-native";
 import UpdateProfileStyle from "./UpdateProfileStyle";
 import InsertPro5Styles from "../Profile/InsertPro5Styles";
-import axios from "axios";
+// import axios from "axios";
+import axiosInstance from "../api/AxiosInstance";
 import { useSelector } from "react-redux";
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
@@ -34,7 +35,7 @@ const UpdateProfile = (props) => {
                 return;
             }
             try {
-                const response = await axios.get(`http://192.168.1.10:3000/users/${userid}/getProfileApp`);
+                const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
                 const data = response.data.data;
                 setName(data.name || '');
                 setBio(data.bio || '');
@@ -177,7 +178,7 @@ const UpdateProfile = (props) => {
         }
 
         try {
-            const response = await axios.put(`http://192.168.1.10:3000/users/${userid}/updateProfile`, {
+            const response = await axiosInstance.put(`/users/${userid}/updateProfile`, {
                 name,
                 bio,
                 gender,

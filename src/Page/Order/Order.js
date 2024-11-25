@@ -161,11 +161,13 @@ const Order = ({ navigation, route }) => {
   return (
     <View style={OrderStyle.container}>
       <View style={OrderStyle.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={OrderStyle.backButton}>
-          <Image
-            source={require('../../assets/notifi/backright.png')}
-            style={OrderStyle.backIcon}
-          />
+        <TouchableOpacity onPress={() => navigation.goBack()}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+          }} >
+          <Image source={require('../../assets/notifi/backright.png')} />
         </TouchableOpacity>
         <Text style={OrderStyle.title}>Đơn hàng</Text>
       </View>
@@ -213,7 +215,7 @@ const OrderStyle = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent:'center'
     
   },
   title: {

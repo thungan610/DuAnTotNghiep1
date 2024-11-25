@@ -31,13 +31,16 @@ const NewNotifi = ({ navigation }) => {
     return (
         <View style={NewnotifiStyle.container}>
             <View style={NewnotifiStyle.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={NewnotifiStyle.backButton}>
-                    <Image
-                        style={NewnotifiStyle.iconBack}
-                        source={require('../../assets/notifi/backright.png')}
-                    />
+                <TouchableOpacity onPress={() => navigation.goBack()}
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                    }} >
+                <Image source={require('../../assets/notifi/backright.png')} />
                 </TouchableOpacity>
                 <Text style={NewnotifiStyle.tieude}>Thông báo</Text>
+                <Text />
             </View>
 
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
