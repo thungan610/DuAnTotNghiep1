@@ -35,8 +35,8 @@ const ProductCancel = (prop) => {
         <Text style={ProductCancelStyle.headerText}>Hủy đơn</Text>
       </View>
 
-      <View style={ProductCancelStyle.boxProduct}>
-        <ScrollView style={ProductCancelStyle.orderContainer}>
+      <ScrollView style={ProductCancelStyle.boxProduct}>
+        <View style={ProductCancelStyle.orderContainer}>
           {order.products.map((product, index) => (
             <View key={product.id} style={ProductCancelStyle.orderCard}>
               <View style={ProductCancelStyle.borderimage}>
@@ -55,31 +55,31 @@ const ProductCancel = (prop) => {
               </View>
             </View>
           ))}
-        </ScrollView>
-
-        <View>
-          <TextInput
-            style={ProductCancelStyle.input}
-            placeholder="Hãy nhập lý do bạn muốn hủy đơn này nhé!!!"
-            multiline={true}
-            numberOfLines={5}
-            onChangeText={(text) => setDescription(text)}
-            value={description}
-          />
-        </View>
-
-        <View style={ProductCancelStyle.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => prop.navigation.navigate('Processing1', { order: order })}
-            style={ProductCancelStyle.button}>
-            <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>
-            <Text style={ProductCancelStyle.textButton1}>Hủy đơn</Text>
-          </TouchableOpacity>
-        </View>
       </View>
-    </View>
+
+      <View>
+        <TextInput
+          style={ProductCancelStyle.input}
+          placeholder="Hãy nhập lý do bạn muốn hủy đơn này nhé!!!"
+          multiline={true}
+          numberOfLines={5}
+          onChangeText={(text) => setDescription(text)}
+          value={description}
+        />
+      </View>
+
+      <View style={ProductCancelStyle.buttonContainer}>
+        <TouchableOpacity
+          onPress={() => prop.navigation.navigate('Processing1', { order: order })}
+          style={ProductCancelStyle.button}>
+          <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>
+          <Text style={ProductCancelStyle.textButton1}>Hủy đơn</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+    </View >
   );
 };
 

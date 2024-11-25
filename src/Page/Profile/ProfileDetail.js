@@ -1,7 +1,6 @@
 import { View, Text, Image, TouchableOpacity, } from 'react-native';
 import { React, useEffect, useState } from 'react';
 import profileStyle from './ProfileDetailstyle';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
 
@@ -11,11 +10,8 @@ const ProfileDetail = (prop) => {
   const userid = user?.userData?._id;
   console.log('userid', userid);
   
-
   console.log('profileData: ', profileData);
   
-
-
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!userid) {
@@ -49,7 +45,7 @@ const ProfileDetail = (prop) => {
         <View style={profileStyle.headercontainer}>
           <TouchableOpacity>
             <Image
-              source={profileData && profileData.avatar ? { uri: profileData.avatar } : require('../../../src/assets/pro5img.png')}
+              source={profileData && profileData.avatar ? { uri: profileData.avatar } : require('../../assets/pro5img.png')}
               style={profileStyle.pro5logo}
               accessibilityLabel="Hình ảnh hồ sơ"
             />

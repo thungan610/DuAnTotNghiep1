@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import axiosInstance from '../api/AxiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
@@ -67,7 +67,7 @@ const Done = (prop) => {
                 <Text style={DoneStyle.title}>Đơn hàng</Text>
             </View>
 
-            <View style={DoneStyle.body}>
+            <ScrollView style={DoneStyle.body}>
 
                 <View style={DoneStyle.banner}>
                     <Text style={DoneStyle.bannerText}>Đơn hàng đã hoàn thành</Text>
@@ -119,10 +119,7 @@ const Done = (prop) => {
                     </TouchableOpacity>
                 </View>
 
-            </View>
-
-
-
+            </ScrollView>
 
         </View>
     );
@@ -154,7 +151,9 @@ const DoneStyle = StyleSheet.create({
     body: {
         borderRadius: 10,
         borderColor: 'black',
+        marginTop:20,
         borderWidth: 1,
+        marginBottom:40
     },
     headertop: {
         flexDirection: 'row',

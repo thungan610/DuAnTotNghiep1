@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import InsertPro5Styles from './InsertPro5Styles';
 // import axios from 'axios';
-import AxiosInstanceSP from '../api/AxiosInstanceSP';
+import AxiosInstance from '../api/AxiosInstance';
 import { useSelector } from 'react-redux';
 const InsertPro5 = (prop) => {
   const [profileData, setProfileData] = useState(null);
@@ -26,7 +26,7 @@ const InsertPro5 = (prop) => {
         return;
       }
       try {
-        const response = await AxiosInstanceSP().get(`http://192.168.1.10:3000/users/${userid}/getProfileApp`);
+        const response = await AxiosInstance.get(`/users/${userid}/getProfileApp`);
         console.log('Profile data:', response.data);
         setProfileData(response.data);
       } catch (error) {

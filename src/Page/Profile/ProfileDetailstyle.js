@@ -21,6 +21,8 @@ const profileStyle = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 45,
+    borderWidth:2,
+    borderColor:"#1C75BC"
   },
   pro5logo1: {
     width: 30,
@@ -48,7 +50,7 @@ const profileStyle = StyleSheet.create({
     flexDirection: 'column',
   },
   mid: {
-    width: '80%',
+    // width: '80%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

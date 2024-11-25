@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const AddAdressStyle = StyleSheet.create({ 
+const AddAdressStyle = StyleSheet.create({
 
     container: {
         height: '100%',
@@ -8,34 +8,29 @@ const AddAdressStyle = StyleSheet.create({
         backgroundColor: 'white',
         padding: 20,
     },
-    header:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    backright:{
-        width: 34,
-        height: 35,
-        tintColor: "black",
-    },
-    title:{
+    title: {
         fontSize: 20,
         color: "black",
         fontWeight: "bold",
         fontFamily: "Poppins",
-        textAlign:'center',
+        textAlign: 'center',
     },
-    body:{
-        width:'100%',
-        backgroundColor:'white',
+    body: {
+        width: '100%',
+        backgroundColor: 'white',
         borderColor: '#ABABAB',
         borderWidth: 1,
         borderRadius: 10,
         marginBottom: 10,
         padding: 10,
     },
-    input:{
-        width:'100%',
+    input: {
+        width: '100%',
         borderBottomColor: '#ABABAB',
         borderBottomWidth: 1,
         marginBottom: 10,
@@ -44,7 +39,7 @@ const AddAdressStyle = StyleSheet.create({
         color: 'black',
         fontFamily: 'Poppins',
     },
-    txtLH:{
+    txtLH: {
         fontSize: 16,
         color: 'black',
         fontFamily: 'Poppins',
@@ -52,19 +47,19 @@ const AddAdressStyle = StyleSheet.create({
         marginTop: 20,
         marginLeft: 20
     },
-    footer:{
+    footer: {
         // flex: 1,
         marginTop: 5
     },
-    button:{
+    button: {
         backgroundColor: "#27AAE1",
         borderRadius: 10,
         padding: 15,
-        paddingHorizontal:10,
+        paddingHorizontal: 10,
         width: '100%',
     },
-    buttonText:{
-        
+    buttonText: {
+
         color: 'white',
         textAlign: 'center',
         fontFamily: 'Poppins',
@@ -75,16 +70,16 @@ const AddAdressStyle = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap', // Cho phép các mục tự động xuống dòng nếu không đủ không gian
         marginVertical: 10,
-      },
-      cityItem: {
+    },
+    cityItem: {
         padding: 10,
         margin: 5,
         backgroundColor: '#f0f0f0',
         borderRadius: 5,
-      },
-      cityText: {
+    },
+    cityText: {
         fontSize: 16,
-      }
+    }
 
- });
+});
 export default AddAdressStyle
