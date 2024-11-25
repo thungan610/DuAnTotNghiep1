@@ -42,7 +42,7 @@ const Order = ({ navigation, route }) => {
 
         setOrders(filteredOrders);
       } catch (error) {
-        console.error('Failed to fetch orders:', error);
+      
       } finally {
         setLoading(false);
       }

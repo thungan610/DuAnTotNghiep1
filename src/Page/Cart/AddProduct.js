@@ -80,6 +80,7 @@ const AddProduct = ({ route, navigation }) => {
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
             console.log('response', response);
+            
             const cartData = Array.isArray(response) ? response : []
             console.log('cartData', cartData);
 

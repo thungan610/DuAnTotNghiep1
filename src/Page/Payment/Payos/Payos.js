@@ -40,8 +40,7 @@ const Payos = ({ route }) => {
       console.log('Cập nhật trạng thái giỏ hàng thành công:', response);
       return response;
     } catch (error) {
-      console.error('Lỗi khi cập nhật trạng thái giỏ hàng:', error.message);
-      throw new Error('Có lỗi xảy ra khi cập nhật trạng thái giỏ hàng.');
+
     }
   };
   const updateOrder = async (idorder, status) => {
@@ -52,8 +51,7 @@ const Payos = ({ route }) => {
       console.log('Cập nhật trạng thái đơn hàng thành công:', response);
       return response;
     } catch (error) {
-      console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error.message);
-      throw new Error('Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.');
+     
     }
   };
 

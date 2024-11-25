@@ -26,6 +26,7 @@ const UpdateProfile = (props) => {
 
     const user = useSelector(state => state.user);
     const userid = user?.userData?._id;
+
     console.log('userid: ', userid);
 
     useEffect(() => {
@@ -36,7 +37,8 @@ const UpdateProfile = (props) => {
             }
             try {
                 const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
-                const data = response.data.data;
+                
+                const data = response.data;
                 setName(data.name || '');
                 setBio(data.bio || '');
                 setGender(data.gender || '');

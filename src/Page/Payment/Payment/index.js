@@ -12,6 +12,8 @@ const Payment = ({ route, navigation }) => {
     const [cartIds, setCartIds] = useState([]);
     const user = useSelector(state => state.user);
     const userId = user?.userData?._id || 'default_id';
+    console.log('userId', userId);
+    
     const [data, setData] = useState([]);
     const [address, setAddress] = useState(null);
     const [cartData, setCartData] = useState([]);
@@ -20,18 +22,20 @@ const Payment = ({ route, navigation }) => {
 
     const getAddress = async (userId) => {
         try {
-            const response = await axiosInstance.get(`users/getAddress/${userId}`);
+            const response = await axiosInstance.get(`/users/getAddress/${userId}`);
+            console.log('response', response);
             if (response && response.data) {
                 setData(response.data);
             }
         } catch (error) {
-            console.error('Error fetching address:', error);
+            // console.error('Error fetching address:', error);
         }
     };
 
     const fetchAddressById = async (addressId) => {
         try {
             const response = await axiosInstance.get(`/users/getAddressById/${addressId}`);
+            console.log('response', response);
             if (response) {
                 setAddress(response);
             } else {
