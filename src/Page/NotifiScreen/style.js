@@ -9,8 +9,7 @@ const notifiStyle = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-    
+        justifyContent: 'center',
         alignItems: 'center',
     },
     iconBack: {
@@ -83,7 +82,8 @@ const notifiStyle = StyleSheet.create({
     },
     body: {
         width: '100%',
-        marginTop: 10,
+        justifyContent:"center",
+        alignItems:'center'
     }
 });
 export default notifiStyle

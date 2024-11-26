@@ -20,7 +20,6 @@ import SMS from "../src/Page/SMS/index.js";
 import Registration_successful from "../src/Page/SMS/Registration_successful.js";
 import ProductCancel from "../src/Page/ProductCancel/index.js";
 import CancelTrue from "../src/Page/ProductCancel/CancelTrue/index.js";
-import NewNotifi from "../src/Page/NotifiScreen/NewNotifi.js";
 import InsertPro5 from "../src/Page/Profile/InsertPro5.js";
 import InsertAddress from "../src/Page/Profile/InsertAddress.js";
 import TabAddress from "../src/Page/Profile/TabAddress.js";
@@ -79,7 +78,6 @@ const MainStack = () => {
             <Stack.Screen name="InsertAddress" component={InsertAddress} />
             <Stack.Screen name="TabAddress" component={TabAddress} />
             <Stack.Screen name="ProductReview" component={ProductReview} />
-            <Stack.Screen name="NewNotifi" component={NewNotifi} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen name="Order" component={Order} />
             <Stack.Screen name="Processing1" component={Processing1} />

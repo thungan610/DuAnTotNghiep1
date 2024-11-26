@@ -13,7 +13,7 @@ const Payment = ({ route, navigation }) => {
     const user = useSelector(state => state.user);
     const userId = user?.userData?._id || 'default_id';
     console.log('userId', userId);
-    
+
     const [data, setData] = useState([]);
     const [address, setAddress] = useState(null);
     const [cartData, setCartData] = useState([]);
@@ -111,7 +111,7 @@ const Payment = ({ route, navigation }) => {
     }, [cartIds]);
 
     const BackRight = () => {
-        navigation.goBack();
+        navigation.navigate('AddProduct');
     };
 
     const HandMethod = () => {
@@ -135,7 +135,7 @@ const Payment = ({ route, navigation }) => {
                 status: status
             });
             console.log('Cập nhật trạng thái giỏ hàng thành công:', response);
-            return response; 
+            return response;
         } catch (error) {
             console.error('Lỗi khi cập nhật trạng thái giỏ hàng:', error.message);
             throw new Error('Có lỗi xảy ra khi cập nhật trạng thái giỏ hàng.');
@@ -144,9 +144,9 @@ const Payment = ({ route, navigation }) => {
 
     const HandPaySuccess = async () => {
         try {
-            const idorder = await createOrder(); 
+            const idorder = await createOrder();
             console.log('idorder', idorder);
-            
+
 
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
@@ -214,9 +214,9 @@ const Payment = ({ route, navigation }) => {
                 ship: selectedTransfer ? selectedTransfer.price : 1,
                 sale: selectedVoucher ? [selectedVoucher] : [],
             };
-            
+
             const response = await axiosInstance.post('/oder/addOrder', orderData);
-            
+
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);
@@ -229,7 +229,7 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
         }
     };
-    
+
 
     const createPayment = async (idorder) => {
         const orderId = Math.floor(100000 + Math.random() * 900000);
@@ -295,14 +295,22 @@ const Payment = ({ route, navigation }) => {
                 <View key={cart._id} style={[PaymentStyle.body, PaymentStyle.Padding]}>
                     {cart.products.map((product, productIndex) => (
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center', }} key={productIndex}>
-                            <View style={PaymentStyle.Viewimg}>
-                                <Image style={PaymentStyle.img} source={{ uri: product.images[0] }} />
-                            </View>
-                            <View>
-                                <Text style={PaymentStyle.txtDC}>{product.name}</Text>
-                                <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
-                                <View style={PaymentStyle.ViewPrice}>
-                                    <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
+                            <View 
+                            style={{
+                                flexDirection:'row'
+                            }}>
+                                <View style={PaymentStyle.Viewimg}>
+                                    <Image style={PaymentStyle.img} source={{ uri: product.images[0] }} />
+                                </View>
+                                <View 
+                                style={{
+                                    marginLeft:20
+                                }}>
+                                    <Text style={PaymentStyle.txtDC}>{product.name}</Text>
+                                    <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
+                                    <View style={PaymentStyle.ViewPrice}>
+                                        <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
+                                    </View>
                                 </View>
                             </View>
                             <View>
