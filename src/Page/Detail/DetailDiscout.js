@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styleDetailDiscout from './style';
 
 const DetailDiscout = (prop) => {
     const { product } = prop.route.params || {};
     const [productDetails, setProductDetails] = useState(product);
-    const [selectedProduct, setselectedProduct] = useState(product);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [initialQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
     const [unitPrice, setUnitPrice] = useState(product?.price || 0);
     const [price, setPrice] = useState(product?.price || 0);
     const [hasNotification, setHasNotification] = useState(false);
+    const [fixedPrice, setFixedPrice] = useState(product?.price || 0);
 
     useEffect(() => {
         if (product) {
@@ -20,6 +21,12 @@ const DetailDiscout = (prop) => {
             setImages(product.images || []);
             setUnitPrice(product.price || 0);
             setPrice(product.price || 0);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        if (product) {
+            setFixedPrice(product.price || 0);
         }
     }, [product]);
 
@@ -91,24 +98,78 @@ const DetailDiscout = (prop) => {
             <View style={styleDiscout.body}>
                 <View style={styleDiscout.bodyText}>
                     <Text style={styleDiscout.textBody}>Sườn non</Text>
-         
-         
-         
+
+
+
                     <Text style={styleDiscout.textkg}>1kg</Text>
                 </View>
                 <View style={styleDiscout.butonView}>
-                    <TouchableOpacity style={styleDiscout.minus}>
-                        <Text style={styleDiscout.textTout}>-</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styleDiscout.tout}>
-                        <Text style={styleDiscout.toutText}>1</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styleDiscout.plus}>
-                        <Text style={styleDiscout.textTout}>+</Text>
-                    </TouchableOpacity>
-                    <Text style={styleDiscout.under}>45.000d</Text>
-                     <Text style={styleDiscout.price}>19.000d</Text>
-                    <Text style={styleDiscout.price}>19.000d</Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            backgroundColor: '#EAEAEA',
+                            width: 100, height: 44,
+                            alignItems: 'center',
+                            borderRadius: 14,
+                            padding: 4,
+                            paddingHorizontal: 12,
+                            justifyContent: 'space-between'
+                        }}>
+                        <TouchableOpacity onPress={decreaseQuantity}>
+                            <Text style={styleDetailDiscout.textTout}>-</Text>
+                        </TouchableOpacity>
+
+                        <TextInput
+                            style={[
+                                styleDetailDiscout.toutText,
+                                {
+                                    textAlign: 'center',
+                                    flex: 1,
+                                    marginHorizontal: 4,
+                                    padding: 0,
+                                },
+                            ]}
+                            value={quantity.toString()}
+                            onChangeText={(text) => {
+                                if (text === '') {
+                                    setQuantity('');
+                                } else {
+                                    const numericValue = parseInt(text.replace(/[^0-9]/g, ''), 10);
+                                    if (!isNaN(numericValue)) {
+                                        setQuantity(numericValue);
+                                    }
+                                }
+                            }}
+                            keyboardType="numeric"
+                            onBlur={() => {
+                                if (quantity === '' || isNaN(quantity)) {
+                                    setQuantity(initialQuantity);
+                                }
+                            }}
+                        />
+                        <TouchableOpacity onPress={increaseQuantity}>
+                            <Text style={styleDetailDiscout.textTout}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                        <Text style={styleDiscout.under}>45.000d</Text>
+                        <View>
+                            <Text
+                                style={{
+                                    fontSize: 18,
+                                }}>
+                                {fixedPrice.toLocaleString()}.000đ</Text>
+                        </View>
+                        <View
+                            style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
+                            <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
+                        </View>
+                    </View>
                 </View>
                 <View style={styleDiscout.underline}>
                     <Text style={styleDiscout.textunderline}>Thông tin sản phẩm</Text>
@@ -118,27 +179,27 @@ const DetailDiscout = (prop) => {
                         <Text style={styleDiscout.scrollText}>
                             Sườn non là một loại thực phẩm phổ biến trên toàn thế giới, được sử dụng trong nhiều món ăn khác nhau.
                         </Text>
-                        
+
                     </View>
-                    <View style={styleDiscout.origin}> 
+                    <View style={styleDiscout.origin}>
                         <View style={styleDiscout.textoriginRow}>
-                        <Text style={styleDiscout.textorigin}>Xuất xứ  :</Text>
-                        <Text style={styleDiscout.textorigin}>Việt Nam</Text>
+                            <Text style={styleDiscout.textorigin}>Xuất xứ  :</Text>
+                            <Text style={styleDiscout.textorigin}>Việt Nam</Text>
                         </View>
                         <View style={styleDiscout.textoriginRow}>
-                        <Text style={styleDiscout.textorigin}>Chất sơ  :</Text>
-                        <Text style={styleDiscout.textorigin}> Khoảng 2.2 gram trên 100 gram</Text>
+                            <Text style={styleDiscout.textorigin}>Chất sơ  :</Text>
+                            <Text style={styleDiscout.textorigin}> Khoảng 2.2 gram trên 100 gram</Text>
                         </View>
                         <View style={styleDiscout.textoriginRow}>
-                        <Text style={styleDiscout.textorigin}>Bảo quản  :</Text>
-                        <Text style={styleDiscout.textorigin}> Bảo quản lạnh</Text>
+                            <Text style={styleDiscout.textorigin}>Bảo quản  :</Text>
+                            <Text style={styleDiscout.textorigin}> Bảo quản lạnh</Text>
                         </View>
                         <View style={styleDiscout.textoriginRow}>
-                        <Text style={styleDiscout.textorigin}>Công dụng :</Text>
-                        <Text style={styleDiscout.textorigin}>Chế biến món ăn</Text>
+                            <Text style={styleDiscout.textorigin}>Công dụng :</Text>
+                            <Text style={styleDiscout.textorigin}>Chế biến món ăn</Text>
                         </View>
                     </View>
-                    
+
                 </ScrollView>
                 {/* buton */}
                 <TouchableOpacity style={styleDiscout.headerFooter}>

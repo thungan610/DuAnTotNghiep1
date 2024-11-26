@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from '../Action/cartActions';
@@ -20,11 +20,13 @@ const Detailbottle = ({ route, navigation }) => {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [initialQuantity] = useState(1);
     const [images, setImages] = useState(product?.images || []);
     const [unitPrice, setUnitPrice] = useState(product?.price || 0);
     const [price, setPrice] = useState(product?.price || 0);
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
+    const [fixedPrice, setFixedPrice] = useState(product?.price || 0);
 
     const user = useSelector(state => state.user);
     console.log('user', user);
@@ -34,6 +36,12 @@ const Detailbottle = ({ route, navigation }) => {
     useEffect(() => {
         if (product) {
             setProductDetails(product);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        if (product) {
+            setFixedPrice(product.price || 0);
         }
     }, [product]);
 
@@ -201,13 +209,70 @@ const Detailbottle = ({ route, navigation }) => {
                                 <Text style={styleDetailbottle.textkg}>{productDetails.oum || 'Khối lượng sản phẩm'}</Text>
                             </View>
                             <View style={styleDetailbottle.butonView}>
-                                <View style={{ flexDirection: 'row', backgroundColor: '#EAEAEA', width: 100, height: 44, alignItems: 'center', borderRadius: 14, padding: 4, paddingHorizontal: 12, justifyContent: 'space-between' }}>
-                                    <TouchableOpacity onPress={decreaseQuantity}><Text style={styleDetailbottle.textTout}>-</Text></TouchableOpacity>
-                                    <Text style={styleDetailbottle.toutText}>{quantity}</Text>
-                                    <TouchableOpacity onPress={increaseQuantity}><Text style={styleDetailbottle.textTout}>+</Text></TouchableOpacity>
+                            <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        backgroundColor: '#EAEAEA',
+                                        width: 100, height: 44,
+                                        alignItems: 'center',
+                                        borderRadius: 14,
+                                        padding: 4,
+                                        paddingHorizontal: 12,
+                                        justifyContent: 'space-between'
+                                    }}>
+                                    <TouchableOpacity onPress={decreaseQuantity}>
+                                        <Text style={styleDetailbottle.textTout}>-</Text>
+                                    </TouchableOpacity>
+
+                                    <TextInput
+                                        style={[
+                                            styleDetailbottle.toutText,
+                                            {
+                                                textAlign: 'center',
+                                                flex: 1,
+                                                marginHorizontal: 4,
+                                                padding: 0,
+                                            },
+                                        ]}
+                                        value={quantity.toString()}
+                                        onChangeText={(text) => {
+                                            if (text === '') {
+                                                setQuantity(''); 
+                                            } else {
+                                                const numericValue = parseInt(text.replace(/[^0-9]/g, ''), 10);
+                                                if (!isNaN(numericValue)) {
+                                                    setQuantity(numericValue);
+                                                }
+                                            }
+                                        }}
+                                        keyboardType="numeric"
+                                        onBlur={() => {
+                                            if (quantity === '' || isNaN(quantity)) {
+                                                setQuantity(initialQuantity);
+                                            }
+                                        }}
+                                    />
+                                    <TouchableOpacity onPress={increaseQuantity}>
+                                        <Text style={styleDetailbottle.textTout}>+</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
-                                    <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
+                                <View
+                                    style={{
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                fontSize:18,
+                                            }}>
+                                                {fixedPrice.toLocaleString()}.000đ</Text>
+                                    </View>
+                                    <View 
+                                    style={{ flexDirection: 'row', alignItems: 'center', marginBottom:14 }}>
+                                        <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>

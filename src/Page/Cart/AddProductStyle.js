@@ -50,8 +50,6 @@ import { StyleSheet } from "react-native";
         },
         itemCategory: {
             fontSize: 14,
-            color: '#C7C7C7',
-            marginVertical: 4,
         },
         itemPrice: {
             fontSize: 16,

@@ -5,7 +5,7 @@ import HomeScreen from '../src/Page/HomeScreen'
 import Order from '../src/Page/Order/Order'
 import ProfileDetail from '../src/Page/Profile/ProfileDetail' 
 import AddProduct from '../src/Page/Cart/AddProduct'
-import NewNotifi from '../src/Page/NotifiScreen/NewNotifi'
+import NotifiScreen from '../src/Page/NotifiScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -45,7 +45,7 @@ const BottomNav = () => {
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BellSau.png') : require('./icon/Bell.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="NotifiScreen" component={NewNotifi} />
+                name="NotifiScreen" component={NotifiScreen} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/UserSau.png') : require('./icon/UserTruoc.png')} />,

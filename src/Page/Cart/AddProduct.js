@@ -7,9 +7,18 @@ import AddProductStyle from './AddProductStyle';
 import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../api/AxiosInstance';
 
+
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
+    const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
     const imageUri = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : null;
+    
+
+    useEffect(() => {
+        if (item) {
+            setFixedPrice(item.price || 0);
+        }
+    }, [item]);
 
     return (
         <View style={AddProductStyle.itemContainer}>
@@ -25,6 +34,13 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
             <View style={AddProductStyle.itemDetails}>
                 <Text style={AddProductStyle.itemName}>{item.name || 'Không có tên'}</Text>
                 <Text style={AddProductStyle.itemCategory}>{item.category_name || 'Không có danh mục'}</Text>
+                <View>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                        }}>
+                        {fixedPrice.toLocaleString()}.000đ</Text>
+                </View>
                 <Text style={AddProductStyle.itemPrice}>
                     {(item.price && item.quantity) ?
                         ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString() : 'Không có giá hoặc số lượng'}
@@ -72,15 +88,15 @@ const AddProduct = ({ route, navigation }) => {
 
     const user = useSelector(state => state.user);
     console.log('user', user);
-    const userId = user?.userData?._id ;
+    const userId = user?.userData?._id;
     console.log('userId', userId);
-    
+
 
     const getCart = async () => {
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
             console.log('response', response);
-            
+
             const cartData = Array.isArray(response) ? response : []
             console.log('cartData', cartData);
 
@@ -137,7 +153,7 @@ const AddProduct = ({ route, navigation }) => {
             try {
                 await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
             } catch (error) {
-                
+
             }
         };
 
