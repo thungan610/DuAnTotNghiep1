@@ -154,7 +154,7 @@ const Order = ({ navigation, route }) => {
               <TouchableOpacity onPress={() => addToCartHandler(item)} style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('ProductReview')} style={OrderStyle.buttonhuy}>
+              <TouchableOpacity onPress={() => navigation.navigate('ProductReview', { order: item })} style={OrderStyle.buttonhuy}>
                 <Text style={OrderStyle.buttonTexthuy}>Đánh giá</Text>
               </TouchableOpacity>
             </View>
