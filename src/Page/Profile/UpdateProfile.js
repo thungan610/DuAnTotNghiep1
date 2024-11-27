@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, Alert, PermissionsAndroid } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, Alert, PermissionsAndroid, ActivityIndicator } from "react-native";
 import UpdateProfileStyle from "./UpdateProfileStyle";
 import InsertPro5Styles from "../Profile/InsertPro5Styles";
-// import axios from "axios";
 import axiosInstance from "../api/AxiosInstance";
 import { useSelector } from "react-redux";
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
@@ -20,14 +19,11 @@ const UpdateProfile = (props) => {
     const [email, setEmail] = useState('');
     const [imageUri, setImageUri] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
-
-    console.log('imageUri: ', imageUri);
-    
+    const [isSaving, setIsSaving] = useState(false); // To handle profile saving state
+    const [isLoading, setIsLoading] = useState(true); // To handle loading state
 
     const user = useSelector(state => state.user);
     const userid = user?.userData?._id;
-
-    console.log('userid: ', userid);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -37,7 +33,6 @@ const UpdateProfile = (props) => {
             }
             try {
                 const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
-                
                 const data = response.data;
                 setName(data.name || '');
                 setBio(data.bio || '');
@@ -46,9 +41,10 @@ const UpdateProfile = (props) => {
                 setPhone(data.phone || '');
                 setEmail(data.email || '');
                 setImageUri(data.avatar || null);
-                console.log('data.avatar: ', data.avatar);
             } catch (error) {
                 Alert.alert("Lỗi", "Không thể lấy dữ liệu người dùng.");
+            } finally {
+                setIsLoading(false);  // Dữ liệu đã được tải
             }
         };
 
@@ -69,6 +65,7 @@ const UpdateProfile = (props) => {
             console.error("Image picker error:", error);
         }
     };
+
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -84,10 +81,8 @@ const UpdateProfile = (props) => {
                 );
 
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    console.log('Quyền truy cập camera đã được cấp');
                     openCamera();
                 } else {
-                    console.log('Quyền truy cập camera bị từ chối');
                     Alert.alert('Lỗi', 'Bạn cần cấp quyền truy cập camera để sử dụng tính năng này.');
                 }
             } catch (err) {
@@ -97,6 +92,7 @@ const UpdateProfile = (props) => {
             openCamera();
         }
     };
+
     const openCamera = async () => {
         try {
             const response = await launchCamera({ cameraType: 'front', saveToPhotos: true, ...commonOptions });
@@ -104,8 +100,6 @@ const UpdateProfile = (props) => {
                 Alert.alert('Hủy Camera', 'Bạn đã hủy chọn camera.');
             } else if (response.errorCode) {
                 Alert.alert('Lỗi', `Đã xảy ra lỗi khi mở camera: ${response.errorMessage}`);
-                console.log('Đã xảy ra lỗi khi mở camera: ' + response.errorMessage);
-
             } else {
                 await handleImageSelection(response);
             }
@@ -126,7 +120,6 @@ const UpdateProfile = (props) => {
                 }
             } catch (error) {
                 Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
-                console.error(error);
             } finally {
                 setIsUploading(false);
             }
@@ -169,8 +162,8 @@ const UpdateProfile = (props) => {
             return;
         }
 
-        if (isUploading) {
-            Alert.alert("Thông báo", "Đang tải ảnh lên. Vui lòng chờ.");
+        if (isUploading || isSaving) {
+            Alert.alert("Thông báo", "Đang tải ảnh lên hoặc lưu thông tin. Vui lòng chờ.");
             return;
         }
 
@@ -178,6 +171,8 @@ const UpdateProfile = (props) => {
             Alert.alert("Lỗi", "Tên và email không được để trống.");
             return;
         }
+
+        setIsSaving(true);
 
         try {
             const response = await axiosInstance.put(`/users/${userid}/updateProfile`, {
@@ -190,7 +185,7 @@ const UpdateProfile = (props) => {
                 avatar: imageUri,
             });
 
-            if (response.status === 200) {
+            if (response) {
                 Alert.alert("Thành công", "Cập nhật hồ sơ thành công!");
             } else {
                 Alert.alert("Lỗi", "Cập nhật hồ sơ thất bại.");
@@ -198,10 +193,10 @@ const UpdateProfile = (props) => {
         } catch (error) {
             console.error("Lỗi khi cập nhật hồ sơ:", error);
             Alert.alert("Lỗi", "Không thể cập nhật hồ sơ. Vui lòng thử lại.");
+        } finally {
+            setIsSaving(false);
         }
     };
-   
-
 
     return (
         <View style={{ backgroundColor: '#fff', height: '100%', width: '100%', padding: 20 }}>
@@ -215,81 +210,91 @@ const UpdateProfile = (props) => {
                 <Text style={InsertPro5Styles.textH}>Sửa hồ sơ</Text>
                 <Text />
             </View>
-            <View style={InsertPro5Styles.imgPro5Container}>
-                <TouchableOpacity style={InsertPro5Styles.containerimage} onPress={openImagePicker}>
-                    {imageUri ? (
-                        <Image
-                            source={{ uri: imageUri }}
-                            style={InsertPro5Styles.imgPro5}
-                        />
-                    ) : (
-                        <Image
-                            source={require('../../../src/assets/pro5img.png')}
-                            style={InsertPro5Styles.imgPro5}
-                        />
-                    )}
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={requestCameraPermission} style={InsertPro5Styles.imgphotoContainer}>
-                <Image
-                    style={InsertPro5Styles.imgphoto}
-                    source={require('../../../src/assets/photographic.png')}
-                />
-            </TouchableOpacity>
 
-            <View style={InsertPro5Styles.body}>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Tên</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={name}
-                        onChangeText={setName}
-                    />
-                </View>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Tiểu sử</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={bio}
-                        onChangeText={setBio}
-                    />
-                </View>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Giới tính</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={gender}
-                        onChangeText={setGender}
-                    />
-                </View>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Ngày sinh</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={birthday}
-                        onChangeText={setBirthday}
-                    />
-                </View>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Số điện thoại</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={phone}
-                        onChangeText={setPhone}
-                    />
-                </View>
-                <View style={InsertPro5Styles.name}>
-                    <Text style={InsertPro5Styles.textPro5TT}>Email</Text>
-                    <TextInput
-                        style={UpdateProfileStyle.textPro5}
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                </View>
-            </View>
-            <TouchableOpacity onPress={handleSubmit} style={UpdateProfileStyle.btnLogout}>
-                <Text style={UpdateProfileStyle.btnLogoutText}>LƯU</Text>
-            </TouchableOpacity>
+            {/* Hiển thị ActivityIndicator khi đang tải */}
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+            ) : (
+                <>
+                    <View style={InsertPro5Styles.imgPro5Container}>
+                        <TouchableOpacity style={InsertPro5Styles.containerimage} onPress={openImagePicker}>
+                            {imageUri ? (
+                                <Image
+                                    source={{ uri: imageUri }}
+                                    style={InsertPro5Styles.imgPro5}
+                                />
+                            ) : (
+                                <Image
+                                    source={require('../../../src/assets/pro5img.png')}
+                                    style={InsertPro5Styles.imgPro5}
+                                />
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={requestCameraPermission} style={InsertPro5Styles.imgphotoContainer}>
+                        <Image
+                            style={InsertPro5Styles.imgphoto}
+                            source={require('../../../src/assets/photographic.png')}
+                        />
+                    </TouchableOpacity>
+
+                    <View style={InsertPro5Styles.body}>
+                        {/* Các trường nhập liệu */}
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Tên</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={name}
+                                onChangeText={setName}
+                            />
+                        </View>
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Tiểu sử</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={bio}
+                                onChangeText={setBio}
+                            />
+                        </View>
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Giới tính</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={gender}
+                                onChangeText={setGender}
+                            />
+                        </View>
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Ngày sinh</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={birthday}
+                                onChangeText={setBirthday}
+                            />
+                        </View>
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Số điện thoại</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={phone}
+                                onChangeText={setPhone}
+                            />
+                        </View>
+                        <View style={InsertPro5Styles.name}>
+                            <Text style={InsertPro5Styles.textPro5TT}>Email</Text>
+                            <TextInput
+                                style={UpdateProfileStyle.textPro5}
+                                value={email}
+                                onChangeText={setEmail}
+                            />
+                        </View>
+                    </View>
+
+                    <TouchableOpacity onPress={handleSubmit} style={UpdateProfileStyle.btnLogout}>
+                        <Text style={UpdateProfileStyle.btnLogoutText}>LƯU</Text>
+                    </TouchableOpacity>
+                </>
+            )}
         </View>
     );
 };

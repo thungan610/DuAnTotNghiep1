@@ -1,33 +1,48 @@
 import { View, Text, Image, TouchableOpacity, } from 'react-native';
-import { React, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import profileStyle from './ProfileDetailstyle';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
+import { useFocusEffect } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
 
 const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id;
   console.log('userid', userid);
-  
-  console.log('profileData: ', profileData);
-  
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!userid) {
-        return;
-      }
-      try {
-        const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
-        console.log('Profile data:', response.data);
-        setProfileData(response.data);
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu:', error);
-      }
-    };
+  const [isLoading, setIsLoading] = useState(true);
 
-    fetchProfileData();
-  }, [userid]);
+  console.log('profileData: ', profileData);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const fetchProfileData = async () => {
+        if (!userid) return;
+
+        try {
+          const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
+          if (isActive) {
+            setProfileData(response.data);
+            setIsLoading(false);
+          }
+        } catch (error) {
+          if (isActive) {
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            setIsLoading(false);
+          }
+        }
+      };
+
+      fetchProfileData();
+
+      return () => {
+        isActive = false;
+      };
+    }, [userid])
+  );
 
   const OnViewHoSo = () => {
     prop.navigation.navigate('InsertPro5');
@@ -39,33 +54,37 @@ const ProfileDetail = (prop) => {
       height: '100%',
       backgroundColor: '#fff',
     }}>
-
-      <View style={profileStyle.header}>
-        <View style={profileStyle.headercontainer}>
-          <TouchableOpacity>
-            <Image
-              source={profileData && profileData.avatar ? { uri: profileData.avatar } : require('../../assets/pro5img.png')}
-              style={profileStyle.pro5logo}
-              accessibilityLabel="Hình ảnh hồ sơ"
-            />
-          </TouchableOpacity>
-
-          <View style={profileStyle.undercontainer}>
-          <Text style={profileStyle.username}>{profileData ? profileData.name : 'Nguyễn Văn A'}</Text>
-            <TouchableOpacity onPress={OnViewHoSo}>
-              <View style={profileStyle.mid}>
-                <Text style={profileStyle.pro5small}>Hồ sơ</Text>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <View style={profileStyle.header}>
+            <View style={profileStyle.headercontainer}>
+              <TouchableOpacity>
                 <Image
-                  style={profileStyle.vecto}
-                  source={require('../../../src/assets/vecto1.png')}
+                  source={profileData && profileData.avatar ? { uri: profileData.avatar } : require('../../assets/pro5img.png')}
+                  style={profileStyle.pro5logo}
+                  accessibilityLabel="Hình ảnh hồ sơ"
                 />
+              </TouchableOpacity>
+
+              <View style={profileStyle.undercontainer}>
+                <Text style={profileStyle.username}>{profileData ? profileData.name : 'Nguyễn Văn A'}</Text>
+                <TouchableOpacity onPress={OnViewHoSo}>
+                  <View style={profileStyle.mid}>
+                    <Text style={profileStyle.pro5small}>Hồ sơ</Text>
+                    <Image
+                      style={profileStyle.vecto}
+                      source={require('../../../src/assets/vecto1.png')}
+                    />
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+
+            </View>
           </View>
-
-        </View>
-
-      </View>
+        </>
+      )}
       <View style={profileStyle.body}>
         <View style={profileStyle.firstbody}>
           <Text style={profileStyle.titleB}>Đơn mua</Text>

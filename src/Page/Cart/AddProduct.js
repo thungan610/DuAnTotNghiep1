@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
@@ -81,10 +82,14 @@ const AddProduct = ({ route, navigation }) => {
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [isCartLoaded, setIsCartLoaded] = useState(false); // State to track if cart is loaded
+    const [isCartLoaded, setIsCartLoaded] = useState(false); 
 
     const user = useSelector(state => state.user);
+    console.log('user', user);
+    
     const userId = user?.userData?._id;
+    console.log('userId', userId);
+    
 
     const getCart = async () => {
         setLoading(true);
@@ -93,8 +98,11 @@ const AddProduct = ({ route, navigation }) => {
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
             console.log('response', response);
+            
 
             const cartData = Array.isArray(response) ? response : [];
+            console.log('cartData', cartData);
+            
             const activeCartData = cartData.filter(cart => cart.status === 1);
             if (activeCartData.length === 0) {
                 console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
@@ -114,32 +122,38 @@ const AddProduct = ({ route, navigation }) => {
             );
             return productsData;
         } catch (error) {
-            console.error('Error fetching cart:', error);
+           
             return [];
         } finally {
             setLoading(false);
         }
     };
 
-    const loadCartFromAPI = async () => {
-        if (userId && !isCartLoaded) { // Only load cart if not already loaded
-            const cartData = await getCart();
-            if (Array.isArray(cartData)) {
-                setCartItems(cartData);
-                const selectedCount = cartData.filter(item => item.selected).length;
-                setSelectedCount(selectedCount);
-                const total = cartData
-                    .filter(item => item.selected)
-                    .reduce((total, item) => total + (item.price * item.quantity), 0);
-                setTotalAmount(total);
-                setIsCartLoaded(true); // Mark cart as loaded
-            }
-        }
-    };
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadCartFromAPI = async () => {
+                try {
+                    const cartData = await getCart();
+                    if (Array.isArray(cartData)) {
+                        setCartItems(cartData);
+                        const selectedCount = cartData.filter(item => item.selected).length;
+                        setSelectedCount(selectedCount);
 
-    useEffect(() => {
-        loadCartFromAPI();
-    }, [userId]); // Load cart when userId changes
+                        const total = cartData
+                            .filter(item => item.selected)
+                            .reduce((total, item) => total + (item.price * item.quantity), 0);
+                        setTotalAmount(total);
+                    } else {
+
+                    }
+                } catch (error) {
+
+                }
+            };
+
+            loadCartFromAPI();
+        }, [])
+    )
 
     const toggleSelectProduct = (cart_id) => {
         console.log('Toggle select product cart_id:', cart_id);
@@ -206,7 +220,6 @@ const AddProduct = ({ route, navigation }) => {
                 return response.data;
             }
         } catch (error) {
-            console.error('Error deleting cart:', error);
         }
     };
 
