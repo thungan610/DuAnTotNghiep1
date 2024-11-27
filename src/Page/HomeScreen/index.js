@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, FlatList, Dimensions, ActivityIndicator } from 'react-native';
 import AxiosInstanceSP from "../api/AxiosInstanceSP";
 import HomeStyle from './style';
 import { useSelector } from 'react-redux';
+import axiosInstance from '../api/AxiosInstance';
 
 const HomeScreen = (props) => {
     const scrollViewRef = useRef(null);
@@ -40,7 +41,7 @@ const HomeScreen = (props) => {
             const endpoint = selectedCategory === "all"
                 ? "/products/getProducts"
                 : `/products/filter/${selectedCategory}`;
-            const response = await AxiosInstanceSP().get(endpoint);
+            const response = await axiosInstance.get(endpoint);
 
             if (response && response.data) {
                 const filteredProducts = response.data.filter(item => item.quantity > 0);
@@ -111,14 +112,14 @@ const HomeScreen = (props) => {
                 <View style={HomeStyle.productContainer}>
                     <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
 
-                        <Text style={HomeStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
-              
+                    <Text style={HomeStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
 
-                        <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
-                        <View style={HomeStyle.priceall}>
-                            <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
-                        </View>
-                    
+
+                    <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
+                    <View style={HomeStyle.priceall}>
+                        <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+                    </View>
+
                 </View>
             </TouchableOpacity>
         );
@@ -144,7 +145,7 @@ const HomeScreen = (props) => {
                         <View style={{ position: 'relative' }}>
                             <Image
                                 style={{ tintColor: '#27AAE1', width: 34, height: 34 }}
-                                source={require('../../../src/assets/Chat.png')}
+                                source={require('../../../src/assets/chat.png')}
                             />
                         </View>
                     </TouchableOpacity>
@@ -160,7 +161,6 @@ const HomeScreen = (props) => {
                 </View>
 
                 <ScrollView
-
                     ref={scrollViewRef}
                     horizontal
                     pagingEnabled
@@ -194,9 +194,12 @@ const HomeScreen = (props) => {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-
+                {refreshing && (
+                    <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                    </View>
+                )}
                 <FlatList
-
                     data={products}
                     renderItem={renderProductItem}
                     keyExtractor={item => item._id.toString()}

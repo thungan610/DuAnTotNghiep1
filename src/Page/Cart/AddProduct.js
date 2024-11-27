@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert } from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
-import { useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../api/AxiosInstance';
-
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
     const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
     const imageUri = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : null;
-    
 
     useEffect(() => {
         if (item) {
@@ -35,11 +32,9 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
                 <Text style={AddProductStyle.itemName}>{item.name || 'Không có tên'}</Text>
                 <Text style={AddProductStyle.itemCategory}>{item.category_name || 'Không có danh mục'}</Text>
                 <View>
-                    <Text
-                        style={{
-                            fontSize: 14,
-                        }}>
-                        {fixedPrice.toLocaleString()}.000đ</Text>
+                    <Text style={{ fontSize: 14 }}>
+                        {fixedPrice.toLocaleString()}.000đ
+                    </Text>
                 </View>
                 <Text style={AddProductStyle.itemPrice}>
                     {(item.price && item.quantity) ?
@@ -81,25 +76,25 @@ const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
 
 const AddProduct = ({ route, navigation }) => {
     const { data } = route.params || {};
-    const [modalVisible, setModalVisible] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [isCartLoaded, setIsCartLoaded] = useState(false); // State to track if cart is loaded
 
     const user = useSelector(state => state.user);
-    console.log('user', user);
     const userId = user?.userData?._id;
-    console.log('userId', userId);
-
 
     const getCart = async () => {
+        setLoading(true);
+        console.log('userId:', userId);
+
         try {
             const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
             console.log('response', response);
 
-            const cartData = Array.isArray(response) ? response : []
-            console.log('cartData', cartData);
-
+            const cartData = Array.isArray(response) ? response : [];
             const activeCartData = cartData.filter(cart => cart.status === 1);
             if (activeCartData.length === 0) {
                 console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
@@ -119,46 +114,32 @@ const AddProduct = ({ route, navigation }) => {
             );
             return productsData;
         } catch (error) {
-
+            console.error('Error fetching cart:', error);
+            return [];
+        } finally {
+            setLoading(false);
         }
     };
-    useFocusEffect(
-        React.useCallback(() => {
-            const loadCartFromAPI = async () => {
-                try {
-                    const cartData = await getCart();
-                    if (Array.isArray(cartData)) {
-                        setCartItems(cartData);
-                        const selectedCount = cartData.filter(item => item.selected).length;
-                        setSelectedCount(selectedCount);
 
-                        const total = cartData
-                            .filter(item => item.selected)
-                            .reduce((total, item) => total + (item.price * item.quantity), 0);
-                        setTotalAmount(total);
-                    } else {
-
-                    }
-                } catch (error) {
-
-                }
-            };
-
-            loadCartFromAPI();
-        }, [])
-    )
+    const loadCartFromAPI = async () => {
+        if (userId && !isCartLoaded) { // Only load cart if not already loaded
+            const cartData = await getCart();
+            if (Array.isArray(cartData)) {
+                setCartItems(cartData);
+                const selectedCount = cartData.filter(item => item.selected).length;
+                setSelectedCount(selectedCount);
+                const total = cartData
+                    .filter(item => item.selected)
+                    .reduce((total, item) => total + (item.price * item.quantity), 0);
+                setTotalAmount(total);
+                setIsCartLoaded(true); // Mark cart as loaded
+            }
+        }
+    };
 
     useEffect(() => {
-        const saveCartToStorage = async () => {
-            try {
-                await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
-            } catch (error) {
-
-            }
-        };
-
-        saveCartToStorage();
-    }, [cartItems]);
+        loadCartFromAPI();
+    }, [userId]); // Load cart when userId changes
 
     const toggleSelectProduct = (cart_id) => {
         console.log('Toggle select product cart_id:', cart_id);
@@ -184,13 +165,6 @@ const AddProduct = ({ route, navigation }) => {
         });
     };
 
-    useEffect(() => {
-        const total = cartItems
-            .filter(item => item.selected)
-            .reduce((total, item) => total + (item.price * item.quantity), 0);
-        setTotalAmount(total);
-    }, [cartItems]);
-
     const updateQuantityInCart = async (cart_id, product_id, quantity) => {
         try {
             const response = await axiosInstance.put(`/carts/updateQuantity/${cart_id}/${product_id}`, { quantity });
@@ -201,7 +175,7 @@ const AddProduct = ({ route, navigation }) => {
                 Alert.alert('Lỗi', 'Cập nhật số lượng không thành công.');
             }
         } catch (error) {
-
+            console.error('Error updating quantity:', error);
         }
     };
 
@@ -219,8 +193,6 @@ const AddProduct = ({ route, navigation }) => {
         });
     };
 
-    console.log('updateQuantity', updateQuantity);
-
     const deleteItemsFromCart = async (cart_id) => {
         try {
             if (!cart_id) {
@@ -234,14 +206,9 @@ const AddProduct = ({ route, navigation }) => {
                 return response.data;
             }
         } catch (error) {
-            if (error.response) {
-
-            } else {
-
-            }
+            console.error('Error deleting cart:', error);
         }
     };
-
 
     const removeSelectedItems = async () => {
         const selectedItems = cartItems.filter(item => item.selected);
@@ -268,7 +235,6 @@ const AddProduct = ({ route, navigation }) => {
             } catch (error) {
                 Alert.alert("Lỗi", "Có lỗi xảy ra khi xóa sản phẩm.");
                 console.log('Lỗi khi xóa sản phẩm', error);
-
             }
         }
     };
@@ -301,7 +267,6 @@ const AddProduct = ({ route, navigation }) => {
         }
     };
 
-
     return (
         <View style={AddProductStyle.container}>
             <View style={AddProductStyle.header}>
@@ -314,7 +279,12 @@ const AddProduct = ({ route, navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {cartItems.length === 0 ? (
+            {loading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text>Đang tải giỏ hàng...</Text>
+                </View>
+            ) : cartItems.length === 0 ? (
                 <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontSize: 18, color: '#666' }}>Hiện chưa có sản phẩm!!!</Text>
                 </View>
@@ -327,6 +297,7 @@ const AddProduct = ({ route, navigation }) => {
                     keyExtractor={(item, index) => `${item.cart_id}-${index}`}
                 />
             )}
+
             {totalAmount > 0 && (
                 <View style={{
                     borderColor: '#27AAE1',
@@ -335,9 +306,7 @@ const AddProduct = ({ route, navigation }) => {
                     padding: 10,
                 }}>
                     <View style={AddProductStyle.total}>
-                        <View style={{
-                            flexDirection: 'row'
-                        }}>
+                        <View style={{ flexDirection: 'row' }}>
                             <Text style={AddProductStyle.totalPrice}>Tổng số lượng: </Text>
                             <Text style={{
                                 fontSize: 24,
