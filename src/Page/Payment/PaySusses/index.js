@@ -1,4 +1,4 @@
-import React from "react";
+    import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import PaySussesStyle from "./style"
 import PayMethodStyle from "../PayMethod/style"

@@ -10,6 +10,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Payment = ({ route, navigation }) => {
     const { addressId } = route.params || {};
     const [cartIds, setCartIds] = useState([]);
+    console.log('cartIds', cartIds);
+
     const user = useSelector(state => state.user);
     const userId = user?.userData?._id || 'default_id';
     console.log('userId', userId);
@@ -17,7 +19,10 @@ const Payment = ({ route, navigation }) => {
     const [data, setData] = useState([]);
     const [address, setAddress] = useState(null);
     const [cartData, setCartData] = useState([]);
+    console.log('cartData', cartData);
     const [selectedVoucher, setSelectedVoucher] = useState(null);
+    console.log('selectedVoucher', selectedVoucher);
+
     const [selectedMethod, setSelectedMethod] = useState(null);
 
     const getAddress = async (userId) => {
@@ -118,9 +123,7 @@ const Payment = ({ route, navigation }) => {
         navigation.navigate('PayMethod');
     };
 
-    const HandVoucher = () => {
-        navigation.navigate('Voucher', { totalPrice });
-    };
+
 
     const HandTransfer = () => {
         navigation.navigate('AddTranfer', {
@@ -128,31 +131,32 @@ const Payment = ({ route, navigation }) => {
         });
     };
 
-    const updateCartStatus = async (cartIds, status) => {
+    const deleteItemsFromCart = async (cartIds) => {
         try {
-            const response = await axiosInstance.put('/carts/updatesatus', {
-                cartIds: cartIds,
-                status: status
-            });
-            console.log('Cập nhật trạng thái giỏ hàng thành công:', response);
-            return response;
+            if (!cartIds || cartIds.length === 0) {
+                console.error('Invalid cart_ids:', cartIds);
+                return;
+            }
+            console.log('cart_ids:', cartIds);
+            const deletePromises = cartIds.map((id) =>
+                axiosInstance.delete(`/carts/deleteCart/${id}`)
+            );
+            await Promise.all(deletePromises);
+            console.log('Deleted all cart items successfully');
         } catch (error) {
-            console.error('Lỗi khi cập nhật trạng thái giỏ hàng:', error.message);
-            throw new Error('Có lỗi xảy ra khi cập nhật trạng thái giỏ hàng.');
+            console.error('Error deleting cart items:', error.response?.data || error.message);
         }
     };
+    
 
     const HandPaySuccess = async () => {
         try {
             const idorder = await createOrder();
             console.log('idorder', idorder);
-
-
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
-                await updateCartStatus(cartIds, 0);
-                await updateCartStatus(cartIds, 0);
-                navigation.navigate('PaySuccessScreen');
+                deleteItemsFromCart(cartIds)
+                navigation.navigate('PaySussesScreen');
             } else {
                 await createPayment(idorder);
             }
@@ -168,6 +172,7 @@ const Payment = ({ route, navigation }) => {
 
     const [selectedTransfer, setSelectedTransfer] = useState({
         label: "Nhanh",
+        status: 2,
         price: "10",
         note: "Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn",
     });
@@ -190,33 +195,44 @@ const Payment = ({ route, navigation }) => {
         }, 0);
     }, 0);
 
+    const HandVoucher = () => {
+        navigation.navigate('Voucher', { totalPrice });
+    };
+    console.log('totalPrice', totalPrice);
+
+
     const totalPayment = (() => {
-        const transferCost = parseFloat(selectedTransfer.price);
+        const transferCost = parseFloat(selectedTransfer.price) || 0;
         let discount = 0;
 
         if (selectedVoucher) {
-            if (selectedVoucher.price.includes('%')) {
-                const percentage = parseFloat(selectedVoucher.price) / 100;
+            const voucherPrice = parseFloat(selectedVoucher.discountAmount.toLocaleString()) || 0;
+            if (selectedVoucher.type === 'percentage') {
+                const percentage = voucherPrice / 100;
                 discount = totalPrice * percentage;
             } else {
-                discount = parseFloat(selectedVoucher.price);
+                discount = voucherPrice;
             }
         }
 
         return (totalPrice + transferCost) - discount;
     })();
+    console.log('totalPayment', totalPayment);
+    
 
     const createOrder = async () => {
         try {
             const orderData = {
                 cart: cartIds,
                 userId,
-                ship: selectedTransfer ? selectedTransfer.price : 1,
+                ship: selectedTransfer ? selectedTransfer.status : 1,
                 sale: selectedVoucher ? [selectedVoucher] : [],
+                totalOrder: totalPayment
             };
+            console.log('orderData', orderData);
 
-            const response = await axiosInstance.post('/oder/addOrder', orderData);
-
+            const response = await axiosInstance.post('/oder/addOrder', orderData)
+            console.log('response', response);
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);
@@ -297,17 +313,17 @@ const Payment = ({ route, navigation }) => {
                 <View key={cart._id} style={[PaymentStyle.body, PaymentStyle.Padding]}>
                     {cart.products.map((product, productIndex) => (
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center', }} key={productIndex}>
-                            <View 
-                            style={{
-                                flexDirection:'row'
-                            }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row'
+                                }}>
                                 <View style={PaymentStyle.Viewimg}>
                                     <Image style={PaymentStyle.img} source={{ uri: product.images[0] }} />
                                 </View>
-                                <View 
-                                style={{
-                                    marginLeft:20
-                                }}>
+                                <View
+                                    style={{
+                                        marginLeft: 20
+                                    }}>
                                     <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                     <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                     <View style={PaymentStyle.ViewPrice}>
@@ -340,7 +356,7 @@ const Payment = ({ route, navigation }) => {
                     <Text style={PaymentStyle.txtDC}>Phương thức thanh toán:</Text>
                     <TouchableOpacity onPress={HandMethod} style={PaymentStyle.btnThem}>
                         <Text style={PaymentStyle.txtDC}>
-                            {selectedMethod ? (selectedMethod === 'payos' ? 'Payos' : 'Thanh toán khi nhận hàng') : 'Khi nhận hàng'}
+                            {selectedMethod ? (selectedMethod === 'payos' ? 'Payos' : 'Khi nhận hàng') : 'Chưa chọn'}
                         </Text>
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
@@ -352,7 +368,7 @@ const Payment = ({ route, navigation }) => {
                     <TouchableOpacity onPress={HandVoucher} style={PaymentStyle.btnThem}>
                         {selectedVoucher ? (
                             <View style={PaymentStyle.ViewTranfer}>
-                                <Text style={PaymentStyle.txtPrice}>{selectedVoucher.voucher}</Text>
+                                <Text style={PaymentStyle.txtPrice}>{selectedVoucher.discountAmount.toLocaleString()} đ</Text>
                             </View>
                         ) : (
                             <Text style={PaymentStyle.txtLH}>Chưa chọn khuyến mãi</Text>
@@ -383,15 +399,16 @@ const Payment = ({ route, navigation }) => {
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
                         <Text style={PaymentStyle.txtPrice1}>
-                            {selectedVoucher ?
-                                (selectedVoucher.price.includes('%') ?
-                                    `${selectedVoucher.price}` :
-                                    `${parseFloat(selectedVoucher.price).toLocaleString()}.000 đ`
-                                ) :
-                                '0đ'
-                            }
+                            <Text style={PaymentStyle.txtPrice1}>
+                                {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
+                                    typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
+                                        `${selectedVoucher.discountAmount.toLocaleString()}` :
+                                        `${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
+                                ) : '0đ'}
+                            </Text>
                         </Text>
                     </View>
+
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
                         <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}.000đ</Text>

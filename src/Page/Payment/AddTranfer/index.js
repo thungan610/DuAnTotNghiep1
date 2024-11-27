@@ -4,11 +4,10 @@ import AddTranferStyle from "./style";
 import AddAdressStyle from "../AddAdress/style";
 import PayMethodStyle from "../PayMethod/style";
 
-// Define the transfer options as a constant
 const transferOptions = [
-    { label: "Tiết kiệm", price: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
-    { label: "Nhanh", price: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
-    { label: "Hoả tốc", price: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    { label: "Tiết kiệm", status: 1, price: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+    { label: "Nhanh", status: 2, price: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+    { label: "Hoả tốc", status: 3, price: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
 ];
 
 const AddTranfer = (prop) => {

@@ -1,16 +1,17 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback,useEffect, useState } from 'react';
 import InsertPro5Styles from './InsertPro5Styles';
 // import axios from 'axios';
 import AxiosInstance from '../api/AxiosInstance';
 import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 const InsertPro5 = (prop) => {
   const [profileData, setProfileData] = useState(null);
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id || 'default_id';
 
   console.log('user', user);
-  
+
 
   const BackRight = () => {
     prop.navigation.goBack();
@@ -20,23 +21,25 @@ const InsertPro5 = (prop) => {
     prop.navigation.navigate('UpdateProfile');
   };
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!userid) {
-        return;
-      }
-      try {
-        const response = await AxiosInstance.get(`/users/${userid}/getProfileApp`);
-        console.log('Profile data:', response.data);
-        setProfileData(response.data);
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu:', error);
-      }
-    };
-  
-    fetchProfileData();
-  }, [userid]);
-  
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProfileData = async () => {
+        if (!userid) {
+          return;
+        }
+        try {
+          const response = await AxiosInstance.get(`/users/${userid}/getProfileApp`);
+          console.log('Profile data:', response.data);
+          setProfileData(response.data);
+        } catch (error) {
+          console.error('Lỗi khi lấy dữ liệu:', error);
+        }
+      };
+
+      fetchProfileData();
+    }, [userid])
+  );
+
 
   if (!profileData) {
     return <Text>Loading...</Text>;
@@ -54,7 +57,7 @@ const InsertPro5 = (prop) => {
         <Text style={InsertPro5Styles.textH}>Hồ sơ</Text>
         <TouchableOpacity onPress={updateHoSo}>
           <Image
-            style={InsertPro5Styles.iconedit}  
+            style={InsertPro5Styles.iconedit}
             source={require('../../../src/assets/edit.png')}
           />
         </TouchableOpacity>

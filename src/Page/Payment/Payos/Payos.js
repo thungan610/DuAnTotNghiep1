@@ -26,23 +26,38 @@ const Payos = ({ route }) => {
       console.error('Error retrieving cart IDs:', error);
     }
   };
+
   useEffect(() => {
     getCartIds();
   }, []);
 
   const navigation = useNavigation();
-  const updateCartStatus = async (cartIds, status) => {
-    try {
-      const response = await axiosInstance.put('/carts/updatesatus', {
-        cartIds: cartIds,
-        status: status
-      });
-      console.log('Cập nhật trạng thái giỏ hàng thành công:', response);
-      return response;
-    } catch (error) {
 
+  const deleteItemsFromCart = async (cartIds) => {
+    try {
+      if (!cartIds || cartIds.length === 0) {
+        console.error('Invalid cart_ids:', cartIds);
+        return;
+      }
+      console.log('cart_ids:', cartIds);
+      const deletePromises = cartIds.map((id) =>
+        axiosInstance.delete(`/carts/deleteCart/${id}`)
+      );
+      await Promise.all(deletePromises);
+      console.log('Deleted all cart items successfully');
+      Toast.show({
+        type: 'success',
+        text1: 'Giỏ hàng đã được xóa thành công!',
+      });
+    } catch (error) {
+      console.error('Error deleting cart items:', error.response?.data || error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi khi xóa giỏ hàng!',
+      });
     }
   };
+
   const updateOrder = async (idorder, status) => {
     try {
       const response = await axiosInstance.post(`/oder/${idorder}/updateOrder`, {
@@ -51,10 +66,13 @@ const Payos = ({ route }) => {
       console.log('Cập nhật trạng thái đơn hàng thành công:', response);
       return response;
     } catch (error) {
-     
+      console.error('Error updating order status:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi khi cập nhật đơn hàng!',
+      });
     }
   };
-
 
   const handleNavigationChange = (navState) => {
     const { url } = navState;
@@ -62,13 +80,13 @@ const Payos = ({ route }) => {
     if (url.includes('/payment/success')) {
       console.log('Navigation detected success URL');
       Alert.alert('Thành công', 'Bạn đã thanh toán thành công');
-      updateCartStatus(cartIds, 0);
+      deleteItemsFromCart(cartIds);
       navigation.navigate('BottomNav');
     } else if (url.includes('/payment/cancel')) {
       console.log('Navigation detected cancel URL');
       Alert.alert('Thất bại', 'Đã hủy thanh toán.');
-      updateOrder(idorder, 4)
-      updateCartStatus(cartIds, 0);
+      updateOrder(idorder, 4);
+      deleteItemsFromCart(cartIds);
       navigation.navigate('BottomNav');
     }
   };

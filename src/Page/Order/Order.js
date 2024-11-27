@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Order = ({ navigation, route }) => {
   const [orders, setOrders] = useState([]);
@@ -11,45 +12,50 @@ const Order = ({ navigation, route }) => {
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id || 'default_id';
 
+
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
-        const allOrders = response;
+  useFocusEffect(
+    useCallback(() => {
+      const fetchOrders = async () => {
+        setLoading(true);
+        try {
+          const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
+          const allOrders = response;
+          console.log('allOrders: ', allOrders);
 
-        const filteredOrders = allOrders
-          .filter(order => {
-            switch (tabs[selectedTabs]) {
-              case 'Chờ xác nhận':
-                return order.status === 1;
-              case 'Đang giao':
-                return order.status === 2;
-              case 'Đã nhận':
-                return order.status === 3;
-              case 'Đã hủy':
-                return order.status === 4;
-              default:
-                return true;
-            }
-          })
-          .map(order => ({
-            ...order,
-            products: order.cart?.flatMap(cartItem => cartItem.products) || [],
-          }));
 
-        setOrders(filteredOrders);
-      } catch (error) {
-      
-      } finally {
-        setLoading(false);
-      }
-    };
+          const filteredOrders = allOrders
+            .filter(order => {
+              switch (tabs[selectedTabs]) {
+                case 'Chờ xác nhận':
+                  return order.status === 1;
+                case 'Đang giao':
+                  return order.status === 2;
+                case 'Đã nhận':
+                  return order.status === 3;
+                case 'Đã hủy':
+                  return order.status === 4;
+                default:
+                  return true;
+              }
+            })
+            .map(order => ({
+              ...order,
+              products: order.cart?.flatMap(cartItem => cartItem.products) || [],
+            }));
 
-    fetchOrders();
-  }, [selectedTabs]);
+          setOrders(filteredOrders);
+        } catch (error) {
+
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchOrders();
+    }, [selectedTabs])
+  );
 
   useEffect(() => {
     const { selectedTab } = route.params || {};
@@ -148,7 +154,7 @@ const Order = ({ navigation, route }) => {
               <TouchableOpacity onPress={() => addToCartHandler(item)} style={OrderStyle.buttonnhan}>
                 <Text style={OrderStyle.buttonTextnhan}>Mua lại</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('ProductReview')} style={OrderStyle.buttonhuy}>
+              <TouchableOpacity onPress={() => navigation.navigate('ProductReview', { order: item })} style={OrderStyle.buttonhuy}>
                 <Text style={OrderStyle.buttonTexthuy}>Đánh giá</Text>
               </TouchableOpacity>
             </View>
@@ -215,8 +221,8 @@ const OrderStyle = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'center'
-    
+    justifyContent: 'center'
+
   },
   title: {
     fontSize: 24,
@@ -284,7 +290,7 @@ const OrderStyle = StyleSheet.create({
   tabsContainer: {
     flexDirection: 'row',
     marginVertical: 10,
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   buttonContainer: {
     flexDirection: 'row',

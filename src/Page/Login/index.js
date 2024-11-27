@@ -15,7 +15,7 @@ const Login = () => {
     const dispatch = useDispatch();
     const [email, setEmailText] = useState('');
     const [password, setPasswordText] = useState('');
-    const [rememberAccount, setRememberAccount] = useState(false); // Set default as false
+    const [rememberAccount, setRememberAccount] = useState(false); 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');

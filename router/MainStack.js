@@ -42,7 +42,9 @@ import UpdateProfile from "../src/Page/Profile/UpdateProfile.js";
 import Payos from "../src/Page/Payment/Payos/Payos.js";
 import PaySusses from "../src/Page/Payment/PaySusses/index.js";
 import Done from "../src/Page/Order/Done.js";
+import OrderSuccess from "../src/Page/Payment/PaySusses/index.js"
 import Promotion from "../src/Page/Promotion/index.js";
+import PaySussesScreen from "../src/Page/Payment/PaySusses/index.js";
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -93,9 +95,12 @@ const MainStack = () => {
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
             <Stack.Screen name="UpdateProfile" component={UpdateProfile}/>
             <Stack.Screen name="Payos" component={Payos}/>
-            <Stack.Screen name="PaySussesScreen" component={PaySusses}/>
+            <Stack.Screen name="PaySussesScreen" component={PaySussesScreen}/>
             <Stack.Screen name="Done" component={Done}/>
+
             <Stack.Screen name="Promotion" component={Promotion}/>
+            <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
+
         </Stack.Navigator >
     );
 };

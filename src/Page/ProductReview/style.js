@@ -101,10 +101,11 @@ const ProductReviewStyle = StyleSheet.create({
     borderColor: '#FF7400',
     width: 120,
     borderRadius: 5,
-    marginLeft: 225,
+    alignSelf: 'flex-end',
     marginTop: 15,
     marginBottom: 10,
-  },
+},
+
   textReview: {
     color: '#FF7400',
     fontSize: 18,
