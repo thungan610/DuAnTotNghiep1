@@ -81,13 +81,12 @@ const ProductReview = ({ maxStars = 5 }) => {
 
   const handleSubmit = async () => {
     try {
-      // Không cần phải upload lại, vì ảnh đã được upload và lưu URL trong state
-      const response = await axiosInstance.post('http://192.168.1.21:3000/comment/addComment', {
+      const response = await axiosInstance.post('/comment/addComment', {
         userId: order?.address?.userId,
         productId: order?.products[0]?._id,
         rating: rating,
         comment: description,
-        images: images.map(image => image.uri), // Chỉ lấy URL đã upload
+        images: images.map(image => image.uri),
         videos: video ? [video] : [],
       });
 
