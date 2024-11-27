@@ -16,7 +16,7 @@ const PaymentStyle = StyleSheet.create({
         paddingBottom: 20
     },
     body:{
-        flexDirection:'row',
+        flexDirection:'column',
         justifyContent:'space-between',
         width:'100%',
         backgroundColor:'white',

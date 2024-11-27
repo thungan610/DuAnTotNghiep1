@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, TouchableOpacity } from 'react-native';
 
-const Preservation = (prop) => {
+const Preservation = ({navigation}) => {
     const BackRight = () => {
-        prop.navigation.goBack()
+        navigation.goBack()
     }
     return (
         <ImageBackground

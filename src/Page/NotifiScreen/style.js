@@ -13,9 +13,9 @@ const notifiStyle = StyleSheet.create({
         alignItems: 'center',
     },
     iconBack: {
-        width: 34,
-        height: 34,
-        tintColor: "black",
+        position:'absolute',
+        left: 0,
+        top: 0
     },
     tieude: {
         fontSize: 24,
@@ -81,9 +81,8 @@ const notifiStyle = StyleSheet.create({
         fontFamily: "Poppins"
     },
     body: {
+        paddingTop:20,
         width: '100%',
-        justifyContent:"center",
-        alignItems:'center'
     }
 });
 export default notifiStyle

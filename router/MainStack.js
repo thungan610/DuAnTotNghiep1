@@ -87,7 +87,7 @@ const MainStack = () => {
             <Stack.Screen name="ZaloPay" component={ZaloPay}/>
             <Stack.Screen name="Policy" component={Policy}/>
             <Stack.Screen name="Information" component={Information}/>
-            <Stack.Screen name="Preseration" component={Preservation}/>
+            <Stack.Screen name="Preservation" component={Preservation}/>
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="DetailDiscout" component={DetailDiscout}/>
             <Stack.Screen name="Detailbottle" component={Detailbottle}/>
