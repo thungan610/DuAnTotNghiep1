@@ -1,59 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import notifiStyle from './style';
-import axios from "axios";
-
-const DataKM = [
-    {
-        id: 1,
-        khuyenmai: "Đang có chương trình khuyến mãi",
-        name: "Bắp cải",
-        image: require("../../assets/image/image1.png"),
-        time: "10/10/2024",
-    },
-    {
-        id: 2,
-        khuyenmai: "Đang có chương trình khuyến mãi",
-        name: "Chanh",
-        image: require("../../assets/image/image2.png"),
-        time: "10/10/2024",
-    },
-    {
-        id: 3,
-        khuyenmai: "Đang có chương trình khuyến mãi",
-        name: "Khoai tây",
-        image: require("../../assets/image/image3.png"),
-        time: "10/10/2024",
-    }
-];
+import { useSelector } from 'react-redux';
+import axiosInstance from "../api/AxiosInstance";
 
 const NotifiScreen = ({ navigation }) => {
     const [data, setData] = useState([]);
+    console.log('data', data);
+    const userId = useSelector(state => state.user.id);
 
     useEffect(() => {
-        const getData = async () => {
-            const result = await fetchData();
-            setData(result);
+        const getNotifi = async () => {
+            try {
+                if (!userId) {
+                    console.log("User ID is not available");
+                    return;
+                }
+                const response = await axiosInstance.get(`/notifications/${userId}`);
+                console.log('API Response:', response.data);
+                if (response.data) {
+                    setData(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
         };
-        getData();
-    }, []);
+        getNotifi();
+    }, [userId]);
 
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('https://your-api-endpoint.com/notifications');
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            return [];
-        }
-    };
+
+
+
+
+
+    // const fetchData = async () => {
+    //     try {
+    //         const response = await axiosInstance.get(`/notifications/${userId}`);
+    //         console.log('response', response);
+    //         return response ;
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         return [];
+    //     }
+    // };
 
     return (
         <View style={notifiStyle.container}>
             <View style={notifiStyle.header}>
-                {/* Updated Go Back Button */}
-                <TouchableOpacity 
-                    onPress={() => navigation.goBack()} 
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
                     style={notifiStyle.iconBack}
                 >
                     <Image source={require("../../assets/notifi/backright.png")} />
@@ -61,26 +56,22 @@ const NotifiScreen = ({ navigation }) => {
                 <Text style={notifiStyle.tieude}>Thông báo</Text>
             </View>
 
-            <ScrollView style={notifiStyle.body}>
-                {data.length === 0 ? (
-                    <View style={notifiStyle.noNotification}>
-                        <Text style={notifiStyle.noNotificationText}>Không có thông báo mới</Text>
-                    </View>
+            <ScrollView
+                style={notifiStyle.body}>
+                {data && data.length > 0 ? (
+                    data.map((item) => (
+                        <View key={item._id} style={notifiStyle.item}>
+                            <Text style={notifiStyle.title}>{item?.title}</Text>
+                            <Text style={notifiStyle.message}>{item?.message}</Text>
+                        </View>
+                    ))
                 ) : (
-                    <View style={notifiStyle.list}>
-                        {DataKM.map((item) => (
-                            <View key={item.id} style={notifiStyle.item}>
-                                <Image style={notifiStyle.image} source={item.image} />
-                                <View style={notifiStyle.ViewTT}>
-                                    <Text style={notifiStyle.khuyenmaiName}>{item.khuyenmai}</Text>
-                                    <Text style={notifiStyle.name}>{item.name}</Text>
-                                    <View style={notifiStyle.ViewTime}>
-                                        <Text style={notifiStyle.time}>{item.time}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
+                    <Text style={{
+                        fontSize: 18,
+                        color:'#666',
+                        textAlign:'center',
+                        marginTop:320
+                    }}>Không có thông báo mới!!!</Text>
                 )}
             </ScrollView>
         </View>

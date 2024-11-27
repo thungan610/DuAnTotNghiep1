@@ -267,7 +267,8 @@ const Payment = ({ route, navigation }) => {
 
             <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
                 <Image style={PaymentStyle.imgmap} source={require("../../../assets/notifi/map.png")} />
-                <View style={{ marginRight: 30 }}>
+                <View style={{flexDirection:'column', paddingLeft: 10}}>
+                <View>
                     <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
                     {address ? (
                         <View>
@@ -286,6 +287,7 @@ const Payment = ({ route, navigation }) => {
                     ) : (
                         <Text style={PaymentStyle.txtLH}>Không có địa chỉ</Text>
                     )}
+                </View>
                 </View>
                 <Image source={require("../../../assets/notifi/expand_right.png")} />
             </TouchableOpacity>
