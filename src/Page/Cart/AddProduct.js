@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
-import { useFocusEffect } from '@react-navigation/native';
+// import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
@@ -129,31 +129,32 @@ const AddProduct = ({ route, navigation }) => {
         }
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const loadCartFromAPI = async () => {
-                try {
-                    const cartData = await getCart();
-                    if (Array.isArray(cartData)) {
-                        setCartItems(cartData);
-                        const selectedCount = cartData.filter(item => item.selected).length;
-                        setSelectedCount(selectedCount);
+    useEffect(() => {
+        const loadCartFromAPI = async () => {
+            setLoading(true);  
+            try {
+                const cartData = await getCart();
+                if (Array.isArray(cartData)) {
+                    setCartItems(cartData);
+                    const selectedCount = cartData.filter(item => item.selected).length;
+                    setSelectedCount(selectedCount);
 
-                        const total = cartData
-                            .filter(item => item.selected)
-                            .reduce((total, item) => total + (item.price * item.quantity), 0);
-                        setTotalAmount(total);
-                    } else {
-
-                    }
-                } catch (error) {
-
+                    const total = cartData
+                        .filter(item => item.selected)
+                        .reduce((total, item) => total + (item.price * item.quantity), 0);
+                    setTotalAmount(total);
+                } else {
+                    console.error('Data is not in expected format');
                 }
-            };
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
+            } finally {
+                setLoading(false); 
+            }
+        };
 
-            loadCartFromAPI();
-        }, [])
-    )
+        loadCartFromAPI();
+    }, []);
 
     const toggleSelectProduct = (cart_id) => {
         console.log('Toggle select product cart_id:', cart_id);

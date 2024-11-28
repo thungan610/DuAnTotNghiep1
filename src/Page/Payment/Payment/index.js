@@ -33,7 +33,7 @@ const Payment = ({ route, navigation }) => {
                 setData(response.data);
             }
         } catch (error) {
-            // console.error('Error fetching address:', error);
+
         }
     };
 
@@ -147,7 +147,7 @@ const Payment = ({ route, navigation }) => {
             console.error('Error deleting cart items:', error.response?.data || error.message);
         }
     };
-    
+
 
     const HandPaySuccess = async () => {
         try {
@@ -218,7 +218,7 @@ const Payment = ({ route, navigation }) => {
         return (totalPrice + transferCost) - discount;
     })();
     console.log('totalPayment', totalPayment);
-    
+
 
     const createOrder = async () => {
         try {
@@ -283,27 +283,27 @@ const Payment = ({ route, navigation }) => {
 
             <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
                 <Image style={PaymentStyle.imgmap} source={require("../../../assets/notifi/map.png")} />
-                <View style={{flexDirection:'column', paddingLeft: 10}}>
-                <View>
-                    <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
-                    {address ? (
-                        <View>
-                            <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
-                            <Text style={PaymentStyle.txtLH}>
-                                {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
-                            </Text>
-                        </View>
-                    ) : data.length > 0 ? (
-                        <View>
-                            <Text style={PaymentStyle.txtLH}>{data[0]?.user?.name}, <Text style={PaymentStyle.txtLH}>{data[0]?.user?.phone}</Text></Text>
-                            <Text style={PaymentStyle.txtLH}>
-                                {data[0]?.alley} {data[0]?.houseNumber}, {data[0]?.quarter}, {data[0]?.district}, {data[0]?.city}, {data[0]?.country}
-                            </Text>
-                        </View>
-                    ) : (
-                        <Text style={PaymentStyle.txtLH}>Không có địa chỉ</Text>
-                    )}
-                </View>
+                <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
+                    <View>
+                        <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
+                        {address ? (
+                            <View>
+                                <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
+                                <Text style={PaymentStyle.txtLH}>
+                                    {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
+                                </Text>
+                            </View>
+                        ) : data.length > 0 ? (
+                            <View>
+                                <Text style={PaymentStyle.txtLH}>{data[0]?.user?.name}, <Text style={PaymentStyle.txtLH}>{data[0]?.user?.phone}</Text></Text>
+                                <Text style={PaymentStyle.txtLH}>
+                                    {data[0]?.alley} {data[0]?.houseNumber}, {data[0]?.quarter}, {data[0]?.district}, {data[0]?.city}, {data[0]?.country}
+                                </Text>
+                            </View>
+                        ) : (
+                            <Text style={PaymentStyle.txtLH}>Không có địa chỉ</Text>
+                        )}
+                    </View>
                 </View>
                 <Image source={require("../../../assets/notifi/expand_right.png")} />
             </TouchableOpacity>
@@ -403,7 +403,7 @@ const Payment = ({ route, navigation }) => {
                                 {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
                                     typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
                                         `${selectedVoucher.discountAmount.toLocaleString()}` :
-                                        `${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
+                                        `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
                                 ) : '0đ'}
                             </Text>
                         </Text>

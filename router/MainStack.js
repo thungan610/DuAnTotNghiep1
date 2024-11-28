@@ -45,6 +45,8 @@ import Done from "../src/Page/Order/Done.js";
 import OrderSuccess from "../src/Page/Payment/PaySusses/index.js"
 import Promotion from "../src/Page/Promotion/index.js";
 import PaySussesScreen from "../src/Page/Payment/PaySusses/index.js";
+import UserCancel from "../src/Page/UserCancel/index.js";
+
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
     return (
@@ -97,7 +99,7 @@ const MainStack = () => {
             <Stack.Screen name="Payos" component={Payos}/>
             <Stack.Screen name="PaySussesScreen" component={PaySussesScreen}/>
             <Stack.Screen name="Done" component={Done}/>
-
+            <Stack.Screen name="UserCancel" component={UserCancel}/>
             <Stack.Screen name="Promotion" component={Promotion}/>
             <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
 

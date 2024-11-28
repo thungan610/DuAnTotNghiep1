@@ -29,21 +29,6 @@ const NotifiScreen = ({ navigation }) => {
     }, [userId]);
 
 
-
-
-
-
-    // const fetchData = async () => {
-    //     try {
-    //         const response = await axiosInstance.get(`/notifications/${userId}`);
-    //         console.log('response', response);
-    //         return response ;
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //         return [];
-    //     }
-    // };
-
     return (
         <View style={notifiStyle.container}>
             <View style={notifiStyle.header}>
