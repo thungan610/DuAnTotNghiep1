@@ -5,26 +5,22 @@ import axiosInstance from '../api/AxiosInstance';
 
 const UserCancel = ({ navigation, route }) => {
   const [description, setDescription] = useState('');
-  const [user, setUser] = useState({ emailOrPhone: '', name: '' });
-
-  useEffect(() => {
-    if (route.params?.user) {
-      setUser(route.params.user);
-    }
-  }, [route.params]);
-
+  const { userId } = route.params || {}; 
+  console.log(userId);
   const handleCancelAccount = async () => {
     try {
-      const response = await axiosInstance.delete('/users/delete-account', {
-        data: { emailOrPhone: user.emailOrPhone },
-      });
-      console.log(response);
-
-      if (response.status === 200) {
+      const response = await axiosInstance.delete(`/users/delete-account/${userId}`);
+  
+      console.log('API Response:', response);
+  
+      if (response) {
         Alert.alert('Thành công', 'Tài khoản của bạn đã được hủy.', [
-          { text: 'OK', onPress: () => {
-            navigation.navigate('Login');
-          }},
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.navigate('Login');
+            },
+          },
         ]);
       } else {
         Alert.alert('Thất bại', 'Không thể hủy tài khoản.');
