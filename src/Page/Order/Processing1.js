@@ -24,7 +24,7 @@ const Processing1 = (prop) => {
                 </TouchableOpacity>
                 <Text style={ProcessingStyle.title}>Đơn hàng</Text>
             </View>
-        
+
             <ScrollView style={ProcessingStyle.body}>
                 <View style={ProcessingStyle.banner}>
                     <Text style={ProcessingStyle.bannerText}>Đơn hàng đang xử lý</Text>
@@ -32,7 +32,7 @@ const Processing1 = (prop) => {
                 <View style={ProcessingStyle.header}>
                     <Text style={ProcessingStyle.headerText}>Thông tin vận chuyển</Text>
                     <Text style={ProcessingStyle.subText}>
-                        {`${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getHours()}h${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getMinutes()}, Ngày ${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getDate()}/${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getMonth() + 1}/${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).getFullYear()}`}
+                        {`${new Date().getHours()}h${new Date().getMinutes()}, Ngày ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`}
                         , {getShippingLabel(order.ship)}
                     </Text>
                 </View>
@@ -109,7 +109,7 @@ const ProcessingStyle = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         marginTop: 20,
-        marginBottom:40
+        marginBottom: 40
     },
     headertop: {
         flexDirection: 'row',

@@ -57,6 +57,7 @@ const VoucherStyle = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'Poppins',
         fontWeight: 'bold',
+        marginBottom:10
     },
     Dieukien:{
         color: 'black',
