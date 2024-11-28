@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
-import PaymentStyle from "./style";
 import VoucherStyle from "./style";
-import AddAdressStyle from "../AddAdress/style";
-import PayMethodStyle from "../PayMethod/style";
+// import VoucherStyle from "../AddAdress/style";
+// import VoucherStyle from "../PayMethod/style";
 import axiosInstance from "../../api/AxiosInstance";
 
 const Voucher = (prop) => {
@@ -12,7 +11,7 @@ const Voucher = (prop) => {
     const { totalPrice } = prop.route.params || {};
 
     console.log('totalPrice', totalPrice);
-    
+
 
     useEffect(() => {
         const getVoucherData = async () => {
@@ -35,9 +34,9 @@ const Voucher = (prop) => {
             return;
         }
         const minOrderValue = selectedVoucher.minOrderValue;
-    
+
         const totalPrice = prop.route.params.totalPrice * 1000;
-    
+
         if (totalPrice >= minOrderValue) {
             setSelectedIndex(index);
             prop.navigation.navigate("Payment", { selectedVoucher });
@@ -48,7 +47,7 @@ const Voucher = (prop) => {
             );
         }
     };
-    
+
 
     const BackRight = () => {
         prop.navigation.goBack();
@@ -56,11 +55,21 @@ const Voucher = (prop) => {
 
     return (
         <View style={VoucherStyle.container}>
-            <View style={[AddAdressStyle.header, { padding: 20 }]}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: "space-between",
+                    width: '68%'
+                }}>
                 <TouchableOpacity onPress={BackRight}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                    <Image source={require("../../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
-                <Text style={AddAdressStyle.title}>Khuyến mãi</Text>
+                <Text style={{
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                    color: 'black',
+                    marginBottom:20
+                }}>Khuyến mãi</Text>
             </View>
 
             <View style={VoucherStyle.ViewAdd}>
@@ -95,8 +104,8 @@ const Voucher = (prop) => {
             ))}
 
             <View style={VoucherStyle.ViewSuss}>
-                <TouchableOpacity onPress={BackRight} style={PayMethodStyle.BtnSuss}>
-                    <Text style={PayMethodStyle.txtSuss}>ĐỒNG Ý</Text>
+                <TouchableOpacity onPress={BackRight} style={VoucherStyle.BtnSuss}>
+                    <Text style={VoucherStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>
         </View>
