@@ -1,33 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import notifiStyle from './style';
 import { useSelector } from 'react-redux';
 import axiosInstance from "../api/AxiosInstance";
+import { useFocusEffect } from "@react-navigation/native";
 
 const NotifiScreen = ({ navigation }) => {
     const [data, setData] = useState([]);
-    console.log('data', data);
-    const userId = useSelector(state => state.user.id);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const user = useSelector(state => state.user);
 
-    useEffect(() => {
-        const getNotifi = async () => {
-            try {
-                if (!userId) {
-                    console.log("User ID is not available");
-                    return;
-                }
-                const response = await axiosInstance.get(`/notifications/${userId}`);
-                console.log('API Response:', response.data);
-                if (response.data) {
-                    setData(response.data);
-                }
-            } catch (error) {
-                console.error('Error fetching notifications:', error);
-            }
-        };
-        getNotifi();
-    }, [userId]);
+    const userId = user?.userData?._id || 'default_id';
 
+    useFocusEffect(
+        useCallback(() => {
+            const getNotifi = async () => {
+                try {
+                    if (!userId) {
+                       
+                        setLoading(false);
+                        return;
+                    }
+                    const response = await axiosInstance.get(`/notifications/${userId}`);
+                    console.log('API Response:', response.data);
+                    if (response.data) {
+                        setData(response.data);
+                    }
+                } catch (error) {
+                    console.error("Error fetching notifications:", error);
+                    setError("Không thể tải thông báo.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+            getNotifi();
+        }, [userId]) 
+    );
 
     return (
         <View style={notifiStyle.container}>
@@ -41,9 +50,16 @@ const NotifiScreen = ({ navigation }) => {
                 <Text style={notifiStyle.tieude}>Thông báo</Text>
             </View>
 
-            <ScrollView
-                style={notifiStyle.body}>
-                {data && data.length > 0 ? (
+            <ScrollView style={notifiStyle.body}>
+                {loading ? (
+                    <Text style={{ fontSize: 18, color: '#666', textAlign: 'center', marginTop: 320 }}>
+                        Đang tải...
+                    </Text>
+                ) : error ? (
+                    <Text style={{ fontSize: 18, color: '#666', textAlign: 'center', marginTop: 320 }}>
+                        {error}
+                    </Text>
+                ) : data.length > 0 ? (
                     data.map((item) => (
                         <View key={item._id} style={notifiStyle.item}>
                             <Text style={notifiStyle.title}>{item?.title}</Text>
@@ -51,12 +67,9 @@ const NotifiScreen = ({ navigation }) => {
                         </View>
                     ))
                 ) : (
-                    <Text style={{
-                        fontSize: 18,
-                        color:'#666',
-                        textAlign:'center',
-                        marginTop:320
-                    }}>Không có thông báo mới!!!</Text>
+                    <Text style={{ fontSize: 18, color: '#666', textAlign: 'center', marginTop: 320 }}>
+                        Không có thông báo mới!!!
+                    </Text>
                 )}
             </ScrollView>
         </View>

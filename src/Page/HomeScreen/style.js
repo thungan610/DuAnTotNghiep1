@@ -7,6 +7,22 @@ const HomeStyle = StyleSheet.create({
         flexDirection: 'column',
         padding: 10,
     },
+    textdiscount: {
+        display: 'flex',
+        top: -2,
+        left: -50,
+        backgroundColor: '#FF0000',
+        width: width * 0.16,
+        height: height * 0.04,
+        justifyContent: 'center',
+        borderTopLeftRadius: 5,
+        alignItems: 'center',  
+    },
+    label:{
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: 'white',
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center'
@@ -42,11 +58,12 @@ const HomeStyle = StyleSheet.create({
         borderWidth: 1,
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        height: height * 0.22,
+        height: height * 0.26,
         marginHorizontal: width * 0.015,
         width: width * 0.44,
         marginTop: height * 0.02,
         marginRight: width * 0.03,
+        position:'relative',
     },
 
     productDetails: {
@@ -57,7 +74,7 @@ const HomeStyle = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
-  
+
     },
     productWeight: {
         fontSize: 16

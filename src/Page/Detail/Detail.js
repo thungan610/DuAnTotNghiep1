@@ -7,11 +7,10 @@ import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
 import Toast from 'react-native-toast-message';
 
-const MAX_QUANTITY = 10; 
+const MAX_QUANTITY = 10;
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
-
     const dispatch = useDispatch();
     const [selectedProduct, setselectedProduct] = useState();
     const [productDetails, setProductDetails] = useState(product || {});
@@ -24,6 +23,7 @@ const Detail = ({ route, navigation }) => {
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
     const [fixedPrice, setFixedPrice] = useState(product?.price || 0);
+    const [discount, setDiscount] = useState(product?.discount || 0);
 
 
     const user = useSelector(state => state.user);
@@ -46,8 +46,9 @@ const Detail = ({ route, navigation }) => {
         const fetchProductDetails = async () => {
             try {
                 const response = await AxiosInstance.get(`/products/getProductDetailById_App/${product.id}`);
+
                 if (response?.data) {
-                    setProductDetails(response.data);
+                    setProductDetails(response);
                     setUnitPrice(response.data.price || 0);
                     setPrice(response.data.price || 0);
                 }
@@ -72,7 +73,10 @@ const Detail = ({ route, navigation }) => {
     }, [product]);
 
     useEffect(() => {
-        setPrice(quantity * productDetails.price);
+        const priceBeforeDiscount = quantity * productDetails.price;
+        const discountAmount = discount;
+        const priceAfterDiscount = productDetails.price - discountAmount;
+        setPrice(priceAfterDiscount * quantity);
     }, [quantity, productDetails.price]);
 
     useEffect(() => {
@@ -98,13 +102,18 @@ const Detail = ({ route, navigation }) => {
             Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
         }
     };
-    
+
 
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
         }
     };
+
+    const amount = (productDetails.price - (Number(productDetails.discount) || 0)) || price || 0;
+
+
+
 
     const addToCartHandler = async () => {
         if (!user?.email) {
@@ -130,18 +139,22 @@ const Detail = ({ route, navigation }) => {
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
-            price: unitPrice,
+            price: amount,
             quantity,
             category: product.category,
             images: product.images,
             selected: true,
         };
+        console.log('productDetails', productToAdd);
+
 
         try {
             const response = await AxiosInstance.post('/carts/addCart_App', {
                 user: user.userData._id,
                 products: [productToAdd],
             });
+            console.log('response', response.data);
+
 
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
@@ -153,8 +166,9 @@ const Detail = ({ route, navigation }) => {
                     visibilityTime: 2000,
                     position: 'top'
                 });
-
+                console.log('Thêm sản phẩm vào giỏ hàng:', productToAdd);
                 dispatch(addToCart(productToAdd));
+
             }
         } catch (error) {
             const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
@@ -233,7 +247,7 @@ const Detail = ({ route, navigation }) => {
                                         value={quantity.toString()}
                                         onChangeText={(text) => {
                                             if (text === '') {
-                                                setQuantity(''); 
+                                                setQuantity('');
                                             } else {
                                                 const numericValue = parseInt(text.replace(/[^0-9]/g, ''), 10);
                                                 if (!isNaN(numericValue)) {
@@ -258,13 +272,32 @@ const Detail = ({ route, navigation }) => {
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                     }}>
-                                    <View>
-                                        <Text
-                                            style={{
-                                                fontSize: 18,
-                                            }}>
-                                            {fixedPrice.toLocaleString()}.000đ</Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {discount ? (
+                                            <>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 18,
+                                                        textDecorationLine: 'line-through',
+                                                        marginRight: 10,
+                                                    }}>
+                                                    {fixedPrice.toLocaleString()}.000đ
+                                                </Text>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 18,
+                                                        color: 'red',
+                                                    }}>
+                                                    {amount.toLocaleString()}.000đ
+                                                </Text>
+                                            </>
+                                        ) : (
+                                            <Text style={{ fontSize: 18 }}>
+                                                {fixedPrice.toLocaleString()}.000đ
+                                            </Text>
+                                        )}
                                     </View>
+
                                     <View
                                         style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
                                         <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>

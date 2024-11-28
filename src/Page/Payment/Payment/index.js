@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import axiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const Payment = ({ route, navigation }) => {
     const { addressId } = route.params || {};
@@ -156,6 +157,7 @@ const Payment = ({ route, navigation }) => {
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds)
+                await createnotifications(idorder, userId);
                 navigation.navigate('PaySussesScreen');
             } else {
                 await createPayment(idorder);
@@ -243,6 +245,36 @@ const Payment = ({ route, navigation }) => {
         } catch (error) {
             console.error('Error creating order:', error.message);
             Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
+        }
+    };
+
+    const createnotifications = async (orderId, userId) => {
+        try {
+            const notifidata = {
+                userId,
+                orderId,
+                title: 'Đơn hàng mới đã được tạo',
+                promotionMessage: 'Bạn đã đặt hàng thành công với mã đơn hàng ' + orderId, 
+                type: 'order',
+                status: 0,
+            };
+            
+    
+            console.log('orderData', notifidata);
+    
+            const response = await axios.post('http://192.168.1.21:3000/notifications/add_notification', notifidata);
+            console.log('response', response);
+    
+            if (response && response.data) {
+                const notifi = response.data._id;
+                console.log('check:', notifi);
+                return notifi;
+            } else {
+                Alert.alert("Lỗi", "Không thể tạo thông báo. Vui lòng thử lại.");
+            }
+        } catch (error) {
+            console.error('Error creating notification:', error.message);
+            Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thông báo. Vui lòng thử lại.");
         }
     };
 

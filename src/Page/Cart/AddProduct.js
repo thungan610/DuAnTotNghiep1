@@ -130,7 +130,6 @@ const AddProduct = ({ route, navigation }) => {
                         .reduce((total, item) => total + (item.price * item.quantity), 0);
                     setTotalAmount(total);
                 } catch (error) {
-                    console.error('Lỗi khi load giỏ hàng:', error.message);
                     setCartItems([]);
                     setSelectedCount(0);
                     setTotalAmount(0);

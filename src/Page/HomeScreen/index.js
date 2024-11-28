@@ -44,7 +44,7 @@ const HomeScreen = (props) => {
             const response = await axiosInstance.get(endpoint);
 
             if (response && response.data) {
-                const filteredProducts = response.data.filter(item => item.quantity > 0);
+                const filteredProducts = response.data.filter(item => item.quantity >= 0);
                 setProducts(filteredProducts);
             } else {
                 console.warn("Dữ liệu API không đúng định dạng:", response.data);
@@ -85,6 +85,7 @@ const HomeScreen = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
+                    if (item.quantity === 0) return;
                     const Detail = {
                         id: item._id,
                         name: item.name,
@@ -93,6 +94,7 @@ const HomeScreen = (props) => {
                         origin: item.origin,
                         preserve: item.preserve?.preserve_name,
                         uses: userid,
+                        discount: item.discount,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,
@@ -110,17 +112,34 @@ const HomeScreen = (props) => {
                 }}
             >
                 <View style={HomeStyle.productContainer}>
+                
+                    
+                    {(item.quantity === 0) && (
+                        <View style={HomeStyle.textdiscount}>
+                            <Text style={HomeStyle.label}>
+                                Hết hàng
+                            </Text>
+                        </View>
+                    )}
+
+                    {item.discount && (
+                        <View style={HomeStyle.textdiscount}>
+                            <Text style={HomeStyle.label}>
+                                Giảm: {item.discount}.000 đ
+                            </Text>
+                        </View>
+                    )}
+
                     <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
-
                     <Text style={HomeStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
-
-
                     <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                     <View style={HomeStyle.priceall}>
-                        <Text style={HomeStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+                        <Text style={HomeStyle.productPrice}>
+                            {item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}
+                        </Text>
                     </View>
-
                 </View>
+
             </TouchableOpacity>
         );
     };
@@ -129,7 +148,6 @@ const HomeScreen = (props) => {
         <View>
             <ScrollView style={HomeStyle.container}
                 showsVerticalScrollIndicator={false}  >
-
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
                     <View style={HomeStyle.searchall}>
