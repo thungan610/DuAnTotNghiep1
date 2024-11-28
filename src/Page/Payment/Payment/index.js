@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import axiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const Payment = ({ route, navigation }) => {
     const { addressId } = route.params || {};
@@ -154,7 +155,6 @@ const Payment = ({ route, navigation }) => {
             const idorder = await createOrder();
             console.log('idorder', idorder);
             if (selectedMethod === 'cash') {
-                navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds)
                 navigation.navigate('PaySussesScreen');
             } else {
@@ -231,7 +231,11 @@ const Payment = ({ route, navigation }) => {
             };
             console.log('orderData', orderData);
 
-            const response = await axiosInstance.post('/oder/addOrder', orderData)
+            const response = await axios.post(`http://192.168.1.21:3000/oder/addOrder`, orderData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
             console.log('response', response);
             if (response && response.data) {
                 const idorder = response.data._id;

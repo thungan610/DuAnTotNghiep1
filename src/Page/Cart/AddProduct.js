@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
-// import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
     if (!item) return null;
@@ -82,79 +82,68 @@ const AddProduct = ({ route, navigation }) => {
     const [selectedCount, setSelectedCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [isCartLoaded, setIsCartLoaded] = useState(false); 
+    const [isCartLoaded, setIsCartLoaded] = useState(false);
 
     const user = useSelector(state => state.user);
     console.log('user', user);
-    
+
     const userId = user?.userData?._id;
     console.log('userId', userId);
-    
 
-    const getCart = async () => {
-        setLoading(true);
-        console.log('userId:', userId);
 
-        try {
-            const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
-            console.log('response', response);
-            
-
-            const cartData = Array.isArray(response) ? response : [];
-            console.log('cartData', cartData);
-            
-            const activeCartData = cartData.filter(cart => cart.status === 1);
-            if (activeCartData.length === 0) {
-                console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
-                return [];
-            }
-            const productsData = activeCartData.flatMap(cart =>
-                cart.products.map(product => ({
-                    cart_id: cart._id,
-                    product_id: product._id,
-                    name: product.name,
-                    category_name: product.category?.category_name || 'Không có danh mục',
-                    price: product.price,
-                    quantity: product.quantity,
-                    images: product.images,
-                    selected: true,
-                }))
-            );
-            return productsData;
-        } catch (error) {
-           
-            return [];
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const loadCartFromAPI = async () => {
-            setLoading(true);  
-            try {
-                const cartData = await getCart();
-                if (Array.isArray(cartData)) {
-                    setCartItems(cartData);
-                    const selectedCount = cartData.filter(item => item.selected).length;
+    useFocusEffect(
+        useCallback(() => {
+            const fetchAndProcessCart = async () => {
+                try {
+                    setLoading(true);
+                    console.log('userId:', userId);
+                    const response = await axiosInstance.get(`/carts/getcartbyiduser/${userId}`);
+                    console.log('response', response);
+                    const cartData = Array.isArray(response) ? response : [];
+                    console.log('cartData', cartData);
+                    const activeCartData = cartData.filter(cart => cart.status === 1);
+                    if (activeCartData.length === 0) {
+                        console.warn('Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!');
+                        setCartItems([]);
+                        setSelectedCount(0);
+                        setTotalAmount(0);
+                        return;
+                    }
+                    const productsData = activeCartData.flatMap(cart =>
+                        cart.products.map(product => ({
+                            cart_id: cart._id,
+                            product_id: product._id,
+                            name: product.name,
+                            category_name: product.category?.category_name || 'Không có danh mục',
+                            price: product.price,
+                            quantity: product.quantity,
+                            images: product.images,
+                            selected: true,
+                        }))
+                    );
+                    setCartItems(productsData);
+                    const selectedCount = productsData.filter(item => item.selected).length;
                     setSelectedCount(selectedCount);
 
-                    const total = cartData
+                    const total = productsData
                         .filter(item => item.selected)
                         .reduce((total, item) => total + (item.price * item.quantity), 0);
                     setTotalAmount(total);
-                } else {
-                    console.error('Data is not in expected format');
+                } catch (error) {
+                    console.error('Lỗi khi load giỏ hàng:', error.message);
+                    setCartItems([]);
+                    setSelectedCount(0);
+                    setTotalAmount(0);
+                } finally {
+                    setLoading(false);
                 }
-            } catch (error) {
-                console.error('Error fetching cart data:', error);
-            } finally {
-                setLoading(false); 
-            }
-        };
+            };
 
-        loadCartFromAPI();
-    }, []);
+            fetchAndProcessCart();
+        }, [userId])
+    );
+
+
 
     const toggleSelectProduct = (cart_id) => {
         console.log('Toggle select product cart_id:', cart_id);

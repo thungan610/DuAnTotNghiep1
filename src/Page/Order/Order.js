@@ -15,47 +15,43 @@ const Order = ({ navigation, route }) => {
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchOrders = async () => {
-        setLoading(true);
-        try {
-          const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
-          const allOrders = response;
-          console.log('allOrders: ', allOrders);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
+        const allOrders = response;
 
+        const filteredOrders = allOrders
+          .filter(order => {
+            switch (tabs[selectedTabs]) {
+              case 'Chờ xác nhận':
+                return order.status === 1;
+              case 'Đang giao':
+                return order.status === 2;
+              case 'Đã nhận':
+                return order.status === 3;
+              case 'Đã hủy':
+                return order.status === 4;
+              default:
+                return true;
+            }
+          })
+          .map(order => ({
+            ...order,
+            products: order.cart?.flatMap(cartItem => cartItem.products) || [],
+          }));
 
-          const filteredOrders = allOrders
-            .filter(order => {
-              switch (tabs[selectedTabs]) {
-                case 'Chờ xác nhận':
-                  return order.status === 1;
-                case 'Đang giao':
-                  return order.status === 2;
-                case 'Đã nhận':
-                  return order.status === 3;
-                case 'Đã hủy':
-                  return order.status === 4;
-                default:
-                  return true;
-              }
-            })
-            .map(order => ({
-              ...order,
-              products: order.cart?.flatMap(cartItem => cartItem.products) || [],
-            }));
+        setOrders(filteredOrders);
+      } catch (error) {
+      
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          setOrders(filteredOrders);
-        } catch (error) {
-
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchOrders();
-    }, [selectedTabs])
-  );
+    fetchOrders();
+  }, [selectedTabs]);
 
   useEffect(() => {
     const { selectedTab } = route.params || {};
