@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, Alert, TextInput } fro
 import PagerView from 'react-native-pager-view';
 import styleDetailDiscout from './style';
 
+const MAX_QUANTITY = 10; 
 const DetailDiscout = (prop) => {
     const { product } = prop.route.params || {};
     const [productDetails, setProductDetails] = useState(product);
@@ -35,7 +36,11 @@ const DetailDiscout = (prop) => {
     }, [quantity, unitPrice]);
 
     const increaseQuantity = () => {
-        setQuantity((prevQuantity) => prevQuantity + 1);
+        if (quantity < MAX_QUANTITY) {
+            setQuantity(prevQuantity => prevQuantity + 1);
+        } else {
+            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
+        }
     };
 
     const decreaseQuantity = () => {

@@ -7,6 +7,8 @@ import Toast from 'react-native-toast-message';
 import styleDetailbottle from './styleDetailbottle';
 import axiosInstance from '../../../src/Page/api/AxiosInstance';
 
+const MAX_QUANTITY = 10; 
+
 const Detailbottle = ({ route, navigation }) => {
     const { product } = route.params || {};
 
@@ -95,7 +97,13 @@ const Detailbottle = ({ route, navigation }) => {
     }, []);
 
 
-    const increaseQuantity = () => setQuantity(prevQuantity => prevQuantity + 1);
+    const increaseQuantity = () => {
+        if (quantity < MAX_QUANTITY) {
+            setQuantity(prevQuantity => prevQuantity + 1);
+        } else {
+            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
+        }
+    };
 
     const decreaseQuantity = () => {
         if (quantity > 1) {

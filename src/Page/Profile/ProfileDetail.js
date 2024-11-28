@@ -137,7 +137,7 @@ const ProfileDetail = (prop) => {
             </View>
           </TouchableOpacity>
           <View>
-            <TouchableOpacity onPress={() => prop.navigation.navigate('UserCancel')}>
+            <TouchableOpacity onPress={() => prop.navigation.navigate('UserCancel', {user})}>
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Yêu cầu hủy tài khoản</Text>
                 <Image

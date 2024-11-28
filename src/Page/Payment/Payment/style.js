@@ -7,10 +7,10 @@ const PaymentStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     Padding:{
-        padding: 20
+        padding: 6
     },
     paddingHorizontal:{
-        paddingHorizontal: 20
+        paddingHorizontal: 2
     },
     paddingBottom:{
         paddingBottom: 20
