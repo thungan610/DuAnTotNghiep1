@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const AxiosInstanceSP = (contentType = 'application/json') => {
     const axiosInstance = axios.create({
-        // baseURL: 'https://server-vert-rho-94.vercel.app'
-        baseURL: 'https://172.18.101.83:6677/'
+        baseURL: 'https://server-vert-rho-94.vercel.app'
     });
     axiosInstance.interceptors.request.use(
         async (config) => {
