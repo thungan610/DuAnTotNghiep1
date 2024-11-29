@@ -12,46 +12,46 @@ const Order = ({ navigation, route }) => {
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id || 'default_id';
 
-
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
-        const allOrders = response;
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
+      const allOrders = response;
+      const filteredOrders = allOrders
+        .filter(order => {
+          switch (tabs[selectedTabs]) {
+            case 'Chờ xác nhận':
+              return order.status === 1;
+            case 'Đang giao':
+              return order.status === 2;
+            case 'Đã nhận':
+              return order.status === 3;
+            case 'Đã hủy':
+              return order.status === 4;
+            default:
+              return true;
+          }
+        })
+        .map(order => ({
+          ...order,
+          products: order.cart?.flatMap(cartItem => cartItem.products) || [],
+        }));
 
-        const filteredOrders = allOrders
-          .filter(order => {
-            switch (tabs[selectedTabs]) {
-              case 'Chờ xác nhận':
-                return order.status === 1;
-              case 'Đang giao':
-                return order.status === 2;
-              case 'Đã nhận':
-                return order.status === 3;
-              case 'Đã hủy':
-                return order.status === 4;
-              default:
-                return true;
-            }
-          })
-          .map(order => ({
-            ...order,
-            products: order.cart?.flatMap(cartItem => cartItem.products) || [],
-          }));
+      setOrders(filteredOrders);
+    } catch (error) {
 
-        setOrders(filteredOrders);
-      } catch (error) {
-      
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedTabs, userid]);
 
-    fetchOrders();
-  }, [selectedTabs]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrders();
+    }, [fetchOrders])
+  );
 
   useEffect(() => {
     const { selectedTab } = route.params || {};
@@ -72,6 +72,8 @@ const Order = ({ navigation, route }) => {
   };
 
   const addToCartHandler = async (order) => {
+    setFocusedOrder(order._id);
+
     const productsToAdd = Array.isArray(order.products) ? order.products.map(product => ({
       id: product._id,
       name: product.name,
@@ -139,7 +141,7 @@ const Order = ({ navigation, route }) => {
         <View style={OrderStyle.orderInfo}>
           <Text style={OrderStyle.orderName}>{item.products.length > 0 ? item.products[0].name : 'Không có sản phẩm'}</Text>
           <Text style={OrderStyle.orderQuantity}>SL: {item.products.length > 0 ? item.products[0].quantity : 0}</Text>
-          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.totalOrder).toLocaleString('vi-VN')} đ</Text>
+          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.totalOrder).toLocaleString('vi-VN')}.000 đ</Text>
 
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
@@ -159,7 +161,6 @@ const Order = ({ navigation, route }) => {
       </View>
     </TouchableOpacity>
   );
-
   return (
     <View style={OrderStyle.container}>
       <View style={OrderStyle.header}>
@@ -193,7 +194,6 @@ const Order = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </View>
-
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
