@@ -1,27 +1,26 @@
-    import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import PaySussesStyle from "./style"
-import PayMethodStyle from "../PayMethod/style"
+import React, { useEffect } from "react";
+import { View, Text, Image } from "react-native";
+import PaySussesStyle from "./style";
+
 const PaySusses = (prop) => {
-    const { navigation } = prop
-    const HandNav = () => {
-        navigation.navigate('BottomNav')
-    }
+    const { navigation } = prop;
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            navigation.navigate('BottomNav'); 
+        }, 3000);
+
+        return () => clearTimeout(timer); 
+    }, [navigation]);
+
     return (
         <View style={PaySussesStyle.container}>
             <View style={PaySussesStyle.body}>
                 <Image source={require('../../../assets/notifi/PaySusses.png')} />
-                <TouchableOpacity>
-                    <Text style={PaySussesStyle.text}>Thanh toán thanh công</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={[PayMethodStyle.ViewSuss, { padding: 20 }]}>
-                <TouchableOpacity onPress={HandNav} style={PayMethodStyle.BtnSuss}>
-                    <Text style={PayMethodStyle.txtSuss}>QUAY LẠI TRANG CHỦ</Text>
-                </TouchableOpacity>
+                <Text style={PaySussesStyle.text}>Đặt hàng thành công</Text>
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default PaySusses
+export default PaySusses;

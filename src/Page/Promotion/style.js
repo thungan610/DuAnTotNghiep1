@@ -10,7 +10,7 @@ const PromotionStyle = StyleSheet.create({
     txtHeader:{
         fontSize:24,
         fontWeight:'bold',
-        color:'#FF7400',
+        color:'black',
         marginLeft:20,
     },
     imHeader:{

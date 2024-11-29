@@ -1,13 +1,17 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { useNavigation } from '@react-navigation/native'; // Sử dụng hook navigation
+import { View, Text, Image} from 'react-native';
+import React, {useEffect} from 'react';
+import { useNavigation } from '@react-navigation/native'; 
 
 const CancelTrue = () => {
-  const navigation = useNavigation(); // Sử dụng navigation từ hook
+  const navigation = useNavigation(); 
 
-  const NextHome = () => {
-    navigation.navigate('BottomNav'); // Điều hướng về HomeScreen
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        navigation.navigate('BottomNav');
+    }, 2000); 
+
+    return () => clearTimeout(timer);
+}, [navigation]);
 
   return (
     <View style={{
@@ -27,25 +31,6 @@ const CancelTrue = () => {
         fontWeight: 'bold',
         color: 'black'
       }}>Hủy đơn thành công</Text>
-
-      <TouchableOpacity onPress={NextHome} style={{
-        borderRadius: 15,
-        borderColor: '#27AAE1',
-        backgroundColor: '#27AAE1',
-        borderWidth: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '90%',
-        height: 50,
-        position: 'absolute',
-        bottom: 10
-      }}>
-        <Text style={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'white',
-        }}>QUAY LẠI TRANG CHỦ</Text>
-      </TouchableOpacity>
     </View>
   );
 };
