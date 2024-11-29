@@ -7,7 +7,6 @@ import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
 import Toast from 'react-native-toast-message';
 
-const MAX_QUANTITY = 10;
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
@@ -96,10 +95,10 @@ const Detail = ({ route, navigation }) => {
     }, []);
 
     const increaseQuantity = () => {
-        if (quantity < MAX_QUANTITY) {
+        if (quantity < productDetails.quantity) {
             setQuantity(prevQuantity => prevQuantity + 1);
         } else {
-            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
+            Alert.alert("Thông báo", `Số lượng trong kho đã đạt tối đa.`);
         }
     };
 
