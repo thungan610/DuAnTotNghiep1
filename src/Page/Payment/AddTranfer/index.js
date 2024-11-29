@@ -52,7 +52,7 @@ const AddTranfer = (prop) => {
                     >
                         <View style={AddTranferStyle.ViewVC}>
                             <Text style={AddTranferStyle.txtVC}>{option.label}</Text>
-                            <Text style={AddTranferStyle.txtVC}>{option.price}.000đ</Text>
+                            <Text style={AddTranferStyle.txtVC}>{option.price}đ</Text>
                         </View>
                         <Text style={AddTranferStyle.txtNote}>{option.note}</Text>
                     </TouchableOpacity>

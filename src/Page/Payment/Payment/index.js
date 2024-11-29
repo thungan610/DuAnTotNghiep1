@@ -443,15 +443,15 @@ const Payment = ({ route, navigation }) => {
 
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}.000 đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
-                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}đ</Text>
                     </View>
                 </View>
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />

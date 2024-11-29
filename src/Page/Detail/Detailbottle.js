@@ -279,7 +279,7 @@ const Detailbottle = ({ route, navigation }) => {
                                                        left:50,
                                                        top:-20
                                                     }}>
-                                                    {fixedPrice.toLocaleString()}.đ
+                                                    {fixedPrice.toLocaleString()}đ
                                                 </Text>
                                 <View
                                     style={{
@@ -293,11 +293,11 @@ const Detailbottle = ({ route, navigation }) => {
                                                 fontSize:18,
                                                 color:'red'
                                             }}>
-                                                {fixedPrice.toLocaleString()}.đ</Text>
+                                                {fixedPrice.toLocaleString()}đ</Text>
                                     </View>
                                     <View 
                                     style={{ flexDirection: 'row', alignItems: 'center', marginBottom:14 }}>
-                                        <Text style={styleDetailbottle.price}>{price.toLocaleString()}.đ</Text>
+                                        <Text style={styleDetailbottle.price}>{price.toLocaleString()}đ</Text>
                                     </View>
                                 </View>
                             </View>

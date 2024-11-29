@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import notifiStyle from './style';
 import { useSelector } from 'react-redux';
-import axiosInstance from "../api/AxiosInstance";
+import AxiosInstance from "../api/AxiosInstance";
 import { useFocusEffect } from "@react-navigation/native";
 
 const NotifiScreen = ({ navigation }) => {
@@ -22,7 +22,7 @@ const NotifiScreen = ({ navigation }) => {
                         setLoading(false);
                         return;
                     }
-                    const response = await axiosInstance.get(`/notifications/${userId}`);
+                    const response = await AxiosInstance.get(`/notifications/${userId}`);
                     console.log('API Response:', response.data);
                     if (response.data) {
                         setData(response.data);

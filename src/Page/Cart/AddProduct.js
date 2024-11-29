@@ -14,46 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
-import {useFocusEffect} from '@react-navigation/native';
 
-const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
-  if (!item) return null;
-  const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
-  const imageUri =
-    Array.isArray(item.images) && item.images.length > 0
-      ? item.images[0]
-      : null;
-
-  useEffect(() => {
-    if (item) {
-      setFixedPrice(item.price || 0);
-    }
-  }, [item]);
-
-  return (
-    <View style={AddProductStyle.itemContainer}>
-      <TouchableOpacity onPress={() => toggleSelect(item.cart_id)}>
-        <Image
-          source={
-            item.selected
-              ? require('../../../src/assets/check.png')
-              : require('../../../src/assets/uncheck.png')
-          }
-          style={AddProductStyle.checkbox}
-        />
-      </TouchableOpacity>
-      <View style={AddProductStyle.borderImage}>
-        <Image source={{uri: imageUri}} style={AddProductStyle.image} />
-      </View>
-      <View style={AddProductStyle.itemDetails}>
-        <Text style={AddProductStyle.itemName}>
-          {item.name || 'Không có tên'}
-        </Text>
-        <Text style={AddProductStyle.itemCategory}>
-          {item.category_name || 'Không có danh mục'}
-        </Text>
-        <View>
-          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}.000đ</Text>
         </View>
         <Text style={AddProductStyle.itemPrice}>
           {item.price && item.quantity
@@ -273,87 +234,7 @@ const AddProduct = ({route, navigation}) => {
             );
           }
         }
-        setModalVisible(false);
-        Alert.alert('Thông báo', 'Xóa sản phẩm thành công');
 
-
-      } catch (error) {
-        Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa sản phẩm.');
-        console.log('Lỗi khi xóa sản phẩm', error);
-      }
-    }
-  };
-
-  const confirmDelete = () => {
-    const selectedItems = cartItems.filter(item => item.selected);
-    console.log('Items to confirm delete:', selectedItems);
-    if (selectedItems.length === 0) {
-      Alert.alert('Thông báo', 'Chưa chọn sản phẩm để xóa');
-    } else {
-      setModalVisible(true);
-    }
-  };
-
-  const handlePayment = async () => {
-    const selectedCartIds = cartItems
-      .filter(item => item.selected)
-      .map(item => item.cart_id);
-
-    console.log('Selected Cart IDs:', selectedCartIds);
-
-    if (selectedCartIds.length > 0) {
-      await AsyncStorage.setItem(
-        'selectedCartIds',
-        JSON.stringify(selectedCartIds),
-      );
-      console.log('Cart IDs saved to AsyncStorage');
-      const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
-      console.log('Stored Cart IDs from AsyncStorage:', storedCartIds);
-      navigation.navigate('NextPayment', {cartIds: selectedCartIds});
-    } else {
-      Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
-    }
-  };
-
-  return (
-    <View style={AddProductStyle.container}>
-      <View style={AddProductStyle.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={require('../../../src/assets/notifi/backright.png')} />
-        </TouchableOpacity>
-        <Text style={AddProductStyle.title}>Giỏ hàng</Text>
-        <TouchableOpacity
-          style={AddProductStyle.iconTrash}
-          onPress={confirmDelete}>
-          <Image source={require('../../../src/assets/Trash.png')} />
-        </TouchableOpacity>
-      </View>
-
-      {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text>Đang tải giỏ hàng...</Text>
-        </View>
-      ) : cartItems.length === 0 ? (
-        <View
-          style={{
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text style={{fontSize: 18, color: '#666'}}>
-            Hiện chưa có sản phẩm!!!
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={cartItems}
-          renderItem={({item}) => (
-            <CartItem
-              item={item}
-              toggleSelect={toggleSelectProduct}
-              updateQuantity={updateQuantity}
             />
           )}
           keyExtractor={(item, index) => `${item.cart_id}-${index}`}
