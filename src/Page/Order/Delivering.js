@@ -49,7 +49,7 @@ const Delivering = (prop) => {
                         <View style={DeliveringStyle.productInfo}>
                             <Text style={DeliveringStyle.productName}>{product.name}</Text>
                             <Text style={DeliveringStyle.category}>{product.category.category_name}</Text>
-                            <Text style={DeliveringStyle.price}>{`${product.price}.000 đ`}</Text>
+                            <Text style={DeliveringStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
                         </View>
                     </View>
                 ))}
@@ -58,9 +58,9 @@ const Delivering = (prop) => {
                 <View style={DeliveringStyle.paymentInfo}>
                     <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
-                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
-                    <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship} đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship} đ`}</Text>
+                    <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${order.totalOrder}đ`}</Text>
                 </View>
             </ScrollView>
         </View>

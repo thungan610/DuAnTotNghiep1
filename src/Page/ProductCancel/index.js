@@ -46,7 +46,7 @@ const ProductCancel = (prop) => {
                 <Text style={ProductCancelStyle.orderName}>{product.name}</Text>
                 <Text style={ProductCancelStyle.orderQuantity}>SL: {product.quantity}</Text>
                 <Text style={ProductCancelStyle.orderPrice}>
-                  Tổng tiền: {(product.quantity * product.price).toLocaleString('vi-VN')}.000 đ
+                  Tổng tiền: {(product.quantity * product.price).toLocaleString('vi-VN')}  đ
                 </Text>
                 <Text style={ProductCancelStyle.orderStatus}>
                   Trạng thái: {order.status === 1 ? 'Chờ xác nhận' : order.status}

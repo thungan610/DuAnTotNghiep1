@@ -139,7 +139,7 @@ const Order = ({ navigation, route }) => {
         <View style={OrderStyle.orderInfo}>
           <Text style={OrderStyle.orderName}>{item.products.length > 0 ? item.products[0].name : 'Không có sản phẩm'}</Text>
           <Text style={OrderStyle.orderQuantity}>SL: {item.products.length > 0 ? item.products[0].quantity : 0}</Text>
-          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.totalOrder).toLocaleString('vi-VN')}.000 đ</Text>
+          <Text style={OrderStyle.orderPrice}>Tổng tiền: {Math.round(item.totalOrder).toLocaleString('vi-VN')} đ</Text>
 
           {tabs[selectedTabs] !== 'Đã nhận' && (
             <Text style={[OrderStyle.orderStatus, { color: getStatusColor(item.status) }]}>{item.status}</Text>
