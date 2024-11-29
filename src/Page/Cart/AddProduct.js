@@ -276,7 +276,7 @@ const AddProduct = ({route, navigation}) => {
         setModalVisible(false);
         Alert.alert('Thông báo', 'Xóa sản phẩm thành công');
 
-
+// đã chỉnh sửa
       } catch (error) {
         Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa sản phẩm.');
         console.log('Lỗi khi xóa sản phẩm', error);
