@@ -286,7 +286,7 @@ const Detail = ({ route, navigation }) => {
                                                         textDecorationLine: 'line-through',
                                                         marginRight: 10,
                                                     }}>
-                                                    {fixedPrice.toLocaleString()}đ
+                                                    {fixedPrice.toLocaleString()}.đ
                                                 </Text>
                                                 <Text
                                                     style={{

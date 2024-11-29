@@ -125,7 +125,7 @@ const HomeScreen = (props) => {
                     {item.discount && (
                         <View style={HomeStyle.textdiscount}>
                             <Text style={HomeStyle.label}>
-                                Giảm: {item.discount}đ
+                                Giảm: {item.discount} đ
                             </Text>
                         </View>
                     )}
