@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message';
 import styleDetailbottle from './styleDetailbottle';
 import axiosInstance from '../../../src/Page/api/AxiosInstance';
 
-const MAX_QUANTITY = 10; 
+
 
 const Detailbottle = ({ route, navigation }) => {
     const { product } = route.params || {};
@@ -29,6 +29,8 @@ const Detailbottle = ({ route, navigation }) => {
     const [categories, setCategories] = useState([]);
     const [preserves, setPreserves] = useState([]);
     const [fixedPrice, setFixedPrice] = useState(product?.price || 0);
+
+    const [discount, setDiscount] = useState(product?.discount || 0);
 
     const user = useSelector(state => state.user);
     console.log('user', user);
@@ -76,10 +78,15 @@ const Detailbottle = ({ route, navigation }) => {
         }
     }, [product]);
 
-    useEffect(() => {
-        setPrice(quantity * productDetails.price);
+    // useEffect(() => {
+    //     setPrice(quantity * productDetails.price);
+    // }, [quantity, productDetails.price]);
+ useEffect(() => {
+        const priceBeforeDiscount = quantity * productDetails.price;
+        const discountAmount = discount;
+        const priceAfterDiscount = productDetails.price - discountAmount;
+        setPrice(priceAfterDiscount * quantity);
     }, [quantity, productDetails.price]);
-
     useEffect(() => {
         const getCategoriesAndPreserves = async () => {
             try {
@@ -98,18 +105,19 @@ const Detailbottle = ({ route, navigation }) => {
 
 
     const increaseQuantity = () => {
-        if (quantity < MAX_QUANTITY) {
+        if (quantity < productDetails.quantity) { // Giới hạn theo tồn kho
             setQuantity(prevQuantity => prevQuantity + 1);
         } else {
-            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
+            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${productDetails.quantity} sản phẩm còn trong kho.`);
         }
     };
-
+    
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(prevQuantity => prevQuantity - 1);
         }
     };
+    
 
     const addToCartHandler = async () => {
         if (!user?.email) {
@@ -264,6 +272,15 @@ const Detailbottle = ({ route, navigation }) => {
                                         <Text style={styleDetailbottle.textTout}>+</Text>
                                     </TouchableOpacity>
                                 </View>
+                                <Text
+                                                    style={{
+                                                        fontSize: 18,
+                                                        textDecorationLine: 'line-through',
+                                                       left:50,
+                                                       top:-20
+                                                    }}>
+                                                    {fixedPrice.toLocaleString()}.đ
+                                                </Text>
                                 <View
                                     style={{
                                         flexDirection: 'column',
@@ -274,12 +291,13 @@ const Detailbottle = ({ route, navigation }) => {
                                         <Text
                                             style={{
                                                 fontSize:18,
+                                                color:'red'
                                             }}>
-                                                {fixedPrice.toLocaleString()}.000đ</Text>
+                                                {fixedPrice.toLocaleString()}.đ</Text>
                                     </View>
                                     <View 
                                     style={{ flexDirection: 'row', alignItems: 'center', marginBottom:14 }}>
-                                        <Text style={styleDetailbottle.price}>{price.toLocaleString()}.000đ</Text>
+                                        <Text style={styleDetailbottle.price}>{price.toLocaleString()}.đ</Text>
                                     </View>
                                 </View>
                             </View>
@@ -301,6 +319,10 @@ const Detailbottle = ({ route, navigation }) => {
                                 <View style={styleDetailbottle.textoriginRow}>
                                     <Text style={styleDetailbottle.textorigin}>Bảo quản: </Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.preserve || 'Chưa có thông tin'}</Text>
+                                </View>
+                                 <View style={styleDetailbottle.textoriginRow}>
+                                    <Text style={styleDetailbottle.textorigin}>Số lượng tồn kho: </Text>
+                                    <Text style={styleDetailbottle.textorigin}>{productDetails.quantity || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View>
                                     <Text style={styleDetailbottle.textorigin}>Công dụng: </Text>

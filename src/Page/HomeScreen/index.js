@@ -125,7 +125,7 @@ const HomeScreen = (props) => {
                     {item.discount && (
                         <View style={HomeStyle.textdiscount}>
                             <Text style={HomeStyle.label}>
-                                Giảm: {item.discount}.000 đ
+                                Giảm: {item.discount} đ
                             </Text>
                         </View>
                     )}
@@ -135,7 +135,7 @@ const HomeScreen = (props) => {
                     <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                     <View style={HomeStyle.priceall}>
                         <Text style={HomeStyle.productPrice}>
-                            {item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}
+                            {item.price ? `${item.price.toLocaleString()}VNĐ` : 'Giá không có'}
                         </Text>
                     </View>
                 </View>

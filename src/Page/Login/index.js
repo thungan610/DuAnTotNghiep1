@@ -9,6 +9,7 @@ import { setPassword } from '../Reducers/userReducers';
 import { setUser } from '../Reducers/userReducers';
 import axiosInstance from '../api/AxiosInstance';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -21,6 +22,21 @@ const Login = () => {
     const [passwordError, setPasswordError] = useState('');
     const [loginError, setLoginError] = useState('');
 
+    // Lấy thông tin từ AsyncStorage khi mở lại ứng dụng
+    useEffect(() => {
+        const checkRememberedAccount = async () => {
+            const savedEmail = await AsyncStorage.getItem('email');
+            const savedPassword = await AsyncStorage.getItem('password');
+            if (savedEmail && savedPassword) {
+                setEmailText(savedEmail);
+                setPasswordText(savedPassword);
+                setRememberAccount(true); // Gắn trạng thái remember là true
+            }
+        };
+
+        checkRememberedAccount();
+    }, []);
+       
     const BtnLogin = async () => {
         let hasError = false;
         setLoginError('');
@@ -68,13 +84,15 @@ const Login = () => {
                     visibilityTime: 2000,
                     position: 'top',
                   });
-                  
-        
+
+                // Nếu chọn nhớ tài khoản, lưu email và mật khẩu vào AsyncStorage
                 if (rememberAccount) {
+                    await AsyncStorage.setItem('email', email);
+                    await AsyncStorage.setItem('password', password);
                     dispatch(setEmail(email));
                     dispatch(setPassword(password));
                 }
-        
+
                 const userData = response.data;  
                 if (userData) {
                     dispatch(setUser(userData));
@@ -88,7 +106,7 @@ const Login = () => {
             } else {
                 throw new Error("Đăng nhập thất bại");
             }
-        
+  
         } catch (error) {
             console.log(error.response?.data || error.message);
             const errorMessage = error.response?.data?.message || "Đăng nhập thất bại!";
@@ -123,7 +141,7 @@ const Login = () => {
     const handleRememberAccount = () => {
         setRememberAccount(!rememberAccount);
     };
-
+ Alert
     return (
         <View style={LoginStyle.container}>
             <View style={LoginStyle.headerlogo}>

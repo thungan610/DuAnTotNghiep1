@@ -168,11 +168,11 @@ const DetailDiscout = (prop) => {
                                 style={{
                                     fontSize: 18,
                                 }}>
-                                {fixedPrice.toLocaleString()}.000đ</Text>
+                                {fixedPrice.toLocaleString()}đ</Text>
                         </View>
                         <View
                             style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
-                            <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
+                            <Text style={styleDetailDiscout.price}>{price.toLocaleString()}đ</Text>
                         </View>
                     </View>
                 </View>
@@ -303,7 +303,7 @@ const DetailDiscout = (prop) => {
                                             alignItems: 'center',
                                             padding: 5
                                         }}>
-                                        <Text style={styleDetailDiscout.price}>{price.toLocaleString()}.000đ</Text>
+                                        <Text style={styleDetailDiscout.price}>{price.toLocaleString()}đ</Text>
                                     </View>
                                 </View>
                             </View>

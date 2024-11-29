@@ -117,6 +117,9 @@ const Detail = ({ route, navigation }) => {
 
     const addToCartHandler = async () => {
         if (!user?.email) {
+        
+            
+            // Nếu người dùng chưa đăng nhập
             Alert.alert(
                 'Thông báo',
                 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
@@ -124,6 +127,7 @@ const Detail = ({ route, navigation }) => {
                     {
                         text: 'Đăng nhập',
                         onPress: () => {
+                            // Điều hướng tới trang đăng nhập
                             navigation.navigate('Login');
                         }
                     },
@@ -135,7 +139,9 @@ const Detail = ({ route, navigation }) => {
             );
             return;
         }
-
+   
+    
+        // Nếu người dùng đã đăng nhập, thêm sản phẩm vào giỏ hàng
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
@@ -146,19 +152,20 @@ const Detail = ({ route, navigation }) => {
             selected: true,
         };
         console.log('productDetails', productToAdd);
-
-
+    
         try {
+            // Gửi request để thêm sản phẩm vào giỏ hàng
             const response = await AxiosInstance.post('/carts/addCart_App', {
                 user: user.userData._id,
                 products: [productToAdd],
             });
             console.log('response', response.data);
-
-
+    
+            // Kiểm tra xem có lỗi không
             if (response.data.error) {
                 Alert.alert('Lỗi', response.data.error);
             } else {
+                // Thông báo thành công
                 Toast.show({
                     type: 'success',
                     text1: 'Thông báo',
@@ -167,15 +174,13 @@ const Detail = ({ route, navigation }) => {
                     position: 'top'
                 });
                 console.log('Thêm sản phẩm vào giỏ hàng:', productToAdd);
-                dispatch(addToCart(productToAdd));
-
+                dispatch(addToCart(productToAdd));  // Cập nhật trạng thái giỏ hàng
             }
         } catch (error) {
             const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
-            Alert.alert('Thông báo', errorMessage);
+            Alert.alert('Thông báo', errorMessage);  // Thông báo lỗi
         }
     };
-
     const renderImages = () => images.map((item, index) => (
         <View key={index}>
             <Image resizeMode='contain' source={{ uri: item }} style={{ width: '100%', height: '100%' }} />
@@ -281,26 +286,26 @@ const Detail = ({ route, navigation }) => {
                                                         textDecorationLine: 'line-through',
                                                         marginRight: 10,
                                                     }}>
-                                                    {fixedPrice.toLocaleString()}.000đ
+                                                    {fixedPrice.toLocaleString()}.đ
                                                 </Text>
                                                 <Text
                                                     style={{
                                                         fontSize: 18,
                                                         color: 'red',
                                                     }}>
-                                                    {amount.toLocaleString()}.000đ
+                                                    {amount.toLocaleString()}đ
                                                 </Text>
                                             </>
                                         ) : (
                                             <Text style={{ fontSize: 18 }}>
-                                                {fixedPrice.toLocaleString()}.000đ
+                                                {fixedPrice.toLocaleString()}đ
                                             </Text>
                                         )}
                                     </View>
 
                                     <View
                                         style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
-                                        <Text style={styleDetail.price}>{price.toLocaleString()}.000đ</Text>
+                                        <Text style={styleDetail.price}>{price.toLocaleString()}đ</Text>
                                     </View>
                                 </View>
                             </View>
