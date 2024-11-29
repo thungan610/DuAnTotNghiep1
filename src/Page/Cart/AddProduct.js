@@ -40,6 +40,7 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
                 <Text style={AddProductStyle.itemPrice}>
                     {(item.price && item.quantity) ?
                         ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString() : 'Không có giá hoặc số lượng'}đ
+
                 </Text>
             </View>
             <View style={AddProductStyle.quantityContainer}>

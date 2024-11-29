@@ -160,8 +160,6 @@ const Order = ({ navigation, route }) => {
             )}
           </View>
         </View>
-      </TouchableOpacity>
-    );
 
     return (
       <View style={OrderStyle.container}>

@@ -3,17 +3,25 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 
 const Processing1 = (prop) => {
     const { order } = prop.route.params;
-    console.log('order', order);
+    console.log('DEBUG - Dữ liệu order:', JSON.stringify(order, null, 2));
 
     const transferOptions = [
         { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
         { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
         { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+        { label: "Bình Thường", ship: "2", note: "Phương thức vận chuyển tiết kiệm nhất" }, 
     ];
+    
 
     const getShippingLabel = (ship) => {
-        const option = transferOptions.find(option => option.ship === ship.toString());
-        return option ? option.label : "Không xác định";
+        const shipStr = String(ship); 
+        console.log("DEBUG - Giá trị ship:", shipStr);
+        const option = transferOptions.find(option => option.ship === shipStr);
+        if (!option) {
+            console.warn(`Không tìm thấy nhãn vận chuyển cho giá trị ship: ${shipStr}`); 
+        }
+
+        return option ? option.label : "Không xác định"; 
     };
 
     return (
@@ -37,7 +45,6 @@ const Processing1 = (prop) => {
                     </Text>
                 </View>
 
-
                 <View style={ProcessingStyle.address}>
                     <Text style={ProcessingStyle.label}>Địa chỉ:</Text>
                     <Text>{`Số nhà ${order.address.houseNumber}, hẻm ${order.address.alley}, ${order.address.quarter}`}</Text>
@@ -50,18 +57,17 @@ const Processing1 = (prop) => {
                         <View style={ProcessingStyle.productInfo}>
                             <Text style={ProcessingStyle.productName}>{product.name}</Text>
                             <Text style={ProcessingStyle.category}>{product.category.category_name}</Text>
-                            <Text style={ProcessingStyle.price}>{`${product.price}.000 đ`}</Text>
+                            <Text style={ProcessingStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
                         </View>
                     </View>
                 ))}
 
-
                 <View style={ProcessingStyle.paymentInfo}>
                     <Text style={ProcessingStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
-                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
-                    <Text style={ProcessingStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${(order.totalOrder - order.ship).toLocaleString()}đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship.toLocaleString()} đ`}</Text>
+                    <Text style={ProcessingStyle.total}>{`Tổng thanh toán: ${order.totalOrder.toLocaleString()}đ`}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -172,15 +178,12 @@ const ProcessingStyle = StyleSheet.create({
     productName: {
         fontSize: 14,
         fontWeight: 'bold',
-        marginLeft: '10'
     },
     category: {
         color: '#777',
-        // marginLeft: 10
     },
     price: {
         color: '#000',
-        // marginLeft: 10
     },
     paymentInfo: {
         marginVertical: 10,
