@@ -12,7 +12,6 @@ const Order = ({ navigation, route }) => {
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id || 'default_id';
 
-
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
 
   const fetchOrders = useCallback(async () => {
@@ -20,7 +19,6 @@ const Order = ({ navigation, route }) => {
     try {
       const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
       const allOrders = response;
-
       const filteredOrders = allOrders
         .filter(order => {
           switch (tabs[selectedTabs]) {
@@ -75,6 +73,7 @@ const Order = ({ navigation, route }) => {
 
   const addToCartHandler = async (order) => {
     setFocusedOrder(order._id);
+
     const productsToAdd = Array.isArray(order.products) ? order.products.map(product => ({
       id: product._id,
       name: product.name,
@@ -195,7 +194,6 @@ const Order = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </View>
-
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (

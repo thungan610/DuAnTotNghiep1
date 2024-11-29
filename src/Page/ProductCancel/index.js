@@ -38,7 +38,7 @@ const ProductCancel = (prop) => {
       <ScrollView style={ProductCancelStyle.boxProduct}>
         <View style={ProductCancelStyle.orderContainer}>
           {order.products.map((product, index) => (
-            <View key={product.id || index} style={ProductCancelStyle.orderCard}>
+            <View key={product.id} style={ProductCancelStyle.orderCard}>
               <View style={ProductCancelStyle.borderimage}>
                 <Image source={{ uri: product.images[0] }} style={ProductCancelStyle.image} />
               </View>
