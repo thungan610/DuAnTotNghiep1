@@ -16,17 +16,19 @@ const NotifiScreen = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             const getNotifi = async () => {
+                console.log('userId');
                 try {
                     if (!userId) {
-                       
+                       console.log(userId);
                         setLoading(false);
                         return;
                     }
                     const response = await axiosInstance.get(`/notifications/${userId}`);
-                    console.log('API Response:', response.data);
-                    if (response.data) {
-                        setData(response.data);
-                    }
+                    console.log('API Response:', response);
+                    if (response) {
+                        setData(response);
+                        console.log('API Response:', response);
+                    }   
                 } catch (error) {
                     console.error("Error fetching notifications:", error);
                     setError("Không thể tải thông báo.");
@@ -35,7 +37,7 @@ const NotifiScreen = ({ navigation }) => {
                 }
             };
             getNotifi();
-        }, [userId]) 
+        }, []) 
     );
 
     return (
