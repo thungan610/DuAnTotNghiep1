@@ -359,7 +359,7 @@ const Payment = ({ route, navigation }) => {
                                     <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                     <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                     <View style={PaymentStyle.ViewPrice}>
-                                        <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
+                                        <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()} đ</Text>
                                     </View>
                                 </View>
                             </View>
@@ -375,7 +375,7 @@ const Payment = ({ route, navigation }) => {
                 {selectedTransfer ? (
                     <View style={PaymentStyle.ViewTranfer}>
                         <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
-                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}.000 đ</Text>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}đ</Text>
                     </View>
                 ) : (
                     <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>
@@ -443,15 +443,15 @@ const Payment = ({ route, navigation }) => {
 
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}.000 đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
-                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}đ</Text>
                     </View>
                 </View>
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
