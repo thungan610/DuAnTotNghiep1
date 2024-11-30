@@ -20,6 +20,8 @@ import Toast from 'react-native-toast-message';
 const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
   if (!item) return null;
   const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
+  const maxQuantity = parseInt(item.quantityMax);
+  console.log('max SL: ', maxQuantity)
   const imageUri =
     Array.isArray(item.images) && item.images.length > 0
       ? item.images[0]
@@ -65,13 +67,13 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
       </View>
       <View style={AddProductStyle.quantityContainer}>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.cart_id, item.product_id, 'decrease')}
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'decrease', maxQuantity)}
           style={AddProductStyle.quantityButton}>
           <Text style={AddProductStyle.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.cart_id, item.product_id, 'increase')}
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'increase', maxQuantity)}
           style={AddProductStyle.quantityButton}>
           <Text style={AddProductStyle.quantityText}>+</Text>
         </TouchableOpacity>
@@ -154,6 +156,7 @@ const AddProduct = ({route, navigation}) => {
               quantity: product.quantity,
               images: product.images,
               selected: true,
+              quantityMax: product.quantityMax
             })),
           );
           setCartItems(productsData);
@@ -207,8 +210,18 @@ const AddProduct = ({route, navigation}) => {
     });
   };
 
-  const updateQuantityInCart = async (cart_id, product_id, quantity) => {
+  const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
     try {
+     
+      let finalQuantity = quantity;
+      if(quantity > quantityMax) {
+        console.log('true')
+        quantity = quantityMax;
+      }
+
+      console.log('cur', quantity);      
+      console.log('max', quantityMax);      
+
       const response = await axiosInstance.put(
         `/carts/updateQuantity/${cart_id}/${product_id}`,
         {quantity},
@@ -227,7 +240,7 @@ const AddProduct = ({route, navigation}) => {
     }
   };
 
-  const updateQuantity = async (cart_id, product_id, action) => {
+  const updateQuantity = async (cart_id, product_id, action, maxQuantity) => {
     setCartItems(prevItems => {
       return prevItems.map(item => {
         if (item.product_id === product_id) {
@@ -236,7 +249,7 @@ const AddProduct = ({route, navigation}) => {
             action === 'increase'
               ? currentQuantity + 1
               : Math.max(1, currentQuantity - 1);
-          updateQuantityInCart(cart_id, item.product_id, newQuantity);
+          updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
           return {...item, quantity: newQuantity};
         }
         return item;
