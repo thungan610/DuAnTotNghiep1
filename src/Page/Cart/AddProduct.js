@@ -1,60 +1,83 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {useSelector} from 'react-redux';
-import {View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator,} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Modal,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
-const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
-    if (!item) return null;
-    const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
-    const imageUri = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : null;
+const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
+  if (!item) return null;
+  const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
+  const imageUri =
+    Array.isArray(item.images) && item.images.length > 0
+      ? item.images[0]
+      : null;
+  // console.log('item', item.product_id);
+  useEffect(() => {
+    if (item) {
+      setFixedPrice(item.price || 0);
+    }
+  }, [item]);
 
-    useEffect(() => {
-        if (item) {
-            setFixedPrice(item.price || 0);
-        }
-    }, [item]);
-
-    return (
-        <View style={AddProductStyle.itemContainer}>
-            <TouchableOpacity onPress={() => toggleSelect(item.cart_id)}>
-                <Image
-                    source={item.selected ? require("../../../src/assets/check.png") : require("../../../src/assets/uncheck.png")}
-                    style={AddProductStyle.checkbox}
-                />
-            </TouchableOpacity>
-            <View style={AddProductStyle.borderImage}>
-                <Image source={{ uri: imageUri }} style={AddProductStyle.image} />
-            </View>
-            <View style={AddProductStyle.itemDetails}>
-                <Text style={AddProductStyle.itemName}>{item.name || 'Không có tên'}</Text>
-                <Text style={AddProductStyle.itemCategory}>{item.category_name || 'Không có danh mục'}</Text>
-                <View>
-                    <Text style={{ fontSize: 14 }}>
-                        {fixedPrice.toLocaleString()}.000đ
-                    </Text>
-                </View>
-                <Text style={AddProductStyle.itemPrice}>
-                    {(item.price && item.quantity) ?
-                        ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString() : 'Không có giá hoặc số lượng'}
-                    .000đ
-                </Text>
-            </View>
-            <View style={AddProductStyle.quantityContainer}>
-                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'decrease')} style={AddProductStyle.quantityButton}>
-                    <Text style={AddProductStyle.quantityText}>-</Text>
-                </TouchableOpacity>
-                <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => updateQuantity(item.cart_id, 'increase')} style={AddProductStyle.quantityButton}>
-                    <Text style={AddProductStyle.quantityText}>+</Text>
-                </TouchableOpacity>
-            </View>
+  return (
+    <View style={AddProductStyle.itemContainer}>
+      <TouchableOpacity onPress={() => toggleSelect(item.product_id)}>
+        <Image
+          source={
+            item.selected
+              ? require('../../../src/assets/check.png')
+              : require('../../../src/assets/uncheck.png')
+          }
+          style={AddProductStyle.checkbox}
+        />
+      </TouchableOpacity>
+      <View style={AddProductStyle.borderImage}>
+        <Image source={{uri: imageUri}} style={AddProductStyle.image} />
+      </View>
+      <View style={AddProductStyle.itemDetails}>
+        <Text style={AddProductStyle.itemName}>
+          {item.name || 'Không có tên'}
+        </Text>
+        <Text style={AddProductStyle.itemCategory}>
+          {item.category_name || 'Không có danh mục'}
+        </Text>
+        <View>
+          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}.000đ</Text>
         </View>
-    );
+        <Text style={AddProductStyle.itemPrice}>
+          {item.price && item.quantity
+            ? ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()
+            : 'Không có giá hoặc số lượng'}
+          .000đ
+        </Text>
+      </View>
+      <View style={AddProductStyle.quantityContainer}>
+        <TouchableOpacity
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'decrease')}
+          style={AddProductStyle.quantityButton}>
+          <Text style={AddProductStyle.quantityText}>-</Text>
+        </TouchableOpacity>
+        <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
+        <TouchableOpacity
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'increase')}
+          style={AddProductStyle.quantityButton}>
+          <Text style={AddProductStyle.quantityText}>+</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 });
 
 const ConfirmationModal = ({visible, onConfirm, onCancel}) => (
@@ -156,11 +179,13 @@ const AddProduct = ({route, navigation}) => {
     }, [userId]),
   );
 
-  const toggleSelectProduct = cart_id => {
-    console.log('Toggle select product cart_id:', cart_id);
+  const toggleSelectProduct = product_id => {
+
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item => {
-        if (item.cart_id === cart_id) {
+        console.log(' item_id:', item.product_id);
+        console.log(' product_id:', product_id);
+        if (item.product_id === product_id) {
           const newItem = {...item, selected: !item.selected};
           return newItem;
         }
@@ -202,10 +227,10 @@ const AddProduct = ({route, navigation}) => {
     }
   };
 
-  const updateQuantity = async (cart_id, action) => {
+  const updateQuantity = async (cart_id, product_id, action) => {
     setCartItems(prevItems => {
       return prevItems.map(item => {
-        if (item.cart_id === cart_id) {
+        if (item.product_id === product_id) {
           const currentQuantity = item.quantity;
           let newQuantity =
             action === 'increase'
@@ -239,14 +264,14 @@ const AddProduct = ({route, navigation}) => {
     const selectedItems = cartItems.filter(item => item.selected);
 
     if (selectedItems.length === 0) {
-        Toast.show({
-            type: 'error',
-            position: 'top',
-            text1: 'Thông báo',
-            text2: 'Không có sản phẩm để xóa',
-            visibilityTime: 3000,
-            autoHide: true,
-          });
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Thông báo',
+        text2: 'Không có sản phẩm để xóa',
+        visibilityTime: 3000,
+        autoHide: true,
+      });
     } else {
       try {
         for (const item of selectedItems) {
@@ -260,14 +285,13 @@ const AddProduct = ({route, navigation}) => {
         }
         setModalVisible(false);
         Toast.show({
-            type: 'success',
-            position: 'top',
-            text1: 'Thông báo',
-            text2: 'Xóa sản phẩm thành công',
-            visibilityTime: 3000,
-            autoHide: true,
-          });
-
+          type: 'success',
+          position: 'top',
+          text1: 'Thông báo',
+          text2: 'Xóa sản phẩm thành công',
+          visibilityTime: 3000,
+          autoHide: true,
+        });
       } catch (error) {
         Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa sản phẩm.');
         console.log('Lỗi khi xóa sản phẩm', error);
@@ -347,7 +371,7 @@ const AddProduct = ({route, navigation}) => {
               updateQuantity={updateQuantity}
             />
           )}
-          keyExtractor={(item, index) => `${item.cart_id}-${index}`}
+          keyExtractor={(item, index) => `${item.product_id}-${index}`}
         />
       )}
 
