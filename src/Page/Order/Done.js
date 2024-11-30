@@ -93,7 +93,7 @@ const Done = (prop) => {
                         <View style={DoneStyle.productInfo}>
                             <Text style={DoneStyle.productName}>{product.name}</Text>
                             <Text style={DoneStyle.category}>{product.category.category_name}</Text>
-                            <Text style={DoneStyle.price}>{`${product.price} đ`}</Text>
+                            <Text style={DoneStyle.price}>{`${product.price}.000 đ`}</Text>
                         </View>
                     </View>
                 ))}
@@ -102,9 +102,9 @@ const Done = (prop) => {
                 <View style={DoneStyle.paymentInfo}>
                     <Text style={DoneStyle.label}>Chi tiết thanh toán</Text>
                     <Text>Khuyến mãi: 0</Text>
-                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship} đ`}</Text>
-                    <Text>{`Tiền vận chuyển: ${order.ship} đ`}</Text>
-                    <Text style={DoneStyle.total}>{`Tổng thanh toán: ${order.totalOrder}đ`}</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship}.000 đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${order.ship}.000 đ`}</Text>
+                    <Text style={DoneStyle.total}>{`Tổng thanh toán: ${order.totalOrder}.000 đ`}</Text>
                 </View>
                 <View style={DoneStyle.buttonContainer}>
                     <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>
