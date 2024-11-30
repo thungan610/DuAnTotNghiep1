@@ -212,12 +212,16 @@ const AddProduct = ({route, navigation}) => {
 
   const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
     try {
-     
-      let finalQuantity = quantity;
-      if(quantity > quantityMax) {
+     if(quantity > quantityMax) {
+      return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
+     }
+
+
+      if(quantity = quantityMax) {
         console.log('true')
         quantity = quantityMax;
       }
+
 
       console.log('cur', quantity);      
       console.log('max', quantityMax);      
@@ -244,10 +248,11 @@ const AddProduct = ({route, navigation}) => {
     setCartItems(prevItems => {
       return prevItems.map(item => {
         if (item.product_id === product_id) {
-          const currentQuantity = item.quantity;
+          let currentQuantity = item.quantity;
+          
           let newQuantity =
             action === 'increase'
-              ? currentQuantity + 1
+              ?  (currentQuantity == maxQuantity ? currentQuantity = maxQuantity : currentQuantity + 1)
               : Math.max(1, currentQuantity - 1);
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
           return {...item, quantity: newQuantity};
