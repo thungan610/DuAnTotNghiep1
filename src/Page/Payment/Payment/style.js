@@ -10,10 +10,10 @@ const PaymentStyle = StyleSheet.create({
         padding: 6
     },
     paddingHorizontal:{
-        paddingHorizontal: 2
+        paddingHorizontal: 4
     },
     paddingBottom:{
-        paddingBottom: 20
+        paddingBottom: 10
     },
     body:{
         flexDirection:'row',
@@ -74,6 +74,7 @@ const PaymentStyle = StyleSheet.create({
     Viewimg:{
         backgroundColor: "#37C5DF",
         borderRadius: 10,
+        marginBottom:6
     },
     ViewBodyContainer:{
         width:'100%',
@@ -132,7 +133,7 @@ const PaymentStyle = StyleSheet.create({
         textAlign:'center',
         fontFamily:'Poppins',
         fontWeight:'bold',
-        fontSize:16,
+        fontSize:18,
     }
 })
 export default PaymentStyle

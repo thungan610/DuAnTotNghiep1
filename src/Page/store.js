@@ -3,18 +3,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer } from 'redux-persist'; 
 import userReducer from './Reducers/userReducers';
 import cartReducer from './Reducers/cartReducers';
+import notificationSlice from './Reducers/notificationSlice'
 
 // Cấu hình persist
 const persistConfig = {
   key: 'store',
   storage: AsyncStorage,
-  whitelist: ['user', 'cart'], 
+  whitelist: ['user', 'cart', 'notification'],
 };
 
 // Kết hợp các reducers
 const rootReducer = combineReducers({
   user: userReducer, 
-  cart: cartReducer,  
+  cart: cartReducer,
+  notification: notificationSlice,
 });
 
 // Tạo persisted reducer
@@ -27,12 +29,12 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
       immutableCheck: false,
-    })
+    }),
 });
 
+// Theo dõi trạng thái cart để debug
 store.subscribe(() => {
   console.log('Cart State:', store.getState().cart.cartItems);
 });
-
 
 export default store;

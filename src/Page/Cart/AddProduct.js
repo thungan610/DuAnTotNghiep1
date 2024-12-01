@@ -1,15 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {useSelector} from 'react-redux';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Modal,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
@@ -26,7 +17,6 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
     Array.isArray(item.images) && item.images.length > 0
       ? item.images[0]
       : null;
-  // console.log('item', item.product_id);
   useEffect(() => {
     if (item) {
       setFixedPrice(item.price || 0);
@@ -56,13 +46,12 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
           {item.category_name || 'Không có danh mục'}
         </Text>
         <View>
-          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}.000đ</Text>
+          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}đ</Text>
         </View>
         <Text style={AddProductStyle.itemPrice}>
           {item.price && item.quantity
             ? ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()
-            : 'Không có giá hoặc số lượng'}
-          .000đ
+            : 'Không có giá hoặc số lượng'}đ
         </Text>
       </View>
       <View style={AddProductStyle.quantityContainer}>
@@ -415,7 +404,7 @@ const AddProduct = ({route, navigation}) => {
               </Text>
             </View>
             <Text style={AddProductStyle.totalPrice}>
-              Tổng tiền: {totalAmount.toLocaleString()}.000đ
+              Tổng tiền: {totalAmount.toLocaleString()}đ
             </Text>
           </View>
           <TouchableOpacity
