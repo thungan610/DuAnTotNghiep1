@@ -358,8 +358,8 @@ const Payment = ({ route, navigation }) => {
                                     <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                     <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                     <View style={PaymentStyle.ViewPrice}>
-                                        <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()} đ</Text>
-                                    </View>
+                                    <Text style={PaymentStyle.txtPrice}>{(product.price * product.quantity).toLocaleString()} đ</Text>
+                                </View>
                                 </View>
                             </View>
                             <View>

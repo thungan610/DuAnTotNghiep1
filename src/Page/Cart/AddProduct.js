@@ -172,53 +172,42 @@ const AddProduct = ({route, navigation}) => {
   );
 
   const toggleSelectProduct = product_id => {
-
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item => {
-        console.log(' item_id:', item.product_id);
-        console.log(' product_id:', product_id);
         if (item.product_id === product_id) {
           const newItem = {...item, selected: !item.selected};
           return newItem;
         }
         return item;
       });
-
-      const newSelectedCount = updatedItems.filter(
-        item => item.selected,
-      ).length;
+  
+      const newSelectedCount = updatedItems.filter(item => item.selected).length;
       setSelectedCount(newSelectedCount);
-
+  
       const newTotal = updatedItems
         .filter(item => item.selected)
-        .reduce((total, item) => total + item.price * item.quantity, 0);
+        .reduce((total, item) => total + (item.price * item.quantity), 0);
       setTotalAmount(newTotal);
-
-      console.log('Updated cart items:', updatedItems);
+  
       return updatedItems;
     });
   };
+  
 
   const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
     try {
-     if(quantity > quantityMax) {
-      return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
-     }
-
-
-      if(quantity = quantityMax) {
-        console.log('true')
-        quantity = quantityMax;
+      if (quantity > quantityMax) {
+        return Alert.alert('Lỗi', 'Số lượng nhập về không hợp lệ.');
       }
-
-
+  
       console.log('cur', quantity);      
       console.log('max', quantityMax);      
-
+  
       const response = await axiosInstance.put(
         `/carts/updateQuantity/${cart_id}/${product_id}`,
-        {quantity},
+        { quantity },
       );
+  
       if (response) {
         return response;
       } else {
@@ -232,24 +221,29 @@ const AddProduct = ({route, navigation}) => {
       console.error('Error updating quantity:', error);
     }
   };
+  
 
   const updateQuantity = async (cart_id, product_id, action, maxQuantity) => {
     setCartItems(prevItems => {
       return prevItems.map(item => {
         if (item.product_id === product_id) {
           let currentQuantity = item.quantity;
-          
           let newQuantity =
             action === 'increase'
-              ?  (currentQuantity == maxQuantity ? currentQuantity = maxQuantity : currentQuantity + 1)
+              ? (currentQuantity == maxQuantity ? currentQuantity : currentQuantity + 1)
               : Math.max(1, currentQuantity - 1);
+  
+          // Cập nhật lại số lượng và tính lại tổng tiền
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
-          return {...item, quantity: newQuantity};
+  
+          const newPrice = item.price * newQuantity;
+          return {...item, quantity: newQuantity, totalPrice: newPrice};
         }
         return item;
       });
     });
   };
+  
 
   const deleteItemsFromCart = async cart_id => {
     try {
