@@ -7,11 +7,13 @@ const userSlice = createSlice({
     password: '',
     rememberAccount: false,
     userData: null,
-    userId: null
+    userId: null,
+    isLoggedIn: false,  
   },
   reducers: {
     setUser: (state, action) => {
       state.userData = action.payload;
+      state.isLoggedIn = true;  
     },
     setEmail: (state, action) => {
       state.email = action.payload;
@@ -29,7 +31,8 @@ const userSlice = createSlice({
       state.userData = null;
       state.email = '';
       state.password = '';
-      state.userId = null; 
+      state.userId = null;
+      state.isLoggedIn = false;  
     },
   },
 });
