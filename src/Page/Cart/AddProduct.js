@@ -17,6 +17,8 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
     Array.isArray(item.images) && item.images.length > 0
       ? item.images[0]
       : null;
+
+      // console.log('item', item.product_id);
   useEffect(() => {
     if (item) {
       setFixedPrice(item.price || 0);
@@ -46,12 +48,13 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
           {item.category_name || 'Không có danh mục'}
         </Text>
         <View>
-          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}đ</Text>
+          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}.000đ</Text>
         </View>
         <Text style={AddProductStyle.itemPrice}>
           {item.price && item.quantity
             ? ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()
-            : 'Không có giá hoặc số lượng'}đ
+            : 'Không có giá hoặc số lượng'}
+            .000đ
         </Text>
       </View>
       <View style={AddProductStyle.quantityContainer}>
@@ -172,36 +175,34 @@ const AddProduct = ({route, navigation}) => {
   );
 
   const toggleSelectProduct = product_id => {
+
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item => {
+        console.log(' item_id:', item.product_id);
+        console.log(' product_id:', product_id);
         if (item.product_id === product_id) {
           const newItem = {...item, selected: !item.selected};
           return newItem;
         }
         return item;
       });
-  
-      const newSelectedCount = updatedItems.filter(item => item.selected).length;
-      setSelectedCount(newSelectedCount);
-  
-      const newTotal = updatedItems
-        .filter(item => item.selected)
-        .reduce((total, item) => total + (item.price * item.quantity), 0);
-      setTotalAmount(newTotal);
-  
-      return updatedItems;
-    });
-  };
+
+      const newSelectedCount = updatedItems.filter(
+        item => item.selected,
+      ).length;
   
 
-  const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
-    try {
-      if (quantity > quantityMax) {
-        return Alert.alert('Lỗi', 'Số lượng nhập về không hợp lệ.');
-      }
-  
-      console.log('cur', quantity);      
-      console.log('max', quantityMax);      
+      const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
+        try {
+         if(quantity > quantityMax) {
+          return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
+         }
+          if(quantity = quantityMax) {
+            console.log('true')
+            quantity = quantityMax;
+          console.log('cur', quantity);      
+          console.log('max', quantityMax);      
+          }
   
       const response = await axiosInstance.put(
         `/carts/updateQuantity/${cart_id}/${product_id}`,
@@ -230,14 +231,14 @@ const AddProduct = ({route, navigation}) => {
           let currentQuantity = item.quantity;
           let newQuantity =
             action === 'increase'
-              ? (currentQuantity == maxQuantity ? currentQuantity : currentQuantity + 1)
+            ?  (currentQuantity == maxQuantity ? currentQuantity = maxQuantity : currentQuantity + 1)
               : Math.max(1, currentQuantity - 1);
   
           // Cập nhật lại số lượng và tính lại tổng tiền
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
-  
-          const newPrice = item.price * newQuantity;
-          return {...item, quantity: newQuantity, totalPrice: newPrice};
+
+          return {...item, quantity: newQuantity};
+          
         }
         return item;
       });
@@ -398,7 +399,7 @@ const AddProduct = ({route, navigation}) => {
               </Text>
             </View>
             <Text style={AddProductStyle.totalPrice}>
-              Tổng tiền: {totalAmount.toLocaleString()}đ
+              Tổng tiền: {totalAmount.toLocaleString()}.000đ
             </Text>
           </View>
           <TouchableOpacity
