@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
 import { useFocusEffect } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { clearUser } from '../Reducers/userReducers';
 
 const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
@@ -12,19 +14,21 @@ const ProfileDetail = (prop) => {
   const userid = user?.userData?._id;
   console.log('userid', userid);
   const [isLoading, setIsLoading] = useState(true);
+  const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+  const dispatch = useDispatch();
 
   console.log('profileData: ', profileData);
 
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
-
+  
       const fetchProfileData = async () => {
         if (!userid) return;
-
+  
         try {
           const response = await axiosInstance.get(`/users/${userid}/getProfileApp`);
-          if (isActive) {
+          if (isActive && userid) {
             setProfileData(response.data);
             setIsLoading(false);
           }
@@ -35,15 +39,34 @@ const ProfileDetail = (prop) => {
           }
         }
       };
-
-      fetchProfileData();
-
+  
+      if (isLoggedIn) {
+        fetchProfileData();
+      } else {
+        setProfileData(null); 
+        setIsLoading(false);
+      }
+  
       return () => {
         isActive = false;
       };
-    }, [userid])
+    }, [userid, isLoggedIn])  
   );
+  
 
+  const handleAuth = () => {
+    if (isLoggedIn) {
+      // Đăng xuất
+      dispatch(clearUser()); 
+      setProfileData(null); 
+      prop.navigation.navigate('Login');  
+    } else {
+      prop.navigation.navigate('Login');
+    }
+  };
+  
+  
+  
   const OnViewHoSo = () => {
     prop.navigation.navigate('InsertPro5');
   };
@@ -136,6 +159,19 @@ const ProfileDetail = (prop) => {
               <View style={profileStyle.boder} />
             </View>
           </TouchableOpacity>
+          <TouchableOpacity onPress={handleAuth}>
+      <View>
+        <View style={profileStyle.insideAccount}>
+          <Text style={profileStyle.textTab}>{isLoggedIn ? 'Đăng xuất' : 'Đăng nhập'}</Text>
+          <Image
+            style={profileStyle.vecto}
+            source={require('../../../src/assets/vecto1.png')}
+          />
+        </View>
+
+        <View style={profileStyle.boder} />
+      </View>
+    </TouchableOpacity>
           <View>
             <TouchableOpacity onPress={() => prop.navigation.navigate('UserCancel', { userId: user.id })}>
               <View style={profileStyle.insideAccount}>
