@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import axiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 const Payment = ({ route, navigation }) => {
     const { addressId } = route.params || {};
@@ -157,7 +156,7 @@ const Payment = ({ route, navigation }) => {
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds)
-                await createnotifications(idorder, userId);
+                // await createnotifications(idorder, userId);
                 navigation.navigate('PaySussesScreen');
             } else {
                 await createPayment(idorder);
@@ -248,35 +247,35 @@ const Payment = ({ route, navigation }) => {
         }
     };
 
-    const createnotifications = async (orderId, userId) => {
-        try {
-            const notifidata = {
-                userId,
-                orderId,
-                title: 'Đơn hàng mới đã được tạo',
-                promotionMessage: 'Bạn đã đặt hàng thành công với mã đơn hàng ' + orderId, 
-                type: 'order',
-                status: 0,
-            };
+    // const createnotifications = async (orderId, userId) => {
+    //     try {
+    //         const notifidata = {
+    //             userId,
+    //             orderId,
+    //             title: 'Đơn hàng mới đã được tạo',
+    //             promotionMessage: 'Bạn đã đặt hàng thành công với mã đơn hàng ' + orderId, 
+    //             type: 'order',
+    //             status: 0,
+    //         };
             
     
-            console.log('orderData', notifidata);
+    //         console.log('orderData', notifidata);
     
-            const response = await axios.post('http://192.168.1.21:3000/notifications/add_notification', notifidata);
-            console.log('response', response);
+    //         const response = await axiosInstance.post('/notifications/add_notification', notifidata);
+    //         console.log('response', response);
     
-            if (response && response.data) {
-                const notifi = response.data._id;
-                console.log('check:', notifi);
-                return notifi;
-            } else {
-                Alert.alert("Lỗi", "Không thể tạo thông báo. Vui lòng thử lại.");
-            }
-        } catch (error) {
-            console.error('Error creating notification:', error.message);
-            Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thông báo. Vui lòng thử lại.");
-        }
-    };
+    //         if (response && response.data) {
+    //             const notifi = response.data._id;
+    //             console.log('check:', notifi);
+    //             return notifi;
+    //         } else {
+    //             Alert.alert("Lỗi", "Không thể tạo thông báo. Vui lòng thử lại.");
+    //         }
+    //     } catch (error) {
+    //         console.error('Error creating notification:', error.message);
+    //         Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thông báo. Vui lòng thử lại.");
+    //     }
+    // };
 
 
     const createPayment = async (idorder) => {
@@ -342,9 +341,9 @@ const Payment = ({ route, navigation }) => {
 
             <Text style={PaymentStyle.Line} />
             {cartData.map((cart, index) => (
-                <View key={cart._id} style={[PaymentStyle.body, PaymentStyle.Padding]}>
+                <View key={cart._id} style={[PaymentStyle.bodysp, PaymentStyle.Padding]}>
                     {cart.products.map((product, productIndex) => (
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center', }} key={productIndex}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center'}} key={productIndex}>
                             <View
                                 style={{
                                     flexDirection: 'row'
@@ -375,7 +374,7 @@ const Payment = ({ route, navigation }) => {
                 {selectedTransfer ? (
                     <View style={PaymentStyle.ViewTranfer}>
                         <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
-                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}đ</Text>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}.000đ</Text>
                     </View>
                 ) : (
                     <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>
@@ -457,7 +456,7 @@ const Payment = ({ route, navigation }) => {
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
                 <View style={PaymentStyle.ViewFooter}>
                     <TouchableOpacity onPress={HandPaySuccess} style={PaymentStyle.btnSubmit}>
-                        <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
+                        <Text style={PaymentStyle.txtBtn}>Đặt hàng</Text>
                     </TouchableOpacity>
                 </View>
             </View>

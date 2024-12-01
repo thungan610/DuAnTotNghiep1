@@ -1,44 +1,41 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import notifiStyle from './style';
-import { useSelector } from 'react-redux';
-import axiosInstance from "../api/AxiosInstance";
-import { useFocusEffect } from "@react-navigation/native";
+import { useSelector, useDispatch } from 'react-redux';
+import PushNotification from "react-native-push-notification";
+import { addNotification, removeNotification } from '../Reducers/notificationSlice'; // Import removeNotification
 
 const NotifiScreen = ({ navigation }) => {
-    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const notifications = useSelector(state => state.notification.notifications);
 
-    const userId = user?.userData?._id || 'default_id';
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            const getNotifi = async () => {
-                console.log('userId');
-                try {
-                    if (!userId) {
-                       console.log(userId);
-                        setLoading(false);
-                        return;
-                    }
-                    const response = await axiosInstance.get(`/notifications/${userId}`);
-                    console.log('API Response:', response);
-                    if (response) {
-                        setData(response);
-                        console.log('API Response:', response);
-                    }   
-                } catch (error) {
-                    console.error("Error fetching notifications:", error);
-                    setError("Không thể tải thông báo.");
-                } finally {
-                    setLoading(false);
-                }
-            };
-            getNotifi();
-        }, []) 
-    );
+    const sendLocalNotification = () => {
+        const newNotification = {
+            id: Date.now().toString(),
+            title: "Thông báo mới",
+            message: "Bạn đã đặt hàng thành công",
+        };
+
+        PushNotification.localNotification({
+            channelId: "channelId",
+            title: newNotification.title,
+            message: newNotification.message,
+        });
+
+        dispatch(addNotification(newNotification));
+    };
+
+    const handleRemoveNotification = (id) => {
+        dispatch(removeNotification(id));  
+    };
 
     return (
         <View style={notifiStyle.container}>
@@ -61,11 +58,18 @@ const NotifiScreen = ({ navigation }) => {
                     <Text style={{ fontSize: 18, color: '#666', textAlign: 'center', marginTop: 320 }}>
                         {error}
                     </Text>
-                ) : data.length > 0 ? (
-                    data.map((item) => (
-                        <View key={item._id} style={notifiStyle.item}>
-                            <Text style={notifiStyle.title}>{item?.title}</Text>
-                            <Text style={notifiStyle.message}>{item?.message}</Text>
+                ) : notifications.length > 0 ? (
+                    notifications.map((item) => (
+                        <View key={item.id} style={{ borderWidth: 1, borderRadius: 1, borderColor: '#37C5DF', marginTop: 20, paddingHorizontal:2 }}>
+                            <TouchableOpacity
+                                onPress={() => handleRemoveNotification(item.id)}>
+                                <Image style={{position:'absolute', right:0, top: 0}} 
+                                 source={require('../../assets/close.png')}/>
+                            </TouchableOpacity>
+
+                            <Text style={{ fontWeight: "bold", fontSize: 18, color: 'black', marginLeft:8, marginTop:10 }}>{item.title}</Text>
+                            <Text style={{ fontSize: 16, marginBottom:10, marginLeft:8 }}>{item.message}</Text>
+
                         </View>
                     ))
                 ) : (

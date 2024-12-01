@@ -8,7 +8,6 @@ import styleDetailbottle from './styleDetailbottle';
 import axiosInstance from '../../../src/Page/api/AxiosInstance';
 
 
-
 const Detailbottle = ({ route, navigation }) => {
     const { product } = route.params || {};
 

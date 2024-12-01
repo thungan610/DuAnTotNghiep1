@@ -7,7 +7,7 @@ import styleDetail from './style';
 import { addToCart } from '../Action/cartActions';
 import Toast from 'react-native-toast-message';
 
-const MAX_QUANTITY = 10;
+// const MAX_QUANTITY = 10;
 
 const Detail = ({ route, navigation }) => {
     const { product } = route.params || {};
@@ -96,10 +96,10 @@ const Detail = ({ route, navigation }) => {
     }, []);
 
     const increaseQuantity = () => {
-        if (quantity < MAX_QUANTITY) {
+        if (quantity < productDetails.quantity) { // Giới hạn theo tồn kho
             setQuantity(prevQuantity => prevQuantity + 1);
         } else {
-            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${MAX_QUANTITY} sản phẩm.`);
+            Alert.alert("Thông báo", `Bạn chỉ có thể mua tối đa ${productDetails.quantity} sản phẩm còn trong kho.`);
         }
     };
 
@@ -286,7 +286,7 @@ const Detail = ({ route, navigation }) => {
                                                         textDecorationLine: 'line-through',
                                                         marginRight: 10,
                                                     }}>
-                                                    {fixedPrice.toLocaleString()}.đ
+                                                    {fixedPrice.toLocaleString()}đ
                                                 </Text>
                                                 <Text
                                                     style={{
