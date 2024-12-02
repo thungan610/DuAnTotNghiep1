@@ -1,14 +1,14 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {useSelector} from 'react-redux';
-import {View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { View, Text, FlatList, Image, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PayMethodStyle from '../Payment/PayMethod/style';
 import AddProductStyle from './AddProductStyle';
 import axiosInstance from '../api/AxiosInstance';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
-const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
+const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
   if (!item) return null;
   const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
   const maxQuantity = parseInt(item.quantityMax);
@@ -18,7 +18,7 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
       ? item.images[0]
       : null;
 
-      // console.log('item', item.product_id);
+  // console.log('item', item.product_id);
   useEffect(() => {
     if (item) {
       setFixedPrice(item.price || 0);
@@ -38,7 +38,7 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
         />
       </TouchableOpacity>
       <View style={AddProductStyle.borderImage}>
-        <Image source={{uri: imageUri}} style={AddProductStyle.image} />
+        <Image source={{ uri: imageUri }} style={AddProductStyle.image} />
       </View>
       <View style={AddProductStyle.itemDetails}>
         <Text style={AddProductStyle.itemName}>
@@ -48,13 +48,13 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
           {item.category_name || 'Không có danh mục'}
         </Text>
         <View>
-          <Text style={{fontSize: 14}}>{fixedPrice.toLocaleString()}.000đ</Text>
+          <Text style={{ fontSize: 14 }}>{fixedPrice.toLocaleString()}.000đ</Text>
         </View>
         <Text style={AddProductStyle.itemPrice}>
           {item.price && item.quantity
             ? ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()
             : 'Không có giá hoặc số lượng'}
-            .000đ
+          .000đ
         </Text>
       </View>
       <View style={AddProductStyle.quantityContainer}>
@@ -74,13 +74,13 @@ const CartItem = React.memo(({item, toggleSelect, updateQuantity}) => {
   );
 });
 
-const ConfirmationModal = ({visible, onConfirm, onCancel}) => (
+const ConfirmationModal = ({ visible, onConfirm, onCancel }) => (
   <Modal transparent={true} animationType="slide" visible={visible}>
     <View style={AddProductStyle.modalContainer}>
       <View style={AddProductStyle.modalContent}>
         <Image
           source={require('../../../src/assets/error.png')}
-          style={{height: 40, width: 40}}
+          style={{ height: 40, width: 40 }}
         />
         <Text style={AddProductStyle.modalTitle}>Xác nhận xóa sản phẩm</Text>
         <View style={AddProductStyle.modalButtons}>
@@ -100,8 +100,8 @@ const ConfirmationModal = ({visible, onConfirm, onCancel}) => (
   </Modal>
 );
 
-const AddProduct = ({route, navigation}) => {
-  const {data} = route.params || {};
+const AddProduct = ({ route, navigation }) => {
+  const { data } = route.params || {};
   const [modalVisible, setModalVisible] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedCount, setSelectedCount] = useState(0);
@@ -181,7 +181,7 @@ const AddProduct = ({route, navigation}) => {
         console.log(' item_id:', item.product_id);
         console.log(' product_id:', product_id);
         if (item.product_id === product_id) {
-          const newItem = {...item, selected: !item.selected};
+          const newItem = { ...item, selected: !item.selected };
           return newItem;
         }
         return item;
@@ -190,25 +190,37 @@ const AddProduct = ({route, navigation}) => {
       const newSelectedCount = updatedItems.filter(
         item => item.selected,
       ).length;
-  
+      setSelectedCount(newSelectedCount);
+      const newTotal = updatedItems
+        .filter(item => item.selected)
+        .reduce((total, item) => total + (item.price * item.quantity), 0);
+      setTotalAmount(newTotal);
 
-      const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
-        try {
-         if(quantity > quantityMax) {
-          return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
-         }
-          if(quantity = quantityMax) {
-            console.log('true')
-            quantity = quantityMax;
-          console.log('cur', quantity);      
-          console.log('max', quantityMax);      
-          }
-  
+      console.log('Updated cart items:', updatedItems);
+
+      return updatedItems;
+    });
+  };
+
+
+
+  const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
+    try {
+      if (quantity > quantityMax) {
+        return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
+      }
+      if (quantity = quantityMax) {
+        console.log('true')
+        quantity = quantityMax;
+        console.log('cur', quantity);
+        console.log('max', quantityMax);
+      }
+
       const response = await axiosInstance.put(
         `/carts/updateQuantity/${cart_id}/${product_id}`,
         { quantity },
       );
-  
+
       if (response) {
         return response;
       } else {
@@ -222,7 +234,7 @@ const AddProduct = ({route, navigation}) => {
       console.error('Error updating quantity:', error);
     }
   };
-  
+
 
   const updateQuantity = async (cart_id, product_id, action, maxQuantity) => {
     setCartItems(prevItems => {
@@ -231,20 +243,20 @@ const AddProduct = ({route, navigation}) => {
           let currentQuantity = item.quantity;
           let newQuantity =
             action === 'increase'
-            ?  (currentQuantity == maxQuantity ? currentQuantity = maxQuantity : currentQuantity + 1)
+              ? (currentQuantity == maxQuantity ? currentQuantity = maxQuantity : currentQuantity + 1)
               : Math.max(1, currentQuantity - 1);
-  
+
           // Cập nhật lại số lượng và tính lại tổng tiền
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
 
-          return {...item, quantity: newQuantity};
-          
+          return { ...item, quantity: newQuantity };
+
         }
         return item;
       });
     });
   };
-  
+
 
   const deleteItemsFromCart = async cart_id => {
     try {
@@ -259,7 +271,7 @@ const AddProduct = ({route, navigation}) => {
       if (response) {
         return response.data;
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const removeSelectedItems = async () => {
@@ -326,7 +338,7 @@ const AddProduct = ({route, navigation}) => {
       console.log('Cart IDs saved to AsyncStorage');
       const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
       console.log('Stored Cart IDs from AsyncStorage:', storedCartIds);
-      navigation.navigate('NextPayment', {cartIds: selectedCartIds});
+      navigation.navigate('NextPayment', { cartIds: selectedCartIds });
     } else {
       Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
     }
@@ -347,7 +359,7 @@ const AddProduct = ({route, navigation}) => {
       </View>
 
       {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#0000ff" />
           <Text>Đang tải giỏ hàng...</Text>
         </View>
@@ -359,14 +371,14 @@ const AddProduct = ({route, navigation}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text style={{fontSize: 18, color: '#666'}}>
+          <Text style={{ fontSize: 18, color: '#666' }}>
             Hiện chưa có sản phẩm!!!
           </Text>
         </View>
       ) : (
         <FlatList
           data={cartItems}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <CartItem
               item={item}
               toggleSelect={toggleSelectProduct}
@@ -386,7 +398,7 @@ const AddProduct = ({route, navigation}) => {
             padding: 10,
           }}>
           <View style={AddProductStyle.total}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Text style={AddProductStyle.totalPrice}>Tổng số lượng: </Text>
               <Text
                 style={{
