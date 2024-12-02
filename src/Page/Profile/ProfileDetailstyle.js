@@ -50,17 +50,16 @@ const profileStyle = StyleSheet.create({
     flexDirection: 'column',
   },
   mid: {
-    width: '40%',
+    // width: '80%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   vecto: {
     marginLeft: 10,
-    // marginTop: 10,
+    marginTop: 10,
     width: 20,
     height: 20,
-    paddingRight:20,
     tintColor: 'black',
   },
   body: {

@@ -93,7 +93,7 @@ const HomeScreen = (props) => {
                         quantity: item.quantity,
                         origin: item.origin,
                         preserve: item.preserve?.preserve_name,
-                        user: userid,
+                        uses: userid,
                         discount: item.discount,
                         fiber: item.fiber,
                         description: item.description,
@@ -146,7 +146,7 @@ const HomeScreen = (props) => {
 
     return (
         <View>
-            <View style={HomeStyle.container}
+            <ScrollView style={HomeStyle.container}
                 showsVerticalScrollIndicator={false}  >
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
@@ -212,7 +212,6 @@ const HomeScreen = (props) => {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <ScrollView style={{marginBottom:450}}>
                 {refreshing && (
                     <View style={{ alignItems: 'center', marginVertical: 20 }}>
                         <ActivityIndicator size="large" color="#0000ff" />
@@ -227,8 +226,7 @@ const HomeScreen = (props) => {
                     showsHorizontalScrollIndicator={false}
                 />
                 <View style={{ height: 40 }} />
-                </ScrollView>
-            </View>
+            </ScrollView>
         </View>
     );
 };
