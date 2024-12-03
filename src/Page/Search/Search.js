@@ -11,7 +11,6 @@ const SearchScreen = ({ navigation }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
-
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
 
   const user = useSelector(state => state.user);
@@ -113,54 +112,89 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const renderProduct = ({ item }) => {
-    const imageUri = item.images && item.images.length > 0 ? item.images[0] : defaultImageUri;
+    const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
+
 
     return (
       <TouchableOpacity
         onPress={() => {
+          if (item.quantity === 0) return;
           const Detail = {
             id: item._id,
             name: item.name,
             oum: item.oum,
+            quantity: item.quantity,
             origin: item.origin,
             preserve: item.preserve?.preserve_name,
-            uses: item.uses,
+            user: userId,
+            discount: item.discount,
             fiber: item.fiber,
             description: item.description,
             price: item.price,
+            discount: item.discount,
             images: item.images || [imageUri],
-            category: item.category,
+            category: item.category?.category_id || 'unknown',
+            categoryName: item.category?.category_name || 'unknown',
           };
-          if (Detail.category === "5" || Detail.category === "6") {
+
+          if (item.category?.category_id === "6606b733ccf861171c336d91") {
             navigation.navigate('Detailbottle', { product: Detail });
           } else {
             navigation.navigate('Detail', { product: Detail });
           }
+
         }}
       >
         <View style={SearchStyle.productContainer}>
+
+
+          {(item.quantity === 0) && (
+            <View style={SearchStyle.textdiscount}>
+              <Text style={SearchStyle.label}>
+                Hết hàng
+              </Text>
+            </View>
+          )}
+
+          {item.discount && (
+            <View style={SearchStyle.textdiscount}>
+              <Text style={SearchStyle.label}>
+                Giảm: {item.discount} đ
+              </Text>
+            </View>
+          )}
+
           <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
-          <View style={SearchStyle.productDetails}>
-            <Text style={SearchStyle.productName}>{item.name || 'Không có tên sản phẩm'}</Text>
-            <Text style={SearchStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
-            <Text style={SearchStyle.productPrice}>{item.price ? `${item.price}.000 VNĐ` : 'Giá không có'}</Text>
+          <Text style={SearchStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
+          <Text style={SearchStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
+          <View style={SearchStyle.priceall}>
+            <Text style={SearchStyle.productPrice}>
+              {item.price ? `${item.price.toLocaleString()}VNĐ` : 'Giá không có'}
+            </Text>
           </View>
         </View>
+
       </TouchableOpacity>
     );
   };
 
+
   const renderHistoryItem = ({ item }) => (
     <View style={SearchStyle.historyItemContainer}>
-      <TouchableOpacity onPress={() => handleSearch(item.keyword)}>
-        <Text style={SearchStyle.historyItem}>{item.keyword}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => {
-        console.log('Deleting ID:', item._id);
-        handleDeleteHistory(item._id);
-      }}>
-        <Text style={SearchStyle.deleteHistoryItem}>x</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row',}}>
+        <Image source={require('../../assets/Refresh.png')} />
+        <TouchableOpacity onPress={() => handleSearch(item.keyword)}>
+          <Text style={SearchStyle.historyItem}>{item.keyword}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ marginTop: 4, marginLeft:270 }}>
+        <TouchableOpacity onPress={() => {
+          console.log('Deleting ID:', item._id);
+          handleDeleteHistory(item._id);
+        }}>
+          <Image source={require('../../assets/delete.png')} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -176,7 +210,7 @@ const SearchScreen = ({ navigation }) => {
         />
         {searchText.length > 0 && (
           <TouchableOpacity onPress={() => setSearchText('')} style={SearchStyle.clearButton}>
-            <Text style={SearchStyle.clearText}>X</Text>
+            <Image style={{ tintColor: 'black', width: 20, height: 20 }} source={require('../../assets/delete.png')} />
           </TouchableOpacity>
         )}
         <TouchableOpacity onPress={() => navigation.navigate('BottomNav')}>
@@ -187,15 +221,15 @@ const SearchScreen = ({ navigation }) => {
       {searchHistory.length > 0 && (
         <FlatList
           horizontal={true}
-          data={isHistoryExpanded ? searchHistory : searchHistory.slice(0, 5)}
+          data={isHistoryExpanded ? searchHistory : searchHistory.slice(0, 4)}
           renderItem={renderHistoryItem}
           keyExtractor={(item, index) => index.toString()}
-
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={SearchStyle.historyList}
         />
       )}
-      {searchHistory.length > 5 && !isHistoryExpanded && (
+
+      {searchHistory.length > 4 && !isHistoryExpanded && (
         <TouchableOpacity onPress={() => setIsHistoryExpanded(true)} style={SearchStyle.viewMoreText}>
           <Text>Xem thêm...</Text>
         </TouchableOpacity>
@@ -219,7 +253,7 @@ const SearchScreen = ({ navigation }) => {
 };
 const { width, height } = Dimensions.get('window');
 const SearchStyle = StyleSheet.create({
-  
+
   container: {
     flex: 1,
     paddingTop: 20,
@@ -264,52 +298,60 @@ const SearchStyle = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: height * 0.22, 
-    width: width * 0.43, 
-    margin: 7, 
+    height: height * 0.22,
+    width: width * 0.43,
+    margin: 7,
   },
   productDetails: {
     alignItems: 'center',
   },
   productName: {
     fontWeight: 'bold',
-    color: '#2CA9C0',
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'center',
   },
   productWeight: {
     fontSize: 12,
-    color: 'gray',
   },
   productPrice: {
-    color: 'red',
     fontSize: 14,
     fontWeight: 'bold',
   },
   historyItemContainer: {
     flexDirection: 'row',
-    padding: 10,
-    flexWrap: 'wrap',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 4
   },
   historyItem: {
     fontSize: 16,
-    color: '#555',
-    marginEnd: 10,
-  },
-  deleteHistoryItem: {
-    fontSize: 20,
-    color: 'red',
-    marginStart: 10,
+    color: 'black',
+    fontWeight: 'bold',
   },
   viewMoreText: {
     alignItems: 'center',
-    marginBottom: 10,
   },
   historyList: {
+    flexDirection: 'column',
     paddingLeft: 10,
-    height: 100,
+    paddingBottom: 10
   },
+  textdiscount: {
+    display: 'flex',
+    top: -2,
+    left: -50,
+    backgroundColor: '#FF0000',
+    width: width * 0.16,
+    height: height * 0.04,
+    justifyContent: 'center',
+    borderTopLeftRadius: 5,
+    alignItems: 'center',  
+},
+label:{
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white',
+},
 });
 
 

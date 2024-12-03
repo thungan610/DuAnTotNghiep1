@@ -233,7 +233,7 @@ const Payment = ({ route, navigation }) => {
             console.log('orderData', orderData);
 
             const response = await axiosInstance.post('/oder/addOrder', orderData)
-            console.log('response', response);
+            console.log('response...................................', response);
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);
@@ -374,7 +374,7 @@ const Payment = ({ route, navigation }) => {
                 {selectedTransfer ? (
                     <View style={PaymentStyle.ViewTranfer}>
                         <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
-                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}đ</Text>
                     </View>
                 ) : (
                     <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>

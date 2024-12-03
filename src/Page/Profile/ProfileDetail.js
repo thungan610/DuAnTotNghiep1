@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../Reducers/userReducers';
+import { clearNotifications } from '../Reducers/notificationSlice';
 
 const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
@@ -58,6 +59,7 @@ const ProfileDetail = (prop) => {
     if (isLoggedIn) {
       // Đăng xuất
       dispatch(clearUser()); 
+      dispatch(clearNotifications());
       setProfileData(null); 
       prop.navigation.navigate('Login');  
     } else {
