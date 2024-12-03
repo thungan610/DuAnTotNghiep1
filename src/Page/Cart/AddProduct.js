@@ -191,7 +191,17 @@ const AddProduct = ({route, navigation}) => {
         item => item.selected,
       ).length;
   
+      setSelectedCount(newSelectedCount);
+      const newTotal = updatedItems
+        .filter(item => item.selected)
+        .reduce((total, item) => total + (item.price * item.quantity), 0);
+      setTotalAmount(newTotal);
 
+      console.log('Updated cart items:', updatedItems);
+
+      return updatedItems;
+    });
+  };
       const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
         try {
          if(quantity > quantityMax) {
