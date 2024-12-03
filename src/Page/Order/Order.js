@@ -18,6 +18,8 @@ const Order = ({ navigation, route }) => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
+      console.log('response..................', response);
+      
       const allOrders = response;
       const filteredOrders = allOrders
         .filter(order => {

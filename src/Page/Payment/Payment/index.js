@@ -1,4 +1,3 @@
-@ -1,441 +1,437 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 import PaymentStyle from "./style";
@@ -7,7 +6,6 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import axiosInstance from "../../api/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 const Payment = ({ route, navigation }) => {
     const { addressId } = route.params || {};
@@ -158,6 +156,7 @@ const Payment = ({ route, navigation }) => {
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds)
+                // await createnotifications(idorder, userId);
                 navigation.navigate('PaySussesScreen');
             } else {
                 await createPayment(idorder);
@@ -234,7 +233,7 @@ const Payment = ({ route, navigation }) => {
             console.log('orderData', orderData);
 
             const response = await axiosInstance.post('/oder/addOrder', orderData)
-            console.log('response', response);
+            console.log('response...................................', response);
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);
@@ -247,6 +246,36 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
         }
     };
+
+    // const createnotifications = async (orderId, userId) => {
+    //     try {
+    //         const notifidata = {
+    //             userId,
+    //             orderId,
+    //             title: 'Đơn hàng mới đã được tạo',
+    //             promotionMessage: 'Bạn đã đặt hàng thành công với mã đơn hàng ' + orderId, 
+    //             type: 'order',
+    //             status: 0,
+    //         };
+            
+    
+    //         console.log('orderData', notifidata);
+    
+    //         const response = await axiosInstance.post('/notifications/add_notification', notifidata);
+    //         console.log('response', response);
+    
+    //         if (response && response.data) {
+    //             const notifi = response.data._id;
+    //             console.log('check:', notifi);
+    //             return notifi;
+    //         } else {
+    //             Alert.alert("Lỗi", "Không thể tạo thông báo. Vui lòng thử lại.");
+    //         }
+    //     } catch (error) {
+    //         console.error('Error creating notification:', error.message);
+    //         Alert.alert("Lỗi", "Có lỗi xảy ra khi tạo thông báo. Vui lòng thử lại.");
+    //     }
+    // };
 
 
     const createPayment = async (idorder) => {
@@ -312,9 +341,9 @@ const Payment = ({ route, navigation }) => {
 
             <Text style={PaymentStyle.Line} />
             {cartData.map((cart, index) => (
-                <View key={cart._id} style={[PaymentStyle.body, PaymentStyle.Padding]}>
+                <View key={cart._id} style={[PaymentStyle.bodysp, PaymentStyle.Padding]}>
                     {cart.products.map((product, productIndex) => (
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center', }} key={productIndex}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center'}} key={productIndex}>
                             <View
                                 style={{
                                     flexDirection: 'row'
@@ -329,8 +358,8 @@ const Payment = ({ route, navigation }) => {
                                     <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                     <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                     <View style={PaymentStyle.ViewPrice}>
-                                        <Text style={PaymentStyle.txtPrice}>{product.price.toLocaleString()}.000 đ</Text>
-                                    </View>
+                                    <Text style={PaymentStyle.txtPrice}>{(product.price * product.quantity).toLocaleString()} đ</Text>
+                                </View>
                                 </View>
                             </View>
                             <View>
@@ -345,7 +374,7 @@ const Payment = ({ route, navigation }) => {
                 {selectedTransfer ? (
                     <View style={PaymentStyle.ViewTranfer}>
                         <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
-                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}.000 đ</Text>
+                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}đ</Text>
                     </View>
                 ) : (
                     <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>
@@ -413,21 +442,21 @@ const Payment = ({ route, navigation }) => {
 
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}.000 đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}đ</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
-                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}.000đ</Text>
+                        <Text style={PaymentStyle.txtDC}>{totalPayment.toLocaleString()}đ</Text>
                     </View>
                 </View>
                 <Text style={[PaymentStyle.Line, PaymentStyle.maginButtom]} />
                 <View style={PaymentStyle.ViewFooter}>
                     <TouchableOpacity onPress={HandPaySuccess} style={PaymentStyle.btnSubmit}>
-                        <Text style={PaymentStyle.txtBtn}>THANH TOÁN</Text>
+                        <Text style={PaymentStyle.txtBtn}>Đặt hàng</Text>
                     </TouchableOpacity>
                 </View>
             </View>

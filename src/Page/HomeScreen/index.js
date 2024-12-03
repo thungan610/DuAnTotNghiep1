@@ -93,11 +93,12 @@ const HomeScreen = (props) => {
                         quantity: item.quantity,
                         origin: item.origin,
                         preserve: item.preserve?.preserve_name,
-                        uses: userid,
+                        user: userid,
                         discount: item.discount,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,
+                        discount: item.discount,
                         images: item.images || [imageUri],
                         category: item.category?.category_id || 'unknown',
                         categoryName: item.category?.category_name || 'unknown',
@@ -125,7 +126,7 @@ const HomeScreen = (props) => {
                     {item.discount && (
                         <View style={HomeStyle.textdiscount}>
                             <Text style={HomeStyle.label}>
-                                Giảm: {item.discount} đ
+                                Giảm:  {item.discount} đ
                             </Text>
                         </View>
                     )}
@@ -135,7 +136,7 @@ const HomeScreen = (props) => {
                     <Text style={HomeStyle.productWeight}>{item.oum || 'Không có trọng lượng'}</Text>
                     <View style={HomeStyle.priceall}>
                         <Text style={HomeStyle.productPrice}>
-                            {item.price ? `${item.price.toLocaleString()}VNĐ` : 'Giá không có'}
+                            {item.price ? `${item.price.toLocaleString()}đ` : 'Giá không có'}
                         </Text>
                     </View>
                 </View>

@@ -5,6 +5,10 @@ const Processing1 = (prop) => {
     const { order } = prop.route.params;
     console.log('DEBUG - Dữ liệu order:', JSON.stringify(order, null, 2));
 
+    if (!order.createdAt) {
+        order.createdAt = new Date(); // Gán ngày giờ hiện tại
+    }
+
     const transferOptions = [
         { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
         { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
@@ -40,7 +44,7 @@ const Processing1 = (prop) => {
                 <View style={ProcessingStyle.header}>
                     <Text style={ProcessingStyle.headerText}>Thông tin vận chuyển</Text>
                     <Text style={ProcessingStyle.subText}>
-                        {`${new Date().getHours()}h${new Date().getMinutes()}, Ngày ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`}
+                        {`${order.createdAt.getHours()}h${order.createdAt.getMinutes()}, Ngày ${order.createdAt.getDate()}/${order.createdAt.getMonth() + 1}/${order.createdAt.getFullYear()}`}
                         , {getShippingLabel(order.ship)}
                     </Text>
                 </View>
