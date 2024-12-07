@@ -3,31 +3,42 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 
 const Processing1 = (prop) => {
     const { order } = prop.route.params;
-    console.log('DEBUG - Dữ liệu order:', JSON.stringify(order, null, 2));
-
+    console.log('order', order);
     if (!order.createdAt) {
         order.createdAt = new Date(); // Gán ngày giờ hiện tại
     }
 
+    const orderCreatedAt = new Date(order.createdAt).toLocaleString();
+    const orderDate = new Date(order.date).toLocaleString();
+
+    console.log("Ngày giờ đơn hàng:", orderDate);
+
     const transferOptions = [
-        { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
-        { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
-        { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
-        { label: "Bình Thường", ship: "2", note: "Phương thức vận chuyển tiết kiệm nhất" }, 
+        { label: "Tiết kiệm", ship: "8000", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn", time: "60" },
+        { label: "Nhanh", ship: "10000", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn", time: "45" },
+        { label: "Hoả tốc", ship: "20000", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn", time: "30" },
     ];
-    
+    const selectedOption = transferOptions.find(option => option.ship === order.ship);
 
-    const getShippingLabel = (ship) => {
-        const shipStr = String(ship); 
-        console.log("DEBUG - Giá trị ship:", shipStr);
-        const option = transferOptions.find(option => option.ship === shipStr);
-        if (!option) {
-            console.warn(`Không tìm thấy nhãn vận chuyển cho giá trị ship: ${shipStr}`); 
+
+    const getShippingLabel = (shipIndex) => {
+        if (shipIndex < 1 || shipIndex > transferOptions.length) {
+            console.warn(`Không tìm thấy nhãn vận chuyển cho chỉ số ship: ${shipIndex}`);
+            return "Không xác định";
         }
-
-        return option ? option.label : "Không xác định"; 
+        const option = transferOptions[shipIndex - 1];
+        return option ? option.ship : "Không xác định";
     };
+    const getShippingTime = (shipIndex) => {
+        if (shipIndex < 1 || shipIndex > transferOptions.length) {
+            return "Không xác định";
+        }
+        const option = transferOptions[shipIndex - 1];
+        return option ? option.time : "Không xác định";
+    }
 
+    const orderShipIndex = parseInt(order.ship, 10);
+    const shippingTime = getShippingTime(orderShipIndex);
     return (
         <View style={ProcessingStyle.container}>
             <View style={ProcessingStyle.headertop}>
@@ -44,8 +55,9 @@ const Processing1 = (prop) => {
                 <View style={ProcessingStyle.header}>
                     <Text style={ProcessingStyle.headerText}>Thông tin vận chuyển</Text>
                     <Text style={ProcessingStyle.subText}>
-                        {`${order.createdAt.getHours()}h${order.createdAt.getMinutes()}, Ngày ${order.createdAt.getDate()}/${order.createdAt.getMonth() + 1}/${order.createdAt.getFullYear()}`}
-                        , {getShippingLabel(order.ship)}
+                        {'Thời gian đặt hàng ' + orderDate}
+                        {'\n'}
+                        {'Thời gian giao hàng dự kiến: ' + shippingTime + ' phút'}
                     </Text>
                 </View>
 
@@ -68,9 +80,10 @@ const Processing1 = (prop) => {
 
                 <View style={ProcessingStyle.paymentInfo}>
                     <Text style={ProcessingStyle.label}>Chi tiết thanh toán</Text>
-                    <Text>Khuyến mãi: 0</Text>
-                    <Text>{`Tổng tiền sản phẩm: ${(order.totalOrder - order.ship).toLocaleString()}đ`}</Text>
-                    <Text>{`Tiền vận chuyển: ${order.ship.toLocaleString()} đ`}</Text>
+                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
+
                     <Text style={ProcessingStyle.total}>{`Tổng thanh toán: ${order.totalOrder.toLocaleString()}đ`}</Text>
                 </View>
 

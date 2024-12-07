@@ -9,18 +9,33 @@ const Canceled = (prop) => {
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
     const userid = user?.userData?._id || 'default_id';
+    const orderDate = new Date(order.date).toLocaleString();
 
     console.log('order', order);
     const transferOptions = [
-        { label: "Tiết kiệm", ship: "8", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
-        { label: "Nhanh", ship: "10", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
-        { label: "Hoả tốc", ship: "20", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+        { label: "Tiết kiệm", ship: "8000", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn", time: "60" },
+        { label: "Nhanh", ship: "10000", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn", time: "45" },
+        { label: "Hoả tốc", ship: "20000", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn", time: "30" },
     ];
 
-    const getShippingLabel = (ship) => {
-        const option = transferOptions.find(option => option.ship === ship.toString());
-        return option ? option.label : "Không xác định";
+    const getShippingLabel = (shipIndex) => {
+        if (shipIndex < 1 || shipIndex > transferOptions.length) {
+            console.warn(`Không tìm thấy nhãn vận chuyển cho chỉ số ship: ${shipIndex}`);
+            return "Không xác định";
+        }
+        const option = transferOptions[shipIndex - 1];
+        return option ? option.ship : "Không xác định";
     };
+    const getShippingTime = (shipIndex) => {
+        if (shipIndex < 1 || shipIndex > transferOptions.length) {
+            return "Không xác định";
+        }
+        const option = transferOptions[shipIndex - 1];
+        return option ? option.time : "Không xác định";
+    }
+
+    const orderShipIndex = parseInt(order.ship, 10);
+    const shippingTime = getShippingTime(orderShipIndex);
 
     const addToCartHandler = async () => {
         const productsToAdd = order.products.map(product => ({
@@ -40,7 +55,6 @@ const Canceled = (prop) => {
             });
 
             if (response.data.error) {
-
             } else {
                 Toast.show({
                     type: 'success',
@@ -75,8 +89,12 @@ const Canceled = (prop) => {
                 <View style={CanceledStyle.header}>
                     <Text style={CanceledStyle.headerText}>Thông tin vận chuyển</Text>
                     <Text style={CanceledStyle.subText}>
-                        {`${new Date().getHours()}h${new Date().getMinutes()}, Ngày ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`}
-                        , {getShippingLabel(order.ship)}
+                        <Text style={CanceledStyle.subText}>
+                            {'Thời gian đặt hàng ' + orderDate}
+                            {'\n'}
+                            <Text style={{ color: 'red' }}>Đã hủy</Text>
+                        </Text>
+
                     </Text>
                 </View>
 
@@ -93,7 +111,7 @@ const Canceled = (prop) => {
                         <View style={CanceledStyle.productInfo}>
                             <Text style={CanceledStyle.productName}>{product.name}</Text>
                             <Text style={CanceledStyle.category}>{product.category.category_name}</Text>
-                            <Text style={CanceledStyle.price}>{`${product.price}đ`}</Text>
+                            <Text style={CanceledStyle.price}>{`${product.price.toLocaleString()}đ`}</Text>
                         </View>
                     </View>
                 ))}
@@ -101,12 +119,11 @@ const Canceled = (prop) => {
 
                 <View style={CanceledStyle.paymentInfo}>
                     <Text style={CanceledStyle.label}>Chi tiết thanh toán</Text>
-                    <Text>Khuyến mãi: 0</Text>
-                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder - order.ship} đ`}</Text>
-                    <Text>{`Tiền vận chuyển: ${order.ship}đ`}</Text>
-                    <Text style={CanceledStyle.total}>{`Tổng thanh toán: ${order.totalOrder} đ`}</Text>
+                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
+                    <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
+                    <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
+                    <Text style={CanceledStyle.total}>{`Tổng thanh toán: ${order.totalOrder.toLocaleString()}đ`}</Text>
                 </View>
-
                 <TouchableOpacity onPress={addToCartHandler} style={CanceledStyle.cancelButton}>
                     <Text style={CanceledStyle.cancelButtonText}>Mua lại</Text>
                 </TouchableOpacity>

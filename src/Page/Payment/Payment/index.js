@@ -116,8 +116,10 @@ const Payment = ({ route, navigation }) => {
     }, [cartIds]);
 
     const BackRight = () => {
-        navigation.navigate('AddProduct');
+        // navigation.goBack(); 
+        navigation.navigate('BottomNav');
     };
+
 
     const HandMethod = () => {
         navigation.navigate('PayMethod');
@@ -150,13 +152,17 @@ const Payment = ({ route, navigation }) => {
 
 
     const HandPaySuccess = async () => {
+        if (!selectedMethod) {
+
+            Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
+            return;
+        }
         try {
             const idorder = await createOrder();
             console.log('idorder', idorder);
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds)
-                // await createnotifications(idorder, userId);
                 navigation.navigate('PaySussesScreen');
             } else {
                 await createPayment(idorder);
@@ -174,7 +180,7 @@ const Payment = ({ route, navigation }) => {
     const [selectedTransfer, setSelectedTransfer] = useState({
         label: "Nhanh",
         status: 2,
-        price: "10",
+        price: "10000",
         note: "Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn",
     });
 
@@ -204,13 +210,21 @@ const Payment = ({ route, navigation }) => {
 
     const totalPayment = (() => {
         const transferCost = parseFloat(selectedTransfer.price) || 0;
+        console.log('transferCost', transferCost);
+
         let discount = 0;
+        console.log('discount', discount);
+
 
         if (selectedVoucher) {
-            const voucherPrice = parseFloat(selectedVoucher.discountAmount.toLocaleString()) || 0;
+            const voucherPrice = selectedVoucher.discountAmount || 0;
+            console.log('voucherPrice', voucherPrice);
+
             if (selectedVoucher.type === 'percentage') {
                 const percentage = voucherPrice / 100;
                 discount = totalPrice * percentage;
+                console.log('discount ccc', discount);
+
             } else {
                 discount = voucherPrice;
             }
@@ -257,13 +271,13 @@ const Payment = ({ route, navigation }) => {
     //             type: 'order',
     //             status: 0,
     //         };
-            
-    
+
+
     //         console.log('orderData', notifidata);
-    
+
     //         const response = await axiosInstance.post('/notifications/add_notification', notifidata);
     //         console.log('response', response);
-    
+
     //         if (response && response.data) {
     //             const notifi = response.data._id;
     //             console.log('check:', notifi);
@@ -343,7 +357,7 @@ const Payment = ({ route, navigation }) => {
             {cartData.map((cart, index) => (
                 <View key={cart._id} style={[PaymentStyle.bodysp, PaymentStyle.Padding]}>
                     {cart.products.map((product, productIndex) => (
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center'}} key={productIndex}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: 'white', alignItems: 'center' }} key={productIndex}>
                             <View
                                 style={{
                                     flexDirection: 'row'
@@ -358,8 +372,8 @@ const Payment = ({ route, navigation }) => {
                                     <Text style={PaymentStyle.txtDC}>{product.name}</Text>
                                     <Text style={PaymentStyle.txtLH}>{product.category.category_name}</Text>
                                     <View style={PaymentStyle.ViewPrice}>
-                                    <Text style={PaymentStyle.txtPrice}>{(product.price * product.quantity).toLocaleString()} đ</Text>
-                                </View>
+                                        <Text style={PaymentStyle.txtPrice}>{(product.price * product.quantity).toLocaleString()} đ</Text>
+                                    </View>
                                 </View>
                             </View>
                             <View>
@@ -374,7 +388,7 @@ const Payment = ({ route, navigation }) => {
                 {selectedTransfer ? (
                     <View style={PaymentStyle.ViewTranfer}>
                         <Text style={PaymentStyle.txtPrice}>{selectedTransfer.label}</Text>
-                        <Text style={PaymentStyle.txtPrice}>{selectedTransfer.price}đ</Text>
+                        <Text style={PaymentStyle.txtPrice}>  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedTransfer.price)}</Text>
                     </View>
                 ) : (
                     <Text style={PaymentStyle.txtLH}>Chưa chọn phương thức vận chuyển</Text>
@@ -434,7 +448,7 @@ const Payment = ({ route, navigation }) => {
                                 {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
                                     typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
                                         `${selectedVoucher.discountAmount.toLocaleString()}` :
-                                        `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
+                                        `${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
                                 ) : '0đ'}
                             </Text>
                         </Text>
@@ -446,7 +460,8 @@ const Payment = ({ route, navigation }) => {
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{selectedTransfer.price}đ</Text>
+                        <Text style={PaymentStyle.txtPrice1}>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedTransfer.price)}</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>

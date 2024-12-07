@@ -11,20 +11,29 @@ import Toast from 'react-native-toast-message';
 const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
   if (!item) return null;
   const [fixedPrice, setFixedPrice] = useState(item?.price || 0);
-  const maxQuantity = parseInt(item.quantityMax);
-  console.log('max SL: ', maxQuantity)
+
   const imageUri =
     Array.isArray(item.images) && item.images.length > 0
       ? item.images[0]
       : null;
 
-  // console.log('item', item.product_id);
   useEffect(() => {
     if (item) {
       setFixedPrice(item.price || 0);
     }
   }, [item]);
 
+  const calculateTotal = (item) => {
+    if (item.price && item.quantity) {
+      const discountedPrice = (item.price - (item.discount ?? 0)) > 0
+        ? (item.price - (item.discount ?? 0))
+        : 0;
+      return (discountedPrice * item.quantity).toLocaleString('vi-VN') + 'đ';
+    }
+    return 'Không có giá hoặc số lượng';
+  };
+
+  console.log(calculateTotal(item));
   return (
     <View style={AddProductStyle.itemContainer}>
       <TouchableOpacity onPress={() => toggleSelect(item.product_id)}>
@@ -51,20 +60,18 @@ const CartItem = React.memo(({ item, toggleSelect, updateQuantity }) => {
           <Text style={{ fontSize: 14 }}>{fixedPrice.toLocaleString()}đ</Text>
         </View>
         <Text style={AddProductStyle.itemPrice}>
-          {item.price && item.quantity
-            ? ((item.price ?? 0) * (item.quantity ?? 1)).toLocaleString()
-            : 'Không có giá hoặc số lượng'}đ
+          {calculateTotal(item)}
         </Text>
       </View>
       <View style={AddProductStyle.quantityContainer}>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.cart_id, item.product_id, 'decrease', maxQuantity)}
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'decrease')}
           style={AddProductStyle.quantityButton}>
           <Text style={AddProductStyle.quantityText}>-</Text>
         </TouchableOpacity>
         <Text style={AddProductStyle.quantity}>{item.quantity}</Text>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.cart_id, item.product_id, 'increase', maxQuantity)}
+          onPress={() => updateQuantity(item.cart_id, item.product_id, 'increase')}
           style={AddProductStyle.quantityButton}>
           <Text style={AddProductStyle.quantityText}>+</Text>
         </TouchableOpacity>
@@ -103,30 +110,33 @@ const AddProduct = ({ route, navigation }) => {
   const { data } = route.params || {};
   const [modalVisible, setModalVisible] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  console.log('Total amount', totalAmount);
+
   const [selectedCount, setSelectedCount] = useState(0);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isCartLoaded, setIsCartLoaded] = useState(false);
-
+  const maxQuantity = cartItems[0]?.quantityMax;
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
   const user = useSelector(state => state.user);
-  console.log('user', user);
-
   const userId = user?.userData?._id;
-  console.log('userId', userId);
+
 
   useFocusEffect(
     useCallback(() => {
       const fetchAndProcessCart = async () => {
         try {
           setLoading(true);
-          console.log('userId:', userId);
+
           const response = await axiosInstance.get(
             `/carts/getcartbyiduser/${userId}`,
           );
-          console.log('response', response);
+
           const cartData = Array.isArray(response) ? response : [];
-          console.log('cartData', cartData);
           const activeCartData = cartData.filter(cart => cart.status === 1);
+
+          console.log('activeCartData', activeCartData);
+
           if (activeCartData.length === 0) {
             console.warn(
               'Giỏ hàng trống hoặc không có giỏ hàng đang hoạt động!',
@@ -136,20 +146,39 @@ const AddProduct = ({ route, navigation }) => {
             setTotalAmount(0);
             return;
           }
-          const productsData = activeCartData.flatMap(cart =>
-            cart.products.map(product => ({
-              cart_id: cart._id,
-              product_id: product._id,
-              name: product.name,
-              category_name:
-                product.category?.category_name || 'Không có danh mục',
-              price: product.price,
-              quantity: product.quantity,
-              images: product.images,
-              selected: true,
-              quantityMax: product.quantityMax
-            })),
-          );
+          const productsData = activeCartData.flatMap(cart => {
+            if (Array.isArray(cart.products)) {
+              return cart.products.map(product => ({
+                cart_id: cart._id,
+                product_id: product._id,
+                name: product.name,
+                category_name: product.category?.category_name || 'Không có danh mục',
+                price: product.price,
+                quantity: product.quantity,
+                images: product.images,
+                selected: true,
+                quantityMax: product.productQuantity,
+                total: product.total,
+                discount: product.discount
+              }));
+            } else if (cart.products && typeof cart.products === 'object') {
+              return [{
+                cart_id: cart._id,
+                product_id: cart.products._id,
+                name: cart.products.name,
+                category_name: cart.products.category?.category_name || 'Không có danh mục',
+                price: cart.products.price,
+                quantity: cart.products.quantity,
+                images: cart.products.images,
+                selected: true,
+                quantityMax: cart.products.productQuantity,
+                total: cart.total,
+                discount: cart.products.discount
+              }];
+            } else {
+              return [];
+            }
+          });
           setCartItems(productsData);
           const selectedCount = productsData.filter(
             item => item.selected,
@@ -158,9 +187,15 @@ const AddProduct = ({ route, navigation }) => {
 
           const total = productsData
             .filter(item => item.selected)
-            .reduce((total, item) => total + item.price * item.quantity, 0);
+            .reduce((total, item) => {
+              const discountedPrice = Math.max(item.price - (item.discount ?? 0), 0);
+              return total + discountedPrice * (item.quantity ?? 1);
+            }, 0);
+          console.log('Total: ', total);
+
           setTotalAmount(total);
         } catch (error) {
+          console.error('Error fetching cart:', error);
           setCartItems([]);
           setSelectedCount(0);
           setTotalAmount(0);
@@ -170,7 +205,7 @@ const AddProduct = ({ route, navigation }) => {
       };
 
       fetchAndProcessCart();
-    }, [userId]),
+    }, [userId, refreshTrigger]),
   );
 
   const toggleSelectProduct = product_id => {
@@ -191,9 +226,17 @@ const AddProduct = ({ route, navigation }) => {
       ).length;
 
       setSelectedCount(newSelectedCount);
-      const newTotal = updatedItems
-        .filter(item => item.selected)
-        .reduce((total, item) => total + (item.price * item.quantity), 0);
+      const newTotal = productsData
+            .filter(item => item.selected)
+            .reduce((total, item) => {
+              const discountedPrice = Math.max(item.price - (item.discount ?? 0), 0);
+              return total + discountedPrice * (item.quantity ?? 1);
+            }, 0);
+      console.log("Total amountsssssssssssssss", newTotal);
+      console.log(newTotal.toLocaleString('vi-VN') + 'đ'); 
+
+
+
       setTotalAmount(newTotal);
 
       console.log('Updated cart items:', updatedItems);
@@ -201,23 +244,23 @@ const AddProduct = ({ route, navigation }) => {
       return updatedItems;
     });
   };
-  const updateQuantityInCart = async (cart_id, product_id, quantity, quantityMax) => {
+  const updateQuantityInCart = async (cart_id, product_id, quantity, maxQuantity) => {
     try {
-      if (quantity > quantityMax) {
+      if (quantity > maxQuantity) {
         return Alert.alert('Lỗi', 'Số lượng nhập về khống hợp lệ.');
       }
-      if (quantity === quantityMax) {
+      if (quantity === maxQuantity) {
         console.log('true')
-        quantity = quantityMax;
+        quantity = maxQuantity;
         console.log('cur', quantity);
-        console.log('max', quantityMax);
+        console.log('max', maxQuantity);
       }
 
       const response = await axiosInstance.put(
         `/carts/updateQuantity/${cart_id}/${product_id}`,
         { quantity },
       );
-
+      console.log('response', response);
       if (response) {
         return response;
       } else {
@@ -237,32 +280,37 @@ const AddProduct = ({ route, navigation }) => {
       const updatedItems = prevItems.map(item => {
         if (item.product_id === product_id) {
           let currentQuantity = item.quantity;
-  
-          // Cập nhật số lượng tùy theo hành động
-          let newQuantity =
-            action === 'increase'
-              ? (currentQuantity === maxQuantity ? currentQuantity : currentQuantity + 1)
-              : Math.max(1, currentQuantity - 1);
-  
-          // Cập nhật số lượng vào API
+          let newQuantity;
+
+          if (action === 'increase') {
+            if (currentQuantity >= maxQuantity) {
+              Alert.alert(`Sản phẩm vượt quá số lượng tồn kho`);
+              newQuantity = currentQuantity;
+            } else {
+              newQuantity = currentQuantity + 1;
+            }
+          } else {
+            newQuantity = currentQuantity - 1;
+          }
+
+          if (newQuantity === 0) {
+            deleteItemsFromCart(item.cart_id);
+            return null;
+          }
+
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
-  
-          // Trả về sản phẩm với số lượng mới
           return { ...item, quantity: newQuantity };
         }
         return item;
-      });
-  
-      // Tính lại tổng tiền sau khi thay đổi số lượng
+      }).filter(item => item !== null);
+
       const newTotal = updatedItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  
-      // Cập nhật lại giỏ hàng với tổng tiền mới
       setTotalAmount(newTotal);
-  
+
       return updatedItems;
     });
   };
-  
+
   const deleteItemsFromCart = async cart_id => {
     try {
       if (!cart_id) {
@@ -272,7 +320,7 @@ const AddProduct = ({ route, navigation }) => {
       const response = await axiosInstance.delete(
         `/carts/deleteCart/${cart_id}`,
       );
-      console.log('res: ', response);
+      setRefreshTrigger(prev => !prev);
       if (response) {
         return response.data;
       }
@@ -340,9 +388,8 @@ const AddProduct = ({ route, navigation }) => {
         'selectedCartIds',
         JSON.stringify(selectedCartIds),
       );
-      console.log('Cart IDs saved to AsyncStorage');
+
       const storedCartIds = await AsyncStorage.getItem('selectedCartIds');
-      console.log('Stored Cart IDs from AsyncStorage:', storedCartIds);
       navigation.navigate('NextPayment', { cartIds: selectedCartIds });
     } else {
       Alert.alert('Thông báo', 'Chưa chọn sản phẩm để thanh toán');
@@ -352,7 +399,7 @@ const AddProduct = ({ route, navigation }) => {
   return (
     <View style={AddProductStyle.container}>
       <View style={AddProductStyle.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity >
           <Image source={require('../../../src/assets/notifi/backright.png')} />
         </TouchableOpacity>
         <Text style={AddProductStyle.title}>Giỏ hàng</Text>
@@ -387,7 +434,9 @@ const AddProduct = ({ route, navigation }) => {
             <CartItem
               item={item}
               toggleSelect={toggleSelectProduct}
-              updateQuantity={updateQuantity}
+              updateQuantity={(cart_id, product_id, action) =>
+                updateQuantity(cart_id, product_id, action, item.quantityMax)
+              }
             />
           )}
           keyExtractor={(item, index) => `${item.product_id}-${index}`}

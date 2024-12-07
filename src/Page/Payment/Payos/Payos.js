@@ -86,7 +86,6 @@ const Payos = ({ route }) => {
       console.log('Navigation detected cancel URL');
       Alert.alert('Thất bại', 'Đã hủy thanh toán.');
       updateOrder(idorder, 4);
-      deleteItemsFromCart(cartIds);
       navigation.navigate('BottomNav');
     }
   };

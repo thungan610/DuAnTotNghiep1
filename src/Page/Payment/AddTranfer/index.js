@@ -5,13 +5,13 @@ import AddAdressStyle from "../AddAdress/style";
 import PayMethodStyle from "../PayMethod/style";
 
 const transferOptions = [
-    { label: "Tiết kiệm", status: 1, price: "8.000", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
-    { label: "Nhanh", status: 2, price: "10.000", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
-    { label: "Hoả tốc", status: 3, price: "20.000", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
+    { label: "Tiết kiệm", status: 1, price: "8000", note: "Đảm bảo nhận hàng trong vòng 60 phút kể từ khi nhận đơn" },
+    { label: "Nhanh", status: 2, price: "10000", note: "Đảm bảo nhận hàng trong vòng 45 phút kể từ khi nhận đơn" },
+    { label: "Hoả tốc", status: 3, price: "20000", note: "Đảm bảo nhận hàng trong vòng 30 phút kể từ khi nhận đơn" },
 ];
 
 const AddTranfer = (prop) => {
-    const [selectedIndex, setSelectedIndex] = useState(null); 
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const BackRight = () => {
         prop.navigation.goBack();
@@ -52,7 +52,9 @@ const AddTranfer = (prop) => {
                     >
                         <View style={AddTranferStyle.ViewVC}>
                             <Text style={AddTranferStyle.txtVC}>{option.label}</Text>
-                            <Text style={AddTranferStyle.txtVC}>{option.price}đ</Text>
+                            <Text style={AddTranferStyle.txtVC}>
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(option.price)}
+                            </Text>
                         </View>
                         <Text style={AddTranferStyle.txtNote}>{option.note}</Text>
                     </TouchableOpacity>
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 5,
         elevation: 5,
-        backgroundColor: "#E6F7FF", 
+        backgroundColor: "#E6F7FF",
     },
     unselectedButton: {
         borderColor: "#8B8B8B",

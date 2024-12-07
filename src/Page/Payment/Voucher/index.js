@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Alert, ScrollView } from "react-native";
 import VoucherStyle from "./style";
 // import VoucherStyle from "../AddAdress/style";
 // import VoucherStyle from "../PayMethod/style";
@@ -10,7 +10,7 @@ const Voucher = (prop) => {
     const [voucherData, setVoucherData] = useState([]);
     const { totalPrice } = prop.route.params || {};
 
-    console.log('totalPrice', totalPrice);
+    console.log('totalPriceccccccccccc', totalPrice);
 
 
     useEffect(() => {
@@ -34,8 +34,14 @@ const Voucher = (prop) => {
             return;
         }
         const minOrderValue = selectedVoucher.minOrderValue;
+        console.log('selectedVoucher', selectedVoucher);
 
-        const totalPrice = prop.route.params.totalPrice * 1000;
+        console.log('minOrderValue', minOrderValue);
+
+
+        const totalPrice = prop.route.params.totalPrice;
+        console.log('totalPrice', totalPrice);
+
 
         if (totalPrice >= minOrderValue) {
             setSelectedIndex(index);
@@ -54,7 +60,9 @@ const Voucher = (prop) => {
     };
 
     return (
-        <View style={VoucherStyle.container}>
+        <ScrollView style={VoucherStyle.container}
+            showsVerticalScrollIndicator={false}
+        >
             <View
                 style={{
                     flexDirection: 'row',
@@ -68,7 +76,7 @@ const Voucher = (prop) => {
                     fontSize: 24,
                     fontWeight: 'bold',
                     color: 'black',
-                    marginBottom:20
+                    marginBottom: 20
                 }}>Khuyến mãi</Text>
             </View>
 
@@ -108,7 +116,7 @@ const Voucher = (prop) => {
                     <Text style={VoucherStyle.txtSuss}>ĐỒNG Ý</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
