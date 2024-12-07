@@ -94,7 +94,9 @@ const ProfileDetail = (prop) => {
               </TouchableOpacity>
 
               <View style={profileStyle.undercontainer}>
+                <View>
                 <Text style={profileStyle.username}>{profileData ? profileData.name : 'Nguyễn Văn A'}</Text>
+                </View>
                 <TouchableOpacity onPress={OnViewHoSo}>
                   <View style={profileStyle.mid}>
                     <Text style={profileStyle.pro5small}>Hồ sơ</Text>
