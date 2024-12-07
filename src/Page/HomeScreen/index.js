@@ -113,8 +113,8 @@ const HomeScreen = (props) => {
                 }}
             >
                 <View style={HomeStyle.productContainer}>
-                
-                    
+
+
                     {(item.quantity === 0) && (
                         <View style={HomeStyle.textdiscount}>
                             <Text style={HomeStyle.label}>

@@ -4,6 +4,7 @@ import AxiosInstanceSP from "../api/AxiosInstanceSP";
 import { useSelector } from 'react-redux';  // Redux selector
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../api/AxiosInstance';
+import axios from 'axios';
 
 const SearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
@@ -14,19 +15,14 @@ const SearchScreen = ({ navigation }) => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
 
   const user = useSelector(state => state.user);
-  console.log('user', user);
-
   const userId = user?.userData?._id || 'default_id';
-  console.log('userId', userId);
-
-
-
   const fetchProducts = async (keyword) => {
     try {
       console.log('Fetching products for keyword:', keyword);
       setRefreshing(true);
-      const response = await AxiosInstanceSP().get(`/products/search?key=${keyword}`);
-      const productsData = Array.isArray(response.data) ? response.data : [];
+      const response = await axios.get(`http://192.168.1.22:3000/products/search?key=${keyword}`);
+      console.log('response:', response);
+      const productsData = response.data.data;
       console.log('Fetched products:', productsData);
       setProducts(productsData);
       setFilteredProducts(productsData);
@@ -54,7 +50,6 @@ const SearchScreen = ({ navigation }) => {
 
   const fetchSearchHistory = async () => {
     try {
-      console.log('Fetching search history for user:', userId);
       const response = await axiosInstance.get(`/search/search-history/${userId}`);
       if (!response) {
         console.log('No data found in response');
@@ -86,7 +81,7 @@ const SearchScreen = ({ navigation }) => {
     fetchSearchHistory();
   }, [userId]);
   useEffect(() => {
-    console.log('Updated searchHistory:', searchHistory);
+
   }, [searchHistory]);
 
   useEffect(() => {
@@ -112,8 +107,8 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const renderProduct = ({ item }) => {
+    console.log('Item:', item);
     const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
-
 
     return (
       <TouchableOpacity
@@ -123,18 +118,17 @@ const SearchScreen = ({ navigation }) => {
             id: item._id,
             name: item.name,
             oum: item.oum,
-            quantity: item.quantity,
-            origin: item.origin,
-            preserve: item.preserve?.preserve_name,
+            quantity: item.quantity ?? 'Không xác định',
+            origin: item.origin ?? 'Không xác định',
+            preserve: item.preserve?.preserve_name ?? 'Không xác định',
             user: userId,
-            discount: item.discount,
-            fiber: item.fiber,
-            description: item.description,
+            discount: item.discount ?? 0,
+            fiber: item.fiber ?? 'Không xác định',
+            description: item.description ?? 'Không có mô tả',
             price: item.price,
-            discount: item.discount,
             images: item.images || [imageUri],
-            category: item.category?.category_id || 'unknown',
-            categoryName: item.category?.category_name || 'unknown',
+            category: item.category?.category_id ?? 'unknown',
+            categoryName: item.category?.category_name ?? 'unknown',
           };
 
           if (item.category?.category_id === "6606b733ccf861171c336d91") {
@@ -142,12 +136,9 @@ const SearchScreen = ({ navigation }) => {
           } else {
             navigation.navigate('Detail', { product: Detail });
           }
-
         }}
       >
         <View style={SearchStyle.productContainer}>
-
-
           {(item.quantity === 0) && (
             <View style={SearchStyle.textdiscount}>
               <Text style={SearchStyle.label}>
@@ -173,21 +164,22 @@ const SearchScreen = ({ navigation }) => {
             </Text>
           </View>
         </View>
-
       </TouchableOpacity>
     );
   };
 
 
+
+
   const renderHistoryItem = ({ item }) => (
     <View style={SearchStyle.historyItemContainer}>
-      <View style={{ flexDirection: 'row',}}>
+      <View style={{ flexDirection: 'row', }}>
         <Image source={require('../../assets/Refresh.png')} />
         <TouchableOpacity onPress={() => handleSearch(item.keyword)}>
           <Text style={SearchStyle.historyItem}>{item.keyword}</Text>
         </TouchableOpacity>
       </View>
-      <View style={{ marginTop: 4, marginLeft:270 }}>
+      <View style={{ marginTop: 4, marginLeft: 270 }}>
         <TouchableOpacity onPress={() => {
           console.log('Deleting ID:', item._id);
           handleDeleteHistory(item._id);
@@ -345,13 +337,13 @@ const SearchStyle = StyleSheet.create({
     height: height * 0.04,
     justifyContent: 'center',
     borderTopLeftRadius: 5,
-    alignItems: 'center',  
-},
-label:{
+    alignItems: 'center',
+  },
+  label: {
     fontSize: 12,
     fontWeight: 'bold',
     color: 'white',
-},
+  },
 });
 
 
