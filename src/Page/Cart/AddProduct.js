@@ -195,7 +195,7 @@ const AddProduct = ({ route, navigation }) => {
 
           setTotalAmount(total);
         } catch (error) {
-          console.error('Error fetching cart:', error);
+        
           setCartItems([]);
           setSelectedCount(0);
           setTotalAmount(0);
@@ -271,7 +271,7 @@ const AddProduct = ({ route, navigation }) => {
         Alert.alert('Lỗi', 'Cập nhật số lượng không thành công.');
       }
     } catch (error) {
-      console.error('Error updating quantity:', error);
+     
     }
   };
 
@@ -360,8 +360,7 @@ const AddProduct = ({ route, navigation }) => {
           autoHide: true,
         });
       } catch (error) {
-        Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa sản phẩm.');
-        console.log('Lỗi khi xóa sản phẩm', error);
+
       }
     }
   };

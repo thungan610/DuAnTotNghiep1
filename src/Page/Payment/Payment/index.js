@@ -153,7 +153,6 @@ const Payment = ({ route, navigation }) => {
 
     const HandPaySuccess = async () => {
         if (!selectedMethod) {
-
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
@@ -162,9 +161,10 @@ const Payment = ({ route, navigation }) => {
             console.log('idorder', idorder);
             if (selectedMethod === 'cash') {
                 navigation.navigate('OrderSuccess');
-                deleteItemsFromCart(cartIds)
+                deleteItemsFromCart(cartIds);
+
                 navigation.navigate('PaySussesScreen');
-            } else {
+            } else if (selectedMethod === 'payos') {
                 await createPayment(idorder);
             }
         } catch (error) {
@@ -172,6 +172,7 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
     };
+    
 
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
@@ -242,7 +243,8 @@ const Payment = ({ route, navigation }) => {
                 userId,
                 ship: selectedTransfer ? selectedTransfer.status : 1,
                 sale: selectedVoucher ? [selectedVoucher] : [],
-                totalOrder: totalPayment
+                totalOrder: totalPayment,
+                method: selectedMethod,
             };
             console.log('orderData', orderData);
 

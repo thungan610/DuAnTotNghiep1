@@ -20,8 +20,9 @@ const SearchScreen = ({ navigation }) => {
     try {
       console.log('Fetching products for keyword:', keyword);
       setRefreshing(true);
-      const response = await axios.get(`http://192.168.1.22:3000/products/search?key=${keyword}`);
+      const response = await axiosInstance.get(`/products/search?key=${keyword}`);
       console.log('response:', response);
+
       const productsData = response.data.data;
       console.log('Fetched products:', productsData);
       setProducts(productsData);
