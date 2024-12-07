@@ -45,19 +45,17 @@ const profileStyle = StyleSheet.create({
     marginLeft: 10,
     fontSize: 15,
     color: 'black',
+    paddingRight:10
   },
   undercontainer: {
     flexDirection: 'column',
   },
   mid: {
-    // width: '80%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   vecto: {
-    marginLeft: 10,
-    marginTop: 10,
     width: 20,
     height: 20,
     tintColor: 'black',

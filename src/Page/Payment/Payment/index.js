@@ -450,7 +450,7 @@ const Payment = ({ route, navigation }) => {
                                 {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
                                     typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
                                         `${selectedVoucher.discountAmount.toLocaleString()}` :
-                                        `${parseFloat(selectedVoucher.discountAmount).toLocaleString()} đ`
+                                        `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()}đ`
                                 ) : '0đ'}
                             </Text>
                         </Text>

@@ -398,7 +398,7 @@ const AddProduct = ({ route, navigation }) => {
   return (
     <View style={AddProductStyle.container}>
       <View style={AddProductStyle.header}>
-        <TouchableOpacity >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image source={require('../../../src/assets/notifi/backright.png')} />
         </TouchableOpacity>
         <Text style={AddProductStyle.title}>Giỏ hàng</Text>
