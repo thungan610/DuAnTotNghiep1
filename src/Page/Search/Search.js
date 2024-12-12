@@ -23,7 +23,7 @@ const SearchScreen = ({ navigation }) => {
       const response = await axiosInstance.get(`/products/search?key=${keyword}`);
       console.log('response:', response);
 
-      const productsData = response.data.data;
+      const productsData = response.data;
       console.log('Fetched products:', productsData);
       setProducts(productsData);
       setFilteredProducts(productsData);
