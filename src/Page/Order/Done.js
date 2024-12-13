@@ -92,7 +92,7 @@ const Done = (prop) => {
                     <Text style={DoneStyle.subText}>
                         {'Thời gian đặt hàng ' + orderDate}
                         {'\n'}
-                        <Text style={{ color: 'red' }}>Đã nhận được hàng</Text> 
+                        <Text style={{ color: 'red' }}>Đã nhận được hàng</Text>
                     </Text>
 
                 </View>
@@ -108,7 +108,10 @@ const Done = (prop) => {
                     <View key={index} style={DoneStyle.product}>
                         <Image source={{ uri: product.images[0] }} style={DoneStyle.productImage} />
                         <View style={DoneStyle.productInfo}>
-                            <Text style={DoneStyle.productName}>{product.name}</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={DoneStyle.productName}>{product.name}</Text>
+                                <Text style={DoneStyle.quantity}>   Số lượng: {product.quantity}</Text>
+                            </View>
                             <Text style={DoneStyle.category}>{product.category.category_name}</Text>
                             <Text style={DoneStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
                         </View>

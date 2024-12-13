@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
 import ProductCancelStyle from './style';
 import axiosInstance from '../api/AxiosInstance';
@@ -16,6 +16,7 @@ const ProductCancel = (prop) => {
   const BtnCancel = () => {
     prop.navigation.navigate('CancelTrue');
     updateOrder(idorder, 4)
+    Alert.alert('Success', 'Hủy đơn hàng thành công')
   };
 
   const updateOrder = async (idorder, status) => {

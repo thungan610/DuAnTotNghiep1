@@ -81,12 +81,12 @@ const Payos = ({ route }) => {
       console.log('Navigation detected success URL');
       Alert.alert('Thành công', 'Bạn đã thanh toán thành công');
       deleteItemsFromCart(cartIds);
-      navigation.navigate('BottomNav');
+      navigation.navigate('Order');
     } else if (url.includes('/payment/cancel')) {
       console.log('Navigation detected cancel URL');
       Alert.alert('Thất bại', 'Đã hủy thanh toán.');
       updateOrder(idorder, 4);
-      navigation.navigate('BottomNav');
+      navigation.navigate('Order');
     }
   };
 

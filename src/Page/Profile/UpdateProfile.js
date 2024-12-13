@@ -79,7 +79,6 @@ const UpdateProfile = (props) => {
                         buttonPositive: 'OK',
                     }
                 );
-
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     openCamera();
                 } else {

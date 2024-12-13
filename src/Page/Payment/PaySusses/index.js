@@ -24,7 +24,7 @@ const PaySusses = ({ navigation }) => {
 
     const HandNav = () => {
         setTimeout(() => {
-            navigation.navigate('BottomNav');
+            navigation.navigate('Order');
         }, 2000);
     };
 

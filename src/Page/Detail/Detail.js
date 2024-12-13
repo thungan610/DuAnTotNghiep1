@@ -174,11 +174,11 @@ const Detail = ({ route, navigation }) => {
                     position: 'top'
                 });
                 console.log('Thêm sản phẩm vào giỏ hàng:', productToAdd);
-                dispatch(addToCart(productToAdd));  // Cập nhật trạng thái giỏ hàng
+                dispatch(addToCart(productToAdd)); 
             }
         } catch (error) {
             const errorMessage = error.response?.data?.data || 'Đã có lỗi xảy ra, vui lòng thử lại.';
-            Alert.alert('Thông báo', errorMessage);  // Thông báo lỗi
+            Alert.alert('Thông báo', errorMessage); 
         }
     };
     const renderImages = () => images.map((item, index) => (

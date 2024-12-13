@@ -74,7 +74,6 @@ const Order = ({ navigation, route }) => {
   };
 
   const addToCartHandler = async (order) => {
-    setFocusedOrder(order._id);
 
     const productsToAdd = Array.isArray(order.products) ? order.products.map(product => ({
       id: product._id,

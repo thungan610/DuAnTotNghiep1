@@ -71,16 +71,21 @@ const Processing1 = (prop) => {
                     <View key={index} style={ProcessingStyle.product}>
                         <Image source={{ uri: product.images[0] }} style={ProcessingStyle.productImage} />
                         <View style={ProcessingStyle.productInfo}>
-                            <Text style={ProcessingStyle.productName}>{product.name}</Text>
+                            <View style={{flexDirection:'row', justifyContent: 'space-between'}}> 
+                                <Text style={ProcessingStyle.productName}>{product.name}</Text>
+                                <Text style={ProcessingStyle.quantity}>   Số lượng: {product.quantity}</Text>
+                            </View>
+                           
                             <Text style={ProcessingStyle.category}>{product.category.category_name}</Text>
                             <Text style={ProcessingStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
+                           
                         </View>
                     </View>
                 ))}
 
                 <View style={ProcessingStyle.paymentInfo}>
                     <Text style={ProcessingStyle.label}>Chi tiết thanh toán</Text>
-                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
+                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString() || 0 } đ`}</Text>
                     <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
                     <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
 

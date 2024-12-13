@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axiosInstance from '../api/AxiosInstance';
 import ProductReviewStyle from './style';
+import axios from 'axios';
 
 const ProductReview = ({ maxStars = 5 }) => {
   const [images, setImages] = useState([]);
@@ -80,8 +81,15 @@ const ProductReview = ({ maxStars = 5 }) => {
   };
 
   const handleSubmit = async () => {
+    const userName = order?.address?.user?.name || 'Tên người dùng';
+  
+    if (!userName || userName.trim() === '') {
+      Alert.alert('Lỗi', 'Tên hiển thị không hợp lệ.');
+      return;
+    }
+  
     try {
-      const response = await axiosInstance.post('/comment/addComment', {
+      const response = await axios.post('http://192.168.1.21:3000/comment/addComment', {
         userId: order?.address?.userId,
         productId: order?.products[0]?._id,
         rating: rating,
@@ -89,15 +97,19 @@ const ProductReview = ({ maxStars = 5 }) => {
         images: images.map(image => image.uri),
         videos: video ? [video] : [],
       });
-
-      console.log('response', response);
+  
+      console.log('Response:', response);
       Alert.alert('Thành công', 'Đánh giá đã được gửi!');
       navigation.goBack();
     } catch (error) {
-      console.error('error', error);
+      console.error('Error:', error);
       Alert.alert('Lỗi', 'Không thể gửi đánh giá. Vui lòng thử lại sau.');
     }
   };
+    
+  
+  
+
 
   return (
     <View>
@@ -114,13 +126,12 @@ const ProductReview = ({ maxStars = 5 }) => {
         <View style={ProductReviewStyle.boxStar}>
           <Text style={ProductReviewStyle.textStar}>Chất lượng</Text>
           <View style={ProductReviewStyle.theStar}>
-            {Array(maxStars)
-              .fill(0)
-              .map((_, index) => (
-                <TouchableOpacity key={index} onPress={() => handleStarPress(index)}>
-                  <Text style={index < rating ? ProductReviewStyle.selectedStar : ProductReviewStyle.star}>★</Text>
-                </TouchableOpacity>
-              ))}
+            {Array.from({ length: maxStars }).map((_, index) => (
+              <TouchableOpacity key={index} onPress={() => handleStarPress(index)}>
+                <Text style={index < rating ? ProductReviewStyle.selectedStar : ProductReviewStyle.star}>★</Text>
+              </TouchableOpacity>
+            ))}
+
           </View>
         </View>
         <View style={ProductReviewStyle.boxStar}>

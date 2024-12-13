@@ -63,7 +63,10 @@ const Delivering = (prop) => {
                     <View key={index} style={DeliveringStyle.product}>
                         <Image source={{ uri: product.images[0] }} style={DeliveringStyle.productImage} />
                         <View style={DeliveringStyle.productInfo}>
-                            <Text style={DeliveringStyle.productName}>{product.name}</Text>
+                        <View style={{flexDirection:'row', justifyContent: 'space-between'}}> 
+                                <Text style={DeliveringStyle.productName}>{product.name}</Text>
+                                <Text style={DeliveringStyle.quantity}>   Số lượng: {product.quantity}</Text>
+                            </View>
                             <Text style={DeliveringStyle.category}>{product.category.category_name}</Text>
                             <Text style={DeliveringStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
                         </View>

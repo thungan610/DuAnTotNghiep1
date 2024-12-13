@@ -47,28 +47,34 @@ const Canceled = (prop) => {
             images: product.images,
             selected: true,
         }));
+        console.log('Add to cart', productsToAdd);
+        
 
         try {
             const response = await axiosInstance.post('/carts/addCart_App', {
                 user: userid,
                 products: productsToAdd,
             });
-
-            if (response.data.error) {
-            } else {
+            console.log('order', response);
+            
+            if(!response){
                 Toast.show({
-                    type: 'success',
+                    type: 'error',
                     text1: 'Thông báo',
-                    text2: 'Thêm sản phẩm thành công!',
+                    text2: 'Thêm sản phẩm vào gio hàng thất bại',
                     visibilityTime: 2000,
-                    position: 'top'
+                });
+            }else{
+                Toast.show({
+                    type:'success',
+                    text1: 'Thông báo',
+                    text2: 'Thêm sản phẩm vào giỏ hàng thành công',
+                    visibilityTime: 2000,
                 });
                 prop.navigation.navigate('AddProduct');
-
-                productsToAdd.forEach(product => dispatch(addToCart(product)));
             }
         } catch (error) {
-
+            console.error('Error:', error.response?.data || error.message);
         }
     };
 
@@ -104,12 +110,14 @@ const Canceled = (prop) => {
                     <Text>{`Số nhà ${order.address.houseNumber}, hẻm ${order.address.alley}, ${order.address.quarter}`}</Text>
                     <Text>{`${order.address.district}, ${order.address.city}, ${order.address.country}`}</Text>
                 </View>
-
                 {order.products.map((product, index) => (
                     <View key={index} style={CanceledStyle.product}>
                         <Image source={{ uri: product.images[0] }} style={CanceledStyle.productImage} />
                         <View style={CanceledStyle.productInfo}>
-                            <Text style={CanceledStyle.productName}>{product.name}</Text>
+                        <View style={{flexDirection:'row', justifyContent: 'space-between'}}> 
+                                <Text style={CanceledStyle.productName}>{product.name}</Text>
+                                <Text style={CanceledStyle.quantity}>   Số lượng: {product.quantity}</Text>
+                            </View>
                             <Text style={CanceledStyle.category}>{product.category.category_name}</Text>
                             <Text style={CanceledStyle.price}>{`${product.price.toLocaleString()}đ`}</Text>
                         </View>
