@@ -28,6 +28,9 @@ const Register = () => {
     const [passwordError, setPasswordError] = useState('');
     const [rememberAccount, setRememberAccount] = useState(false);
 
+    const NextLogin = () => {
+        navigation.navigate('Login')
+    };
     // Hàm lưu tài khoản vào AsyncStorage
     const saveAccount = async (email, password) => {
         try {
@@ -250,7 +253,7 @@ const Register = () => {
                                 secureTextEntry={!isPasswordVisible}
                             />
                             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-                            <Image
+                                <Image
                                     style={RegisterStyle.eye_closed}
                                     source={isPasswordVisible
                                         ? require("../../../src/assets/eye.png")
@@ -259,29 +262,48 @@ const Register = () => {
                                 />
                             </TouchableOpacity>
                         </View>
-
-                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <TouchableOpacity
-                                onPress={handleRememberAccount}
-                                style={{
-                                    width: 20,
-                                    height: 20,
-                                    borderWidth: 1,
-                                    borderColor: '#2CA9C0',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginRight: 10,
-                                }}>
+                    </View>
+                    <View style={RegisterStyle.button}>
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical:10
+                        }}>
+                            <TouchableOpacity onPress={handleRememberAccount} style={{
+                                width: 20,
+                                height: 20,
+                                borderWidth: 1,
+                                borderColor: '#2CA9C0',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginRight: 10,
+                            }}>
                                 {rememberAccount && (
                                     <Image source={require('../../../src/assets/check.png')} />
                                 )}
                             </TouchableOpacity>
                             <Text style={RegisterStyle.tieudeInput}>Nhớ tài khoản</Text>
                         </View>
+                        <TouchableOpacity onPress={BtnRegister} style={RegisterStyle.tout}>
+                            <Text style={RegisterStyle.textDk}>
+                                Đăng Ký
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={BtnRegister} style={RegisterStyle.btnDN}>
-                        <Text style={RegisterStyle.textdn}>Đăng ký</Text>
-                    </TouchableOpacity>
+                    <Text style={RegisterStyle.hoac}>Hoặc</Text>
+                    <View style={RegisterStyle.icon}>
+                        <TouchableOpacity style={RegisterStyle.fb}>
+                            <Image source={require('../../../src/assets/fb.png')} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={RegisterStyle.fb}>
+                            <Image source={require('../../../src/assets/gg.png')} />
+                        </TouchableOpacity>
+                        
+                    </View>
+                    <View style={RegisterStyle.footer}>
+                        <Text style={RegisterStyle.ftText}>Bạn đã có tài khoản?</Text>
+                        <Text onPress={NextLogin} style={RegisterStyle.end}> Đăng Nhập</Text>
+                    </View>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

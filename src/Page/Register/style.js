@@ -20,7 +20,7 @@ const RegisterStyle = StyleSheet.create({
   },
   body: {
     width: '100%',
-    height: 665,
+    height: 800,
     borderRadius: 20,
     backgroundColor: 'white'
   },
@@ -42,7 +42,6 @@ const RegisterStyle = StyleSheet.create({
   tieudeInput: {
     fontSize: 16,
     color: 'black',
-    marginBottom: 10
   },
   inputView: {
 
