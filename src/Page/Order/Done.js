@@ -68,7 +68,7 @@ const Done = (prop) => {
                     visibilityTime: 2000,
                     position: 'top'
                 });
-                prop.navigation.navigate('AddProduct');
+                prop.navigation.navigate('AddProductsScreen');
 
                 productsToAdd.forEach(product => dispatch(addToCart(product)));
             }

@@ -155,7 +155,7 @@ const Order = ({ navigation, route }) => {
           visibilityTime: 2000,
           position: 'top',
         });
-        navigation.navigate('AddProduct');
+        navigation.navigate('AddProductsScreen');
       }
     } catch (error) {
       console.error('Failed to add to cart:', error);
