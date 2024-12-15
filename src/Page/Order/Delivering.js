@@ -84,7 +84,7 @@ const Delivering = (prop) => {
 
                 <View style={DeliveringStyle.paymentInfo}>
                     <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
-                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
+                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString() || 0} đ`}</Text>
                     <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
                     <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
                     <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${totalPayment.toLocaleString()} đ`}</Text>

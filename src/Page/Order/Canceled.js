@@ -76,7 +76,7 @@ const Canceled = (prop) => {
                     text2: 'Thêm sản phẩm vào giỏ hàng thành công',
                     visibilityTime: 2000,
                 });
-                prop.navigation.navigate('AddProduct');
+                prop.navigation.navigate('AddProductsScreen');
             }
         } catch (error) {
             console.error('Error:', error.response?.data || error.message);

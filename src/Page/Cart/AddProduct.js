@@ -208,42 +208,6 @@ const AddProduct = ({ route, navigation }) => {
     }, [userId, refreshTrigger]),
   );
 
-  // const toggleSelectProduct = product_id => {
-
-  //   setCartItems(prevItems => {
-  //     const updatedItems = prevItems.map(item => {
-  //       console.log(' item_id:', item.product_id);
-  //       console.log(' product_id:', product_id);
-  //       if (item.product_id === product_id) {
-  //         const newItem = { ...item, selected: !item.selected };
-  //         return newItem;
-  //       }
-  //       return item;
-  //     });
-
-  //     const newSelectedCount = updatedItems.filter(
-  //       item => item.selected,
-  //     ).length;
-
-  //     setSelectedCount(newSelectedCount);
-  //     const newTotal = productsData
-  //           .filter(item => item.selected)
-  //           .reduce((total, item) => {
-  //             const discountedPrice = Math.max(item.price - (item.discount ?? 0), 0);
-  //             return total + discountedPrice * (item.quantity ?? 1);
-  //           }, 0);
-  //     console.log("Total amounts", newTotal);
-  //     console.log(newTotal.toLocaleString('vi-VN') + 'đ'); 
-
-
-
-  //     setTotalAmount(newTotal);
-
-  //     console.log('Updated cart items:', updatedItems);
-
-  //     return updatedItems;
-  //   });
-  // };
   const toggleSelectProduct = product_id => {
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item => {

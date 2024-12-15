@@ -12,6 +12,10 @@ const notificationSlice = createSlice({
       if (currentTime - state.lastNotificationTime > 10000) {
         state.notifications.push(action.payload);
         state.lastNotificationTime = currentTime;
+
+        if (state.notifications.length > 20) {
+          state.notifications.shift(); 
+        }
       }
     },
     removeNotification: (state, action) => {

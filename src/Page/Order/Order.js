@@ -43,7 +43,7 @@ const Order = ({ navigation, route }) => {
 
     Toast.show({
       type: "info",
-      text1: "Bạn có thông báo mớimới",
+      text1: "Bạn có thông báo mới",
       text2: message,
       visibilityTime: 3000,
     });
@@ -51,6 +51,12 @@ const Order = ({ navigation, route }) => {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
+    if (userid === 'default_id') {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
       console.log('response..................', response);
@@ -75,11 +81,14 @@ const Order = ({ navigation, route }) => {
           ...order,
           products: order.cart?.flatMap(cartItem => cartItem.products) || [],
         }));
+
+      // So sánh trạng thái đơn hàng mới và cũ, nếu có thay đổi thì thông báo
       if (previousOrders.length > 0) {
         filteredOrders.forEach((order) => {
           const previousOrder = previousOrders.find(o => o._id === order._id);
           if (previousOrder && previousOrder.status !== order.status) {
-            notifyStatusChange(order._id, order.status); // Gọi hàm thông báo
+            // Gọi hàm thông báo khi trạng thái thay đổi
+            notifyStatusChange(order._id, order.status);
           }
         });
       }
@@ -96,7 +105,7 @@ const Order = ({ navigation, route }) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedTabs, userid]);
+  }, [selectedTabs, userid, previousOrders]);
 
   useFocusEffect(
     useCallback(() => {
@@ -246,6 +255,8 @@ const Order = ({ navigation, route }) => {
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
+      ) : orders.length === 0 ? (
+        <Text style={{textAlign:'center',marginTop:300, fontSize:20}}>Không có sản phẩm!!!</Text>  
       ) : (
         <FlatList
           data={orders}

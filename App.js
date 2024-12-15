@@ -10,7 +10,7 @@ const App = () => {
   useEffect(() => {
     PushNotification.createChannel(
       {
-        channelId: "chennelId",
+        channelId: "channelId",
         channelName: "Bạn có thông báo mới", 
         channelDescription: "A default channel for notifications", 
         importance: 4, 
