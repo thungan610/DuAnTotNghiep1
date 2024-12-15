@@ -325,9 +325,22 @@ const AddProduct = ({ route, navigation }) => {
           }
 
           if (newQuantity === 0) {
-            deleteItemsFromCart(item.cart_id);
-            return null;
-          }
+            Alert.alert(
+              'Xác nhận',
+              `Bạn có chắc chắn muốn xóa sản phẩm "${item.name}" khỏi giỏ hàng?`,
+              [
+                {
+                  text: 'Hủy',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Đồng ý',
+                  onPress: () => deleteItemsFromCart(item.cart_id),
+                },
+              ],
+            );
+            return item; 
+          }  
 
           updateQuantityInCart(cart_id, item.product_id, newQuantity, maxQuantity);
           return { ...item, quantity: newQuantity };

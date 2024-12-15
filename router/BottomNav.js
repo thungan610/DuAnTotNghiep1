@@ -33,7 +33,7 @@ const BottomNav = () => {
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/oderSau.png') : require('./icon/oder.png')} />,
                     tabBarLabel: ({ focused }) => focused ? <Text style={styles.label}>.</Text> : null
                 }}
-                name="Order" component={Order} />
+                name="OrderScreen" component={Order} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ focused }) => <Image style={styles.icon} source={focused ? require('./icon/BasketSau.png') : require('./icon/BatketTruoc.png')} />,

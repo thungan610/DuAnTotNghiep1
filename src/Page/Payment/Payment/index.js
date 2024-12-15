@@ -172,7 +172,7 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
     };
-    
+
 
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
@@ -321,11 +321,14 @@ const Payment = ({ route, navigation }) => {
     return (
         <ScrollView style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
-                <TouchableOpacity onPress={BackRight}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <TouchableOpacity style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                }} onPress={BackRight}>
+                    <Image source={require("../../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={AddAdressStyle.title}>Thanh toán</Text>
-                <Text />
             </View>
 
             <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
@@ -443,6 +446,16 @@ const Payment = ({ route, navigation }) => {
                 <Text style={PaymentStyle.Line} />
                 <View>
                     <Text style={[PaymentStyle.txtDC, PaymentStyle.paddingHorizontal]}>Chi tiết thanh toán</Text>
+
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}đ</Text>
+                    </View>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedTransfer.price)}</Text>
+                    </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
                         <Text style={PaymentStyle.txtPrice1}>
@@ -454,16 +467,6 @@ const Payment = ({ route, navigation }) => {
                                 ) : '0đ'}
                             </Text>
                         </Text>
-                    </View>
-
-                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
-                        <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>{totalPrice.toLocaleString()}đ</Text>
-                    </View>
-                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
-                        <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedTransfer.price)}</Text>
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
