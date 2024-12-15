@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
 import ProductCancelStyle from './style';
 import axiosInstance from '../api/AxiosInstance';
+import Toast from 'react-native-toast-message';
 
 const ProductCancel = (prop) => {
   const { order } = prop.route.params;
   console.log('order', order);
-  
+
   const [description, setDescription] = useState('');
 
   const idorder = order._id
@@ -16,7 +17,14 @@ const ProductCancel = (prop) => {
   const BtnCancel = () => {
     prop.navigation.navigate('CancelTrue');
     updateOrder(idorder, 4)
-    Alert.alert('Success', 'Hủy đơn hàng thành công')
+    Toast.show({
+      type: 'error',
+      position: 'top',
+      text1: 'Thông báo',
+      text2: 'Hủy đơn hàng thành côngcông',
+      visibilityTime: 3000,
+      autoHide: true,
+    });
   };
 
   const updateOrder = async (idorder, status) => {
@@ -58,30 +66,30 @@ const ProductCancel = (prop) => {
               </View>
             </View>
           ))}
-      </View>
+        </View>
 
-      <View>
-        <TextInput
-          style={ProductCancelStyle.input}
-          placeholder="Hãy nhập lý do bạn muốn hủy đơn này nhé!!!"
-          multiline={true}
-          numberOfLines={5}
-          onChangeText={(text) => setDescription(text)}
-          value={description}
-        />
-      </View>
+        <View>
+          <TextInput
+            style={ProductCancelStyle.input}
+            placeholder="Hãy nhập lý do bạn muốn hủy đơn này nhé!!!"
+            multiline={true}
+            numberOfLines={5}
+            onChangeText={(text) => setDescription(text)}
+            value={description}
+          />
+        </View>
 
-      <View style={ProductCancelStyle.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => prop.navigation.navigate('Processing1', { order: order })}
-          style={ProductCancelStyle.button}>
-          <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>
-          <Text style={ProductCancelStyle.textButton1}>Hủy đơn</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={ProductCancelStyle.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => prop.navigation.navigate('Processing1', { order: order })}
+            style={ProductCancelStyle.button}>
+            <Text style={ProductCancelStyle.textButton}>Quay lại</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={BtnCancel} style={ProductCancelStyle.button1}>
+            <Text style={ProductCancelStyle.textButton1}>Hủy đơn</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View >
   );
 };

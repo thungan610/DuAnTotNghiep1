@@ -4,22 +4,57 @@ import { useSelector } from 'react-redux';
 import axiosInstance from '../api/AxiosInstance';
 import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../Reducers/notificationSlice';
 
 const Order = ({ navigation, route }) => {
   const [orders, setOrders] = useState([]);
   const [selectedTabs, setSelectedTabs] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [previousOrders, setPreviousOrders] = useState([]);
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id || 'default_id';
 
   const tabs = ['Chờ xác nhận', 'Đang giao', 'Đã nhận', 'Đã hủy'];
+
+  const dispatch = useDispatch();
+
+  const notifyStatusChange = (orderId, status) => {
+    let message;
+    switch (status) {
+      case 2:
+        message = `Đơn hàng ${orderId} đang được giao.`;
+        break;
+      case 3:
+        message = `Đơn hàng ${orderId} đã được giao thành công.`;
+        break;
+      case 4:
+        message = `Đơn hàng ${orderId} đã bị hủy.`;
+        break;
+      default:
+        message = `Trạng thái đơn hàng ${orderId} đã thay đổi.`;
+    }
+
+    dispatch(addNotification({
+      id: Date.now(),
+      title: "Thông báo mới về đơn hàng",
+      message,
+    }));
+
+    Toast.show({
+      type: "info",
+      text1: "Bạn có thông báo mớimới",
+      text2: message,
+      visibilityTime: 3000,
+    });
+  };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
       console.log('response..................', response);
-      
+
       const allOrders = response;
       const filteredOrders = allOrders
         .filter(order => {
@@ -40,10 +75,24 @@ const Order = ({ navigation, route }) => {
           ...order,
           products: order.cart?.flatMap(cartItem => cartItem.products) || [],
         }));
+      if (previousOrders.length > 0) {
+        filteredOrders.forEach((order) => {
+          const previousOrder = previousOrders.find(o => o._id === order._id);
+          if (previousOrder && previousOrder.status !== order.status) {
+            notifyStatusChange(order._id, order.status); // Gọi hàm thông báo
+          }
+        });
+      }
 
+      setPreviousOrders(filteredOrders);
       setOrders(filteredOrders);
     } catch (error) {
-
+      console.error('Error fetching orders:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi',
+        text2: 'Không thể tải đơn hàng. Vui lòng thử lại sau!',
+      });
     } finally {
       setLoading(false);
     }

@@ -36,6 +36,11 @@ const Done = (prop) => {
     const orderShipIndex = parseInt(order.ship, 10);
     const shippingTime = getShippingTime(orderShipIndex);
 
+    const discountAmount = order?.sale[0]?.discountAmount || 0; // Khuyến mãi
+    const shippingCost = Number(getShippingLabel(order.ship)); // Tiền vận chuyển
+    const totalPayment = order.totalOrder - discountAmount + shippingCost; // Tính tổng thanh toán
+
+
     const addToCartHandler = async () => {
         const productsToAdd = order.products.map(product => ({
             id: product._id,
@@ -113,7 +118,10 @@ const Done = (prop) => {
                                 <Text style={DoneStyle.quantity}>   Số lượng: {product.quantity}</Text>
                             </View>
                             <Text style={DoneStyle.category}>{product.category.category_name}</Text>
-                            <Text style={DoneStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
+                            <Text style={DoneStyle.price}>
+                                {`${(product.price * product.quantity).toLocaleString()} đ`}
+                            </Text>
+
                         </View>
                     </View>
                 ))}
@@ -124,7 +132,7 @@ const Done = (prop) => {
                     <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
                     <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
                     <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
-                    <Text style={DoneStyle.total}>{`Tổng thanh toán: ${order.totalOrder.toLocaleString()}đ`}</Text>
+                    <Text style={DoneStyle.total}>{`Tổng thanh toán: ${totalPayment.toLocaleString()} đ`}</Text>
                 </View>
                 <View style={DoneStyle.buttonContainer}>
                     <TouchableOpacity onPress={() => prop.navigation.navigate('BotChat')}>

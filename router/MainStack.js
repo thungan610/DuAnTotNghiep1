@@ -83,7 +83,7 @@ const MainStack = () => {
             <Stack.Screen name="TabAddress" component={TabAddress} />
             <Stack.Screen name="ProductReview" component={ProductReview} />
             <Stack.Screen name="Search" component={Search} />
-            <Stack.Screen name="OrderScreen" component={Order} />
+            <Stack.Screen name="Order" component={Order} />
             <Stack.Screen name="Processing1" component={Processing1} />
             <Stack.Screen name="Delivering" component={Delivering} />
             <Stack.Screen name="Canceled" component={Canceled} />
