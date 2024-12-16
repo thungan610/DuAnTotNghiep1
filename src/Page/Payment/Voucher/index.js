@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Alert, ScrollView } from "react-native";
 import VoucherStyle from "./style";
-// import VoucherStyle from "../AddAdress/style";
-// import VoucherStyle from "../PayMethod/style";
 import axiosInstance from "../../api/AxiosInstance";
 
 const Voucher = (prop) => {
@@ -10,14 +8,10 @@ const Voucher = (prop) => {
     const [voucherData, setVoucherData] = useState([]);
     const { totalPrice } = prop.route.params || {};
 
-    console.log('totalPriceccccccccccc', totalPrice);
-
-
     useEffect(() => {
         const getVoucherData = async () => {
             try {
                 const voucherResponse = await axiosInstance.get("/sale/getSale");
-                console.log("Dữ liệu trả về từ API:", voucherResponse.data);
                 setVoucherData(voucherResponse.data);
             } catch (error) {
                 console.error("Lỗi khi lấy dữ liệu:", error);
@@ -34,14 +28,8 @@ const Voucher = (prop) => {
             return;
         }
         const minOrderValue = selectedVoucher.minOrderValue;
-        console.log('selectedVoucher', selectedVoucher);
-
-        console.log('minOrderValue', minOrderValue);
-
 
         const totalPrice = prop.route.params.totalPrice;
-        console.log('totalPrice', totalPrice);
-
 
         if (totalPrice >= minOrderValue) {
             setSelectedIndex(index);
@@ -54,62 +42,57 @@ const Voucher = (prop) => {
         }
     };
 
-
     const BackRight = () => {
         prop.navigation.goBack();
     };
 
     return (
-        <ScrollView style={VoucherStyle.container}
-            showsVerticalScrollIndicator={false}
-        >
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: "space-between",
-                    width: '68%'
-                }}>
+        <ScrollView style={VoucherStyle.container} showsVerticalScrollIndicator={false}>
+            <View style={{ flexDirection: 'row', justifyContent: "space-between", width: '68%' }}>
                 <TouchableOpacity onPress={BackRight}>
                     <Image source={require("../../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
-                <Text style={{
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    color: 'black',
-                    marginBottom: 20
-                }}>Khuyến mãi</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'black', marginBottom: 20 }}>Khuyến mãi</Text>
             </View>
 
             <View style={VoucherStyle.ViewAdd}>
-                <TextInput
-                    placeholder="Nhập mã khuyến mãi"
-                    style={VoucherStyle.input}
-                />
+                <TextInput placeholder="Nhập mã khuyến mãi" style={VoucherStyle.input} />
                 <TouchableOpacity style={VoucherStyle.button}>
                     <Text style={VoucherStyle.buttonText}>ÁP DỤNG</Text>
                 </TouchableOpacity>
             </View>
 
-            {voucherData.map((option, index) => (
-                <View style={VoucherStyle.bodyMain} key={index}>
-                    <TouchableOpacity
-                        onPress={() => handlePress(index)}
-                        style={[
-                            VoucherStyle.body,
-                            selectedIndex === index ? styles.selectedButton : styles.unselectedButton,
-                        ]}
-                    >
-                        <Text style={VoucherStyle.title}>Giảm {option.discountAmount.toLocaleString()} đ</Text>
-                        <Text style={VoucherStyle.title}>{option.title}</Text>
-                        <Text style={VoucherStyle.minOrderValue}>
-                            Cho hoá đơn từ {option.minOrderValue.toLocaleString()} đ
-                        </Text>
-                        <Text style={VoucherStyle.time}>
-                            Hạn sử dụng: {new Date(option.expirationDate).toLocaleDateString()}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            ))}
+            {voucherData.map((option, index) => {
+                // Determine whether to show discountAmount or discountPercent
+                const discountText = option.discountAmount > 0
+                    ? `Giảm ${option.discountAmount.toLocaleString()} đ`
+                    : option.discountPercent > 0
+                    ? `Giảm ${option.discountPercent}%`
+                    : null;
+
+                return (
+                    <View style={VoucherStyle.bodyMain} key={index}>
+                        <TouchableOpacity
+                            onPress={() => handlePress(index)}
+                            style={[
+                                VoucherStyle.body,
+                                selectedIndex === index ? styles.selectedButton : styles.unselectedButton,
+                            ]}
+                        >
+                            <Text style={VoucherStyle.title}>
+                                {discountText} {/* Display discount amount or percentage */}
+                            </Text>
+                            <Text style={VoucherStyle.title}>{option.title}</Text>
+                            <Text style={VoucherStyle.minOrderValue}>
+                                Cho hoá đơn từ {option.minOrderValue.toLocaleString()} đ
+                            </Text>
+                            <Text style={VoucherStyle.time}>
+                                Hạn sử dụng: {new Date(option.expirationDate).toLocaleDateString()}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            })}
 
             <View style={VoucherStyle.ViewSuss}>
                 <TouchableOpacity onPress={BackRight} style={VoucherStyle.BtnSuss}>

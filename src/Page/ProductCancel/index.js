@@ -21,7 +21,7 @@ const ProductCancel = (prop) => {
       type: 'error',
       position: 'top',
       text1: 'Thông báo',
-      text2: 'Hủy đơn hàng thành côngcông',
+      text2: 'Hủy đơn hàng thành công',
       visibilityTime: 3000,
       autoHide: true,
     });

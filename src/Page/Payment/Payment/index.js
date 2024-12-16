@@ -210,29 +210,31 @@ const Payment = ({ route, navigation }) => {
 
 
     const totalPayment = (() => {
+        // Ensure totalPrice is correctly defined and accessible.
         const transferCost = parseFloat(selectedTransfer.price) || 0;
-        console.log('transferCost', transferCost);
-
         let discount = 0;
-        console.log('discount', discount);
-
-
+    
         if (selectedVoucher) {
             const voucherPrice = selectedVoucher.discountAmount || 0;
-            console.log('voucherPrice', voucherPrice);
-
-            if (selectedVoucher.type === 'percentage') {
-                const percentage = voucherPrice / 100;
-                discount = totalPrice * percentage;
-                console.log('discount ccc', discount);
-
+            const voucherPercent = selectedVoucher.discountPercent || 0;
+    
+            // Apply percentage discount if available
+            if (voucherPercent > 0) {
+                // Apply percentage discount to totalPrice + transferCost
+                discount = ((totalPrice + transferCost) * voucherPercent) / 100;
             } else {
+                // Apply fixed amount discount
                 discount = voucherPrice;
             }
         }
-
-        return (totalPrice + transferCost) - discount;
+    
+        // Calculate the total payment
+        const total = (totalPrice + transferCost) - discount;
+    
+        // Round to 2 decimal places to avoid floating point precision issues
+        return Math.round(total * 100) / 100;
     })();
+    
     console.log('totalPayment', totalPayment);
 
 
@@ -418,7 +420,15 @@ const Payment = ({ route, navigation }) => {
                     <TouchableOpacity onPress={HandVoucher} style={PaymentStyle.btnThem}>
                         {selectedVoucher ? (
                             <View style={PaymentStyle.ViewTranfer}>
-                                <Text style={PaymentStyle.txtPrice}>{selectedVoucher.discountAmount.toLocaleString()} đ</Text>
+                                {selectedVoucher.discountPercent ? (
+                                    <Text style={PaymentStyle.txtPrice}>
+                                        {selectedVoucher.discountPercent}%
+                                    </Text>
+                                ) : (
+                                    <Text style={PaymentStyle.txtPrice}>
+                                        -{selectedVoucher.discountAmount.toLocaleString()} đ
+                                    </Text>
+                                )}
                             </View>
                         ) : (
                             <Text style={PaymentStyle.txtLH}>Chưa chọn khuyến mãi</Text>
@@ -426,6 +436,7 @@ const Payment = ({ route, navigation }) => {
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
                 </View>
+
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBodynote}>
                     <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
@@ -459,14 +470,18 @@ const Payment = ({ route, navigation }) => {
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
                         <Text style={PaymentStyle.txtPrice1}>
-                            <Text style={PaymentStyle.txtPrice1}>
-                                {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
-                                    typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
-                                        `${selectedVoucher.discountAmount.toLocaleString()}` :
-                                        `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()}đ`
-                                ) : '0đ'}
-                            </Text>
+                            {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
+                                selectedVoucher.discountPercent ? (
+                                    `-${selectedVoucher.discountPercent}%`
+                                ) : (
+                                    `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()}đ`
+                                )
+                            ) : (
+
+                                '0đ'
+                            )}
                         </Text>
+
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>
