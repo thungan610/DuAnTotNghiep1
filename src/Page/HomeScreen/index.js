@@ -228,7 +228,7 @@ const HomeScreen = (props) => {
                     scrollEnabled={false}
                     showsHorizontalScrollIndicator={false}
                 />
-                <View style={{ height: 40 }} />
+                <View style={{ height: 500 }} />
                 </ScrollView>
             </View>
         </View>
