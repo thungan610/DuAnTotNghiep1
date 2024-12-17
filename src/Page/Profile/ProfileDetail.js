@@ -13,12 +13,9 @@ const ProfileDetail = (prop) => {
   const [profileData, setProfileData] = useState(null);
   const user = useSelector(state => state.user);
   const userid = user?.userData?._id;
-  console.log('userid', userid);
   const [isLoading, setIsLoading] = useState(true);
   const isLoggedIn = useSelector(state => state.user.isLoggedIn);
   const dispatch = useDispatch();
-
-  console.log('profileData: ', profileData);
 
   useFocusEffect(
     useCallback(() => {

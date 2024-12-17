@@ -110,8 +110,6 @@ const AddProduct = ({ route, navigation }) => {
   const { data } = route.params || {};
   const [modalVisible, setModalVisible] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
-  console.log('Total amount', totalAmount);
-
   const [selectedCount, setSelectedCount] = useState(0);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);

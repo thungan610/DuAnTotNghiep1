@@ -65,7 +65,6 @@ const AddAddress = (prop) => {
 
     try {
       const response = await AxiosInstance.post(`/users/${userId}/addressNew`, address);
-      console.log("API Response:", response);
       if (!response) {
         Alert.alert("Lỗi", "Không nhận được phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng.");
       } else {
