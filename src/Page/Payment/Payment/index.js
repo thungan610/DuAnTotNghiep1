@@ -40,17 +40,20 @@ const Payment = ({ route, navigation }) => {
     const fetchAddressById = async (addressId) => {
         try {
             const response = await axiosInstance.get(`/users/getAddressById/${addressId}`);
-            console.log('response', response);
-            if (response) {
-                setAddress(response);
+            const normalizedCity = response?.data?.city?.trim().toLowerCase(); // Chuẩn hóa tên thành phố
+    
+            if (normalizedCity === "hồ chí minh") {
+                setAddress(response.data); // Cập nhật địa chỉ nếu hợp lệ
             } else {
-                setAddress(null);
+                Alert.alert("Thông báo", "Địa chỉ nhận hàng phải nằm trong Hồ Chí Minh");
+                setAddress(null); // Xóa địa chỉ nếu không hợp lệ
             }
         } catch (err) {
-            console.error('Error fetching address by ID:', err);
+            console.error('Lỗi khi lấy thông tin địa chỉ:', err);
+            Alert.alert("Lỗi", "Không thể lấy thông tin địa chỉ.");
         }
     };
-
+    
     useFocusEffect(
         React.useCallback(() => {
             if (userId) {
@@ -64,13 +67,14 @@ const Payment = ({ route, navigation }) => {
             fetchAddressById(addressId);
         } else {
             if (data.length > 0) {
+                console.log('Setting default address:', data[0]);
                 setAddress(data[0]);
             } else {
                 setAddress(null);
             }
         }
     }, [addressId, data]);
-
+    
     useEffect(() => {
         if (route.params?.selectedMethod) {
             const method = route.params.selectedMethod;
@@ -152,19 +156,26 @@ const Payment = ({ route, navigation }) => {
 
 
     const HandPaySuccess = async () => {
+        // Check if the selected method is chosen
         if (!selectedMethod) {
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
+    
+       
         try {
+            
             const idorder = await createOrder();
             console.log('idorder', idorder);
+    
+            
             if (selectedMethod === 'cash') {
+              
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds);
-
                 navigation.navigate('PaySussesScreen');
             } else if (selectedMethod === 'payos') {
+              
                 await createPayment(idorder);
             }
         } catch (error) {
@@ -172,17 +183,16 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
     };
-
-
+    
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
     };
 
     const [selectedTransfer, setSelectedTransfer] = useState({
-        label: "Nhanh",
-        status: 2,
-        price: "10000",
-        note: "Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn",
+        label: "Tiết Kiệm",
+        status: 1,
+        price: "8000",
+        note: "Đảm bảo nhận hàng trong 60 phút kể từ khi nhận đơn",
     });
 
     useEffect(() => {
@@ -213,11 +223,11 @@ const Payment = ({ route, navigation }) => {
         // Ensure totalPrice is correctly defined and accessible.
         const transferCost = parseFloat(selectedTransfer.price) || 0;
         let discount = 0;
-    
+
         if (selectedVoucher) {
             const voucherPrice = selectedVoucher.discountAmount || 0;
             const voucherPercent = selectedVoucher.discountPercent || 0;
-    
+
             // Apply percentage discount if available
             if (voucherPercent > 0) {
                 // Apply percentage discount to totalPrice + transferCost
@@ -227,14 +237,14 @@ const Payment = ({ route, navigation }) => {
                 discount = voucherPrice;
             }
         }
-    
+
         // Calculate the total payment
         const total = (totalPrice + transferCost) - discount;
-    
+
         // Round to 2 decimal places to avoid floating point precision issues
         return Math.round(total * 100) / 100;
     })();
-    
+
     console.log('totalPayment', totalPayment);
 
 
@@ -344,6 +354,10 @@ const Payment = ({ route, navigation }) => {
                                 <Text style={PaymentStyle.txtLH}>
                                     {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
                                 </Text>
+                                <Text style={{ color: 'red', marginVertical: 10 }}>
+                                    Lưu ý: Chỉ hỗ trợ giao hàng trong khu vực Hồ Chí Minh.
+                                </Text>
+
                             </View>
                         ) : data.length > 0 ? (
                             <View>
