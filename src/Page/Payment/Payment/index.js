@@ -155,21 +155,21 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
-    
-       
+
+
         try {
-            
+
             const idorder = await createOrder();
             console.log('idorder', idorder);
-    
-            
+
+
             if (selectedMethod === 'cash') {
-              
+
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds);
                 navigation.navigate('PaySussesScreen');
             } else if (selectedMethod === 'payos') {
-              
+
                 await createPayment(idorder);
             }
         } catch (error) {
@@ -177,7 +177,7 @@ const Payment = ({ route, navigation }) => {
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
     };
-    
+
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
     };
@@ -344,7 +344,7 @@ const Payment = ({ route, navigation }) => {
                         {address ? (
                             <View>
                                 <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
-                                <Text style={PaymentStyle.txtLH}>
+                                <Text style={[PaymentStyle.txtLH, { width: '86%'}]} numberOfLines={1} ellipsizeMode="tail">
                                     {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
                                 </Text>
                                 <Text style={{ color: 'red', marginVertical: 10 }}>
