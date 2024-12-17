@@ -40,20 +40,17 @@ const Payment = ({ route, navigation }) => {
     const fetchAddressById = async (addressId) => {
         try {
             const response = await axiosInstance.get(`/users/getAddressById/${addressId}`);
-            const normalizedCity = response?.data?.city?.trim().toLowerCase(); // Chuẩn hóa tên thành phố
-    
-            if (normalizedCity === "hồ chí minh") {
-                setAddress(response.data); // Cập nhật địa chỉ nếu hợp lệ
+            console.log('response', response);
+            if (response) {
+                setAddress(response);
             } else {
-                Alert.alert("Thông báo", "Địa chỉ nhận hàng phải nằm trong Hồ Chí Minh");
-                setAddress(null); // Xóa địa chỉ nếu không hợp lệ
+                setAddress(null);
             }
         } catch (err) {
-            console.error('Lỗi khi lấy thông tin địa chỉ:', err);
-            Alert.alert("Lỗi", "Không thể lấy thông tin địa chỉ.");
+            console.error('Error fetching address by ID:', err);
         }
     };
-    
+
     useFocusEffect(
         React.useCallback(() => {
             if (userId) {
@@ -67,14 +64,13 @@ const Payment = ({ route, navigation }) => {
             fetchAddressById(addressId);
         } else {
             if (data.length > 0) {
-                console.log('Setting default address:', data[0]);
                 setAddress(data[0]);
             } else {
                 setAddress(null);
             }
         }
     }, [addressId, data]);
-    
+
     useEffect(() => {
         if (route.params?.selectedMethod) {
             const method = route.params.selectedMethod;
@@ -118,7 +114,6 @@ const Payment = ({ route, navigation }) => {
             getCartsByIds(cartIds);
         }
     }, [cartIds]);
-
     const BackRight = () => {
         // navigation.goBack(); 
         navigation.navigate('BottomNav');
