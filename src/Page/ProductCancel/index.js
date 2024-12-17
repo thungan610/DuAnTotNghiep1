@@ -32,7 +32,6 @@ const ProductCancel = (prop) => {
       const response = await axiosInstance.post(`/oder/${idorder}/updateOrder`, {
         status: status,
       });
-      console.log('Cập nhật trạng thái đơn hàng thành công:', response);
       return response;
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error.message);

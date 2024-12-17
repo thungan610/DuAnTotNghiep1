@@ -72,7 +72,6 @@ const TabAddress = (prop) => {
       if (userId) {
         getAddress(userId);
       } else {
-        console.error("UserId is missing");
       }
     }, [userId])
   );

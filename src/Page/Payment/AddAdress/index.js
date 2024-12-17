@@ -86,7 +86,7 @@ const AddAddress = (prop) => {
       Toast.show({
         type: "success",
         text1: "Thông báo",
-text2: "Thêm địa chỉ thành công.",
+        text2: "Thêm địa chỉ thành công.",
       });
       goBack();
     } catch (error) {
@@ -116,7 +116,7 @@ text2: "Thêm địa chỉ thành công.",
       <Text style={AddAdressStyle.txtLH}>Thông tin địa chỉ</Text>
       <View style={AddAdressStyle.body}>
         <TextInput style={AddAdressStyle.input} value={country} editable={false} />
-        
+
         {/* Cố định giá trị thành phố là TP Hồ Chí Minh */}
         <Picker selectedValue={city} style={AddAdressStyle.input} enabled={false}>
           <Picker.Item label="TP Hồ Chí Minh" value="TP Hồ Chí Minh" />

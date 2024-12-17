@@ -312,6 +312,10 @@ const Detailbottle = ({ route, navigation }) => {
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetailbottle.textoriginRow}>
+                                    <Text style={styleDetailbottle.textorigin}>Nhà cung cấp: </Text>
+                                    <Text style={styleDetailbottle.textorigin}>{productDetails.supplier || 'Chưa có thông tin'}</Text>
+                                </View>
+                                <View style={styleDetailbottle.textoriginRow}>
                                     <Text style={styleDetailbottle.textorigin}>Chất sơ: </Text>
                                     <Text style={styleDetailbottle.textorigin}>{productDetails.fiber || 'Không có dữ liệu'}</Text>
                                 </View>

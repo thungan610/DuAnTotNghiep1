@@ -19,25 +19,25 @@ const Order = ({ navigation, route }) => {
 
   const dispatch = useDispatch();
 
-  const notifyStatusChange = (orderId, status) => {
+  const notifyStatusChange = (status) => {
     let message;
     switch (status) {
       case 2:
-        message = `Đơn hàng ${orderId} đang được giao.`;
+        message = `Đơn hàng đang được giao.`;
         break;
       case 3:
-        message = `Đơn hàng ${orderId} đã được giao thành công.`;
+        message = `Đơn hàng đã được giao thành công.`;
         break;
       case 4:
-        message = `Đơn hàng ${orderId} đã bị hủy.`;
+        message = `Đơn hàng đã bị hủy.`;
         break;
       default:
-        message = `Trạng thái đơn hàng ${orderId} đã thay đổi.`;
+        message = `Trạng thái đơn hàng đã thay đổi.`;
     }
 
     dispatch(addNotification({
       id: Date.now(),
-      title: "Thông báo mới về đơn hàng",
+      title: "Thông báo ",
       message,
     }));
 
@@ -56,12 +56,11 @@ const Order = ({ navigation, route }) => {
       setLoading(false);
       return;
     }
-
+  
     try {
       const response = await axiosInstance.get(`/oder/getorderbyuserid/${userid}`);
-      console.log('response..................', response);
-
       const allOrders = response;
+  
       const filteredOrders = allOrders
         .filter(order => {
           switch (tabs[selectedTabs]) {
@@ -80,20 +79,17 @@ const Order = ({ navigation, route }) => {
         .map(order => ({
           ...order,
           products: order.cart?.flatMap(cartItem => cartItem.products) || [],
-        }));
-
-      // So sánh trạng thái đơn hàng mới và cũ, nếu có thay đổi thì thông báo
-      if (previousOrders.length > 0) {
-        filteredOrders.forEach((order) => {
-          const previousOrder = previousOrders.find(o => o._id === order._id);
-          if (previousOrder && previousOrder.status !== order.status) {
-            // Gọi hàm thông báo khi trạng thái thay đổi
-            notifyStatusChange(order._id, order.status);
-          }
-        });
-      }
-
-      setPreviousOrders(filteredOrders);
+        }))
+        .sort((a, b) => b._id.localeCompare(a._id));
+  
+      filteredOrders.forEach((order) => {
+        const previousOrder = previousOrders.find(o => o._id === order._id);
+        if (previousOrder && previousOrder.status !== order.status) {
+          notifyStatusChange(order._id, order.status); 
+        }
+      });
+  
+      setPreviousOrders(filteredOrders);  
       setOrders(filteredOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -105,7 +101,7 @@ const Order = ({ navigation, route }) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedTabs, userid, previousOrders]);
+  }, [selectedTabs, userid,previousOrders]);  
 
   useFocusEffect(
     useCallback(() => {
@@ -273,7 +269,6 @@ const Order = ({ navigation, route }) => {
 const OrderStyle = StyleSheet.create({
   container: {
     padding: 20,
-    flex: 1,
   },
   header: {
     flexDirection: 'row',

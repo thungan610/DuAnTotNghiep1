@@ -19,7 +19,6 @@ const SearchScreen = ({ navigation }) => {
   const userId = user?.userData?._id || 'default_id';
   const fetchProducts = async (keyword) => {
     try {
-      console.log('Fetching products for keyword:', keyword);
       setRefreshing(true);
       const response = await axiosInstance.get(`/products/search?key=${keyword}`);
       console.log('response:', response);
@@ -109,7 +108,6 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const renderProduct = ({ item }) => {
-    console.log('Item:', item);
     const imageUri = item.images && item.images.length > 0 ? item.images[0] : 'default_image_uri';
 
     return (

@@ -143,7 +143,6 @@ const Payment = ({ route, navigation }) => {
                 axiosInstance.delete(`/carts/deleteCart/${id}`)
             );
             await Promise.all(deletePromises);
-            console.log('Deleted all cart items successfully');
         } catch (error) {
             console.error('Error deleting cart items:', error.response?.data || error.message);
         }
@@ -151,37 +150,50 @@ const Payment = ({ route, navigation }) => {
 
 
     const HandPaySuccess = async () => {
-        // Check if the selected method is chosen
+        // Kiểm tra xem địa chỉ đã được chọn chưa
+        if (!address) {
+            Alert.alert("Thông báo", "Vui lòng chọn địa chỉ giao hàng.");
+            return;
+        }
+    
+        // Kiểm tra nếu phương thức thanh toán chưa được chọn
         if (!selectedMethod) {
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
     
-       
         try {
-            
             const idorder = await createOrder();
             console.log('idorder', idorder);
     
-            
             if (selectedMethod === 'cash') {
-              
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds);
                 navigation.navigate('PaySussesScreen');
             } else if (selectedMethod === 'payos') {
-              
                 await createPayment(idorder);
             }
         } catch (error) {
             console.error('Lỗi khi thanh toán:', error.message);
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
-    };
-    
+    };    
+
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
     };
+
+    useEffect(() => {
+        if (addressId) {
+            fetchAddressById(addressId);
+        } else {
+            if (data.length > 0) {
+                setAddress(data[0]);
+            } else {
+                setAddress(null);
+            }
+        }
+    }, [addressId, data]);
 
     const [selectedTransfer, setSelectedTransfer] = useState({
         label: "Tiết Kiệm",
@@ -256,7 +268,6 @@ const Payment = ({ route, navigation }) => {
             console.log('orderData', orderData);
 
             const response = await axiosInstance.post('/oder/addOrder', orderData)
-            console.log('response...................................', response);
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);
@@ -345,8 +356,9 @@ const Payment = ({ route, navigation }) => {
                         <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
                         {address ? (
                             <View>
-                                <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
-                                <Text style={PaymentStyle.txtLH}>
+                                <Text style={PaymentStyle.txtLH}>{address?.user?.name}, 
+                                <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
+                                <Text style={[PaymentStyle.txtLH, { width: '86%'}]} numberOfLines={1} ellipsizeMode="tail">
                                     {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
                                 </Text>
                                 <Text style={{ color: 'red', marginVertical: 10 }}>
@@ -357,7 +369,7 @@ const Payment = ({ route, navigation }) => {
                         ) : data.length > 0 ? (
                             <View>
                                 <Text style={PaymentStyle.txtLH}>{data[0]?.user?.name}, <Text style={PaymentStyle.txtLH}>{data[0]?.user?.phone}</Text></Text>
-                                <Text style={PaymentStyle.txtLH}>
+                                <Text style={[PaymentStyle.txtLH, { width: '86% '}]} numberOfLines={1} ellipsizeMode="tail">
                                     {data[0]?.alley} {data[0]?.houseNumber}, {data[0]?.quarter}, {data[0]?.district}, {data[0]?.city}, {data[0]?.country}
                                 </Text>
                             </View>
