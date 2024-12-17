@@ -10,7 +10,6 @@ const PaySusses = ({ navigation }) => {
     const dispatch = useDispatch();
 
     const handlePaymentSuccess = () => {
-        // Thêm thông báo vào Redux mà không cần kiểm tra lại sự tồn tại của thông báo
         dispatch(addNotification({
             id: Date.now(),
             title: "Thông báo",
@@ -24,7 +23,7 @@ const PaySusses = ({ navigation }) => {
 
     const HandNav = () => {
         setTimeout(() => {
-            navigation.navigate('Order');
+            navigation.navigate('OrderScreen');
         }, 2000);
     };
 

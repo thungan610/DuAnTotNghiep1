@@ -10,7 +10,7 @@ const AddAdressStyle = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     title: {
@@ -18,7 +18,7 @@ const AddAdressStyle = StyleSheet.create({
         color: "black",
         fontWeight: "bold",
         fontFamily: "Poppins",
-        textAlign: 'center',
+        alignItems:'center'
     },
     body: {
         width: '100%',

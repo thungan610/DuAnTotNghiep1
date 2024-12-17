@@ -148,7 +148,7 @@ const HomeScreen = (props) => {
 
     return (
         <View>
-            <ScrollView style={HomeStyle.container}
+            <View style={HomeStyle.container}
                 showsVerticalScrollIndicator={false}  >
                 <View style={HomeStyle.header}>
                     <Image style={HomeStyle.avatar} source={require('../../../src/assets/Logoshop.png')} />
@@ -219,6 +219,7 @@ const HomeScreen = (props) => {
                         <ActivityIndicator size="large" color="#0000ff" />
                     </View>
                 )}
+                <ScrollView>
                 <FlatList
                     data={products}
                     renderItem={renderProductItem}
@@ -227,8 +228,9 @@ const HomeScreen = (props) => {
                     scrollEnabled={false}
                     showsHorizontalScrollIndicator={false}
                 />
-                <View style={{ height: 40 }} />
-            </ScrollView>
+                <View style={{ height: 500 }} />
+                </ScrollView>
+            </View>
         </View>
     );
 };

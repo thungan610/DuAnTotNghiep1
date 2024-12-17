@@ -114,7 +114,6 @@ const Payment = ({ route, navigation }) => {
             getCartsByIds(cartIds);
         }
     }, [cartIds]);
-
     const BackRight = () => {
         // navigation.goBack(); 
         navigation.navigate('BottomNav');
@@ -152,19 +151,26 @@ const Payment = ({ route, navigation }) => {
 
 
     const HandPaySuccess = async () => {
+        // Check if the selected method is chosen
         if (!selectedMethod) {
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
+    
+       
         try {
+            
             const idorder = await createOrder();
             console.log('idorder', idorder);
+    
+            
             if (selectedMethod === 'cash') {
+              
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds);
-
                 navigation.navigate('PaySussesScreen');
             } else if (selectedMethod === 'payos') {
+              
                 await createPayment(idorder);
             }
         } catch (error) {
@@ -173,16 +179,15 @@ const Payment = ({ route, navigation }) => {
         }
     };
     
-
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
     };
 
     const [selectedTransfer, setSelectedTransfer] = useState({
-        label: "Nhanh",
-        status: 2,
-        price: "10000",
-        note: "Đảm bảo nhận hàng trong 2 tiếng kể từ khi nhận đơn",
+        label: "Tiết Kiệm",
+        status: 1,
+        price: "8000",
+        note: "Đảm bảo nhận hàng trong 60 phút kể từ khi nhận đơn",
     });
 
     useEffect(() => {
@@ -210,29 +215,31 @@ const Payment = ({ route, navigation }) => {
 
 
     const totalPayment = (() => {
+        // Ensure totalPrice is correctly defined and accessible.
         const transferCost = parseFloat(selectedTransfer.price) || 0;
-        console.log('transferCost', transferCost);
-
         let discount = 0;
-        console.log('discount', discount);
-
 
         if (selectedVoucher) {
             const voucherPrice = selectedVoucher.discountAmount || 0;
-            console.log('voucherPrice', voucherPrice);
+            const voucherPercent = selectedVoucher.discountPercent || 0;
 
-            if (selectedVoucher.type === 'percentage') {
-                const percentage = voucherPrice / 100;
-                discount = totalPrice * percentage;
-                console.log('discount ccc', discount);
-
+            // Apply percentage discount if available
+            if (voucherPercent > 0) {
+                // Apply percentage discount to totalPrice + transferCost
+                discount = ((totalPrice + transferCost) * voucherPercent) / 100;
             } else {
+                // Apply fixed amount discount
                 discount = voucherPrice;
             }
         }
 
-        return (totalPrice + transferCost) - discount;
+        // Calculate the total payment
+        const total = (totalPrice + transferCost) - discount;
+
+        // Round to 2 decimal places to avoid floating point precision issues
+        return Math.round(total * 100) / 100;
     })();
+
     console.log('totalPayment', totalPayment);
 
 
@@ -321,11 +328,14 @@ const Payment = ({ route, navigation }) => {
     return (
         <ScrollView style={PaymentStyle.container}>
             <View style={[AddAdressStyle.header, PaymentStyle.Padding]}>
-                <TouchableOpacity onPress={BackRight}>
-                    <Image style={AddAdressStyle.backright} source={require("../../../assets/notifi/backright.png")} />
+                <TouchableOpacity style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                }} onPress={BackRight}>
+                    <Image source={require("../../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={AddAdressStyle.title}>Thanh toán</Text>
-                <Text />
             </View>
 
             <TouchableOpacity onPress={BtnTabAddress} style={[PaymentStyle.body, PaymentStyle.paddingHorizontal, PaymentStyle.paddingBottom]}>
@@ -339,6 +349,10 @@ const Payment = ({ route, navigation }) => {
                                 <Text style={PaymentStyle.txtLH}>
                                     {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
                                 </Text>
+                                <Text style={{ color: 'red', marginVertical: 10 }}>
+                                    Lưu ý: Chỉ hỗ trợ giao hàng trong khu vực Hồ Chí Minh.
+                                </Text>
+
                             </View>
                         ) : data.length > 0 ? (
                             <View>
@@ -415,7 +429,15 @@ const Payment = ({ route, navigation }) => {
                     <TouchableOpacity onPress={HandVoucher} style={PaymentStyle.btnThem}>
                         {selectedVoucher ? (
                             <View style={PaymentStyle.ViewTranfer}>
-                                <Text style={PaymentStyle.txtPrice}>{selectedVoucher.discountAmount.toLocaleString()} đ</Text>
+                                {selectedVoucher.discountPercent ? (
+                                    <Text style={PaymentStyle.txtPrice}>
+                                        {selectedVoucher.discountPercent}%
+                                    </Text>
+                                ) : (
+                                    <Text style={PaymentStyle.txtPrice}>
+                                        -{selectedVoucher.discountAmount.toLocaleString()} đ
+                                    </Text>
+                                )}
                             </View>
                         ) : (
                             <Text style={PaymentStyle.txtLH}>Chưa chọn khuyến mãi</Text>
@@ -423,6 +445,7 @@ const Payment = ({ route, navigation }) => {
                         <Image source={require("../../../assets/notifi/expand_right.png")} />
                     </TouchableOpacity>
                 </View>
+
                 <Text style={PaymentStyle.Line} />
                 <View style={PaymentStyle.ViewBodynote}>
                     <Text style={PaymentStyle.txtDC}>Ghi chú:</Text>
@@ -443,18 +466,6 @@ const Payment = ({ route, navigation }) => {
                 <Text style={PaymentStyle.Line} />
                 <View>
                     <Text style={[PaymentStyle.txtDC, PaymentStyle.paddingHorizontal]}>Chi tiết thanh toán</Text>
-                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
-                        <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
-                        <Text style={PaymentStyle.txtPrice1}>
-                            <Text style={PaymentStyle.txtPrice1}>
-                                {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
-                                    typeof selectedVoucher.discountAmount === 'string' && selectedVoucher.discountAmount.includes('%') ?
-                                        `${selectedVoucher.discountAmount.toLocaleString()}` :
-                                        `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()}đ`
-                                ) : '0đ'}
-                            </Text>
-                        </Text>
-                    </View>
 
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC1}>Tổng tiền sản phẩm:</Text>
@@ -464,6 +475,22 @@ const Payment = ({ route, navigation }) => {
                         <Text style={PaymentStyle.txtDC1}>Tiền vận chuyển:</Text>
                         <Text style={PaymentStyle.txtPrice1}>
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedTransfer.price)}</Text>
+                    </View>
+                    <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
+                        <Text style={PaymentStyle.txtDC1}>Khuyến mãi:</Text>
+                        <Text style={PaymentStyle.txtPrice1}>
+                            {selectedVoucher && selectedVoucher.discountAmount !== undefined ? (
+                                selectedVoucher.discountPercent ? (
+                                    `-${selectedVoucher.discountPercent}%`
+                                ) : (
+                                    `-${parseFloat(selectedVoucher.discountAmount).toLocaleString()}đ`
+                                )
+                            ) : (
+
+                                '0đ'
+                            )}
+                        </Text>
+
                     </View>
                     <View style={[PaymentStyle.ViewBody, PaymentStyle.Height]}>
                         <Text style={PaymentStyle.txtDC}>Tổng thanh toán:</Text>

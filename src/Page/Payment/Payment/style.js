@@ -50,7 +50,6 @@ const PaymentStyle = StyleSheet.create({
         fontSize:16,
         color:'black',
         fontFamily:'Poppins',
-        fontWeight:'bold'
     },
     ViewPrice:{
         flexDirection:'row',

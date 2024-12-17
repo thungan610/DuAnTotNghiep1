@@ -124,13 +124,13 @@ const ProfileDetail = (prop) => {
             />
             <Text style={profileStyle.loadtext}>Lịch sử mua hàng</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')}>
+          {/* <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')}>
             <Image
               style={profileStyle.loadimg1}
               source={require('../../../src/assets/star.png')}
             />
             <Text style={profileStyle.loadtext2}>Đánh giá</Text>
-          </TouchableOpacity >
+          </TouchableOpacity > */}
           <TouchableOpacity onPress={() => prop.navigation.navigate('Policy')}>
             <Image
               style={profileStyle.loadimg}
@@ -177,7 +177,7 @@ const ProfileDetail = (prop) => {
       </View>
     </TouchableOpacity>
           <View>
-            <TouchableOpacity onPress={() => prop.navigation.navigate('UserCancel', { userId: user.id })}>
+            <TouchableOpacity>  
               <View style={profileStyle.insideAccount}>
                 <Text style={profileStyle.textTab}>Yêu cầu hủy tài khoản</Text>
                 <Image
@@ -218,7 +218,7 @@ const ProfileDetail = (prop) => {
 
             <TouchableOpacity onPress={() => prop.navigation.navigate('Promotion')}>
               <View style={profileStyle.insideAccount}>
-                <Text style={profileStyle.textTab}>Chương trình khuyến mãi</Text>
+                <Text style={profileStyle.textTab}>Khuyến mãi trong tháng</Text>
                 <Image
                   style={profileStyle.vecto}
                   source={require('../../../src/assets/vecto1.png')}

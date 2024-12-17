@@ -16,7 +16,7 @@ const Promotion = (prop) => {
         source={require('../../../src/assets/chevron-left.png')}
         />
        </TouchableOpacity>
-        <Text style={PromotionStyle.txtHeader}>Chương trình khuyến mãi</Text>
+        <Text style={PromotionStyle.txtHeader}>Khuyến mãi trong tháng</Text>
       </View>
       <TouchableOpacity>
         <Image
@@ -30,23 +30,7 @@ const Promotion = (prop) => {
         source={require('../../assets/promotion2.png')}
         />
       </TouchableOpacity>
-
-      <View style={PromotionStyle.promotionBox}>
-      <TouchableOpacity>
-        <Image
-        style={PromotionStyle.image1}
-        source={require('../../assets/promotion1.png')}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Image
-        style={PromotionStyle.image1}
-        source={require('../../assets/promotion1.png')}
-        />
-      </TouchableOpacity>
-      </View>
-
-      
+            
       <TouchableOpacity>
         <Image
         style={PromotionStyle.image}

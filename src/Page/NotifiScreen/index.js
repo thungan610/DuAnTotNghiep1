@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import notifiStyle from './style';
 import { useSelector, useDispatch } from 'react-redux';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addNotification, removeNotification, setNotifications} from '../Reducers/notificationSlice';
+import { addNotification, removeNotification, setNotifications } from '../Reducers/notificationSlice';
 
 const NotifiScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const notifications = useSelector(state => state.notification.notifications);
     const user = useSelector(state => state.user);
-    console.log('user', user);
+    const orders = useSelector(state => state.orders);
 
     const userId = user?.userData?._id;
-    console.log('userId', userId);
 
     useEffect(() => {
         const loadNotifications = async () => {
             if (!userId) {
                 setLoading(false);
-                return; // Không tải thông báo nếu chưa đăng nhập
+                return; 
             }
             try {
                 const savedNotifications = await AsyncStorage.getItem(`notifications_${userId}`);
@@ -39,7 +38,64 @@ const NotifiScreen = ({ navigation }) => {
 
     useEffect(() => {
         const saveNotifications = async () => {
-            if (userId) {
+            if (userId && notifications.length > 0) {
+                try {
+                    await AsyncStorage.setItem(`notifications_${userId}`, JSON.stringify(notifications));
+                } catch (error) {
+                    console.error("Lỗi khi lưu thông báo:", error);
+                }
+            }
+        };
+
+        saveNotifications();
+    }, [notifications, userId]);
+
+    // Kiểm tra trạng thái đơn hàng và gửi thông báo
+    useEffect(() => {
+        if (!orders) return; 
+
+        orders.forEach(order => {
+            if (order.status === "Đang giao") {
+                const newNotification = {
+                    id: Date.now().toString(),
+                    userId, 
+                    title: "Đơn hàng đang giao",
+                    message: `Đơn hàng của bạn với mã ${order.id} đang được giao.`,
+                };
+
+                // Gửi thông báo đẩy local khi trạng thái là "Đang giao"
+                PushNotification.localNotification({
+                    channelId: "channelId", 
+                    title: newNotification.title,
+                    message: newNotification.message,
+                });
+
+                dispatch(addNotification(newNotification));
+            }
+
+            if (order.status === "Đã nhận") {
+                const newNotification = {
+                    id: Date.now().toString(),
+                    userId,
+                    title: "Đơn hàng đã nhận",
+                    message: `Đơn hàng của bạn với mã ${order.id} đã được nhận.`,
+                };
+
+                // Gửi thông báo đẩy local khi trạng thái là "Đã nhận"
+                PushNotification.localNotification({
+                    channelId: "channelId", 
+                    title: newNotification.title,
+                    message: newNotification.message,
+                });
+
+                dispatch(addNotification(newNotification));
+            }
+        });
+    }, [orders, userId, dispatch]);
+
+    useEffect(() => {
+        const saveNotifications = async () => {
+            if (userId && notifications.length > 0) {
                 try {
                     await AsyncStorage.setItem(`notifications_${userId}`, JSON.stringify(notifications));
                 } catch (error) {
@@ -77,14 +133,10 @@ const NotifiScreen = ({ navigation }) => {
         dispatch(removeNotification(id));
     };
 
-
     return (
         <View style={notifiStyle.container}>
             <View style={notifiStyle.header}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={notifiStyle.iconBack}
-                >
+                <TouchableOpacity onPress={() => navigation.goBack()} style={notifiStyle.iconBack}>
                     <Image source={require("../../assets/notifi/backright.png")} />
                 </TouchableOpacity>
                 <Text style={notifiStyle.tieude}>Thông báo</Text>
@@ -92,19 +144,19 @@ const NotifiScreen = ({ navigation }) => {
 
             <ScrollView style={notifiStyle.body}>
                 {loading ? (
-                    <Text style={{ fontSize: 18, color: '#666', textAlign: 'center', marginTop: 320 }}>
-                        Đang tải...
-                    </Text>
+                    <ActivityIndicator size="large" color="#37C5DF" style={{ marginTop: 320 }} />
                 ) : notifications.length > 0 ? (
                     notifications.map((item) => (
                         <View key={item.id} style={{ borderWidth: 1, borderRadius: 1, borderColor: '#37C5DF', marginTop: 20, paddingHorizontal: 2 }}>
-                            <TouchableOpacity
-                                onPress={() => handleRemoveNotification(item.id)}>
-                                <Image style={{ position: 'absolute', right: 0, top: 0 }}
-                                    source={require('../../assets/close.png')} />
+                            <TouchableOpacity onPress={() => handleRemoveNotification(item.id)}>
+                                <Image style={{ position: 'absolute', right: 0, top: 0, width:26, height:26 }} source={require('../../assets/close.png')} />
                             </TouchableOpacity>
-                            <Text style={{ fontWeight: "bold", fontSize: 18, color: 'black', marginLeft: 8, marginTop: 10 }}>{item.title}</Text>
-                            <Text style={{ fontSize: 16, marginBottom: 10, marginLeft: 8 }}>{item.message}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 18, color: 'black', marginLeft: 8, marginTop: 10 }}>
+                                {item.title}
+                            </Text>
+                            <Text style={{ fontSize: 16, marginBottom: 10, marginLeft: 8 }}>
+                                {item.message}
+                            </Text>
                         </View>
                     ))
                 ) : (

@@ -88,6 +88,7 @@ const profileStyle = StyleSheet.create({
   },
   secondbody: {
     flexDirection: 'row',
+    justifyContent:'space-between',
     paddingTop: 10,
   },
   load: {

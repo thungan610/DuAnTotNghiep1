@@ -12,15 +12,15 @@ const Policy = (prop) => {
             source={require('../../assets/anhnenpolicy.png')}
             resizeMode='cover'
         >
-            <ScrollView style={styles.container}>
-                <View style={styles.header}>
-                   <TouchableOpacity onPress={BackRight}>
-                   <Image
-                        source={require('../../assets/chevron-left.png')}
-                        style={styles.backIcon} />
-                   </TouchableOpacity>
+            <View style={styles.header}>
+                    <TouchableOpacity onPress={BackRight}>
+                        <Image
+                            source={require('../../assets/chevron-left.png')}
+                            style={styles.backIcon} />
+                    </TouchableOpacity>
                     <Text style={styles.title}>Chính sách hoàn trả</Text>
                 </View>
+            <ScrollView style={styles.container}>
                 <View style={styles.banner}>
                     <Text style={styles.tp}>Thực phẩm tươi sống</Text>
                     <Text style={styles.text}>Chính sách hoàn trả:</Text>
@@ -85,18 +85,23 @@ const Policy = (prop) => {
                     </Text>
                 </View>
             </ScrollView>
+            <Text style={{ fontSize: 18, color: 'red', fontWeight: 'bold', paddingVertical:2 , textAlign: 'center' }}>
+                * Liên hệ Hotline: 0386706637
+            </Text>
         </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        paddingHorizontal: 20,
+        marginBottom: 20
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 16,
+        paddingTop:10,
     },
     backIcon: {
         width: 24,
@@ -119,7 +124,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 15,
         color: '#000000'
-    }
+    },
 });
 
 export default Policy;

@@ -30,6 +30,11 @@ const Delivering = (prop) => {
 
     const orderShipIndex = parseInt(order.ship, 10);
     const shippingTime = getShippingTime(orderShipIndex);
+
+    const discountAmount = order?.sale[0]?.discountAmount || 0; // Khuyến mãi
+    const shippingCost = Number(getShippingLabel(order.ship)); // Tiền vận chuyển
+    const totalPayment = order.totalOrder - discountAmount + shippingCost; // Tính tổng thanh toán
+
     return (
         <View style={DeliveringStyle.container}>
             <View style={DeliveringStyle.headertop}>
@@ -63,12 +68,15 @@ const Delivering = (prop) => {
                     <View key={index} style={DeliveringStyle.product}>
                         <Image source={{ uri: product.images[0] }} style={DeliveringStyle.productImage} />
                         <View style={DeliveringStyle.productInfo}>
-                        <View style={{flexDirection:'row', justifyContent: 'space-between'}}> 
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width:'85%' }}>
                                 <Text style={DeliveringStyle.productName}>{product.name}</Text>
                                 <Text style={DeliveringStyle.quantity}>   Số lượng: {product.quantity}</Text>
                             </View>
                             <Text style={DeliveringStyle.category}>{product.category.category_name}</Text>
-                            <Text style={DeliveringStyle.price}>{`${product.price.toLocaleString()} đ`}</Text>
+                            <Text style={DeliveringStyle.price}>
+                                {`${(product.price * product.quantity).toLocaleString()} đ`}
+                            </Text>
+
                         </View>
                     </View>
                 ))}
@@ -76,10 +84,11 @@ const Delivering = (prop) => {
 
                 <View style={DeliveringStyle.paymentInfo}>
                     <Text style={DeliveringStyle.label}>Chi tiết thanh toán</Text>
-                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString()} đ`}</Text>
+                    <Text>{`Khuyến mãi: ${order?.sale[0]?.discountAmount.toLocaleString() || 0} đ`}</Text>
                     <Text>{`Tổng tiền sản phẩm: ${order.totalOrder.toLocaleString()}đ`}</Text>
                     <Text>{`Tiền vận chuyển: ${Number(getShippingLabel(order.ship)).toLocaleString()} đ`}</Text>
-                    <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${order.totalOrder.toLocaleString()}đ`}</Text>
+                    <Text style={DeliveringStyle.total}>{`Tổng thanh toán: ${totalPayment.toLocaleString()} đ`}</Text>
+
                 </View>
             </ScrollView>
         </View>
