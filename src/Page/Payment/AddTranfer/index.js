@@ -33,7 +33,12 @@ const AddTranfer = (prop) => {
     return (
         <View style={AddTranferStyle.container}>
             <View style={[AddAdressStyle.header, { padding: 20 }]}>
-                <TouchableOpacity onPress={BackRight}>
+                <TouchableOpacity style={{
+                    position: 'absolute',
+                    padding:20,
+                    left: 0,
+                    top: 0,
+                }} onPress={BackRight}>
                     <Image
                         style={AddAdressStyle.backright}
                         source={require("../../../assets/notifi/backright.png")}

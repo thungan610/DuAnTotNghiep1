@@ -150,37 +150,50 @@ const Payment = ({ route, navigation }) => {
 
 
     const HandPaySuccess = async () => {
-        // Check if the selected method is chosen
+        // Kiểm tra xem địa chỉ đã được chọn chưa
+        if (!address) {
+            Alert.alert("Thông báo", "Vui lòng chọn địa chỉ giao hàng.");
+            return;
+        }
+    
+        // Kiểm tra nếu phương thức thanh toán chưa được chọn
         if (!selectedMethod) {
             Alert.alert("Thông báo", "Bạn chưa chọn phương thức thanh toán");
             return;
         }
-
-
+    
         try {
-
             const idorder = await createOrder();
             console.log('idorder', idorder);
-
-
+    
             if (selectedMethod === 'cash') {
-
                 navigation.navigate('OrderSuccess');
                 deleteItemsFromCart(cartIds);
                 navigation.navigate('PaySussesScreen');
             } else if (selectedMethod === 'payos') {
-
                 await createPayment(idorder);
             }
         } catch (error) {
             console.error('Lỗi khi thanh toán:', error.message);
             Alert.alert("Lỗi", "Có lỗi xảy ra khi thanh toán. Vui lòng thử lại.");
         }
-    };
+    };    
 
     const BtnTabAddress = () => {
         navigation.navigate('TabAddress');
     };
+
+    useEffect(() => {
+        if (addressId) {
+            fetchAddressById(addressId);
+        } else {
+            if (data.length > 0) {
+                setAddress(data[0]);
+            } else {
+                setAddress(null);
+            }
+        }
+    }, [addressId, data]);
 
     const [selectedTransfer, setSelectedTransfer] = useState({
         label: "Tiết Kiệm",
@@ -343,7 +356,8 @@ const Payment = ({ route, navigation }) => {
                         <Text style={PaymentStyle.txtDC}>Địa chỉ nhận hàng</Text>
                         {address ? (
                             <View>
-                                <Text style={PaymentStyle.txtLH}>{address?.user?.name}, <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
+                                <Text style={PaymentStyle.txtLH}>{address?.user?.name}, 
+                                <Text style={PaymentStyle.txtLH}>{address?.user?.phone}</Text></Text>
                                 <Text style={[PaymentStyle.txtLH, { width: '86%'}]} numberOfLines={1} ellipsizeMode="tail">
                                     {address?.alley} {address?.houseNumber}, {address?.quarter}, {address?.district}, {address?.city}, {address?.country}
                                 </Text>
@@ -355,7 +369,7 @@ const Payment = ({ route, navigation }) => {
                         ) : data.length > 0 ? (
                             <View>
                                 <Text style={PaymentStyle.txtLH}>{data[0]?.user?.name}, <Text style={PaymentStyle.txtLH}>{data[0]?.user?.phone}</Text></Text>
-                                <Text style={PaymentStyle.txtLH}>
+                                <Text style={[PaymentStyle.txtLH, { width: '86% '}]} numberOfLines={1} ellipsizeMode="tail">
                                     {data[0]?.alley} {data[0]?.houseNumber}, {data[0]?.quarter}, {data[0]?.district}, {data[0]?.city}, {data[0]?.country}
                                 </Text>
                             </View>
