@@ -151,7 +151,7 @@ const SearchScreen = ({ navigation }) => {
           {item.discount && (
             <View style={SearchStyle.textdiscount}>
               <Text style={SearchStyle.label}>
-                Giảm: {item.discount} đ
+                Giảm: {item.discount.toLocaleString()} đ
               </Text>
             </View>
           )}
