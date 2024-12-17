@@ -11,6 +11,7 @@ const AxiosInstanceSP = (contentType = 'application/json') => {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',
                 'Content-Type': contentType
+                
             }
             return config;
         },
