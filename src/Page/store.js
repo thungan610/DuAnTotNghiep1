@@ -34,7 +34,6 @@ const store = configureStore({
 
 // Theo dõi trạng thái cart để debug
 store.subscribe(() => {
-  console.log('Cart State:', store.getState().cart.cartItems);
 });
 
 export default store;

@@ -95,6 +95,7 @@ const HomeScreen = (props) => {
                         preserve: item.preserve?.preserve_name,
                         user: userid,
                         discount: item.discount,
+                        supplier: item.supplier,
                         fiber: item.fiber,
                         description: item.description,
                         price: item.price,

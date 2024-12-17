@@ -140,8 +140,6 @@ const Detail = ({ route, navigation }) => {
             return;
         }
    
-    
-        // Nếu người dùng đã đăng nhập, thêm sản phẩm vào giỏ hàng
         const productToAdd = {
             id: productDetails.id,
             name: product.name,
@@ -319,6 +317,10 @@ const Detail = ({ route, navigation }) => {
                                 <View style={styleDetail.textoriginRow}>
                                     <Text style={styleDetail.textorigin}>Xuất xứ: </Text>
                                     <Text style={styleDetail.textorigin}>{productDetails.origin || 'Chưa có thông tin'}</Text>
+                                </View>
+                                <View style={styleDetail.textoriginRow}>
+                                    <Text style={styleDetail.textorigin}>Nhà cung cấp: </Text>
+                                    <Text style={styleDetail.textorigin}>{productDetails.supplier || 'Chưa có thông tin'}</Text>
                                 </View>
                                 <View style={styleDetail.textoriginRow}>
                                     <Text style={styleDetail.textorigin}>Chất sơ: </Text>

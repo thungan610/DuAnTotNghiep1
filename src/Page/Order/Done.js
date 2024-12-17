@@ -141,8 +141,8 @@ const Done = (prop) => {
                     <TouchableOpacity onPress={addToCartHandler} style={DoneStyle.buttonnhan}>
                         <Text style={DoneStyle.buttonTextnhan}>Mua lại</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => prop.navigation.navigate('ProductReview')} style={DoneStyle.buttonhuy}>
-                        <Text style={DoneStyle.buttonTexthuy}>Đánh giá</Text>
+                    <TouchableOpacity onPress={() => prop.navigation.navigate('Policy')} style={DoneStyle.buttonhuy}>
+                        <Text style={DoneStyle.buttonTexthuy}>Hoàn trả</Text>
                     </TouchableOpacity>
                 </View>
 

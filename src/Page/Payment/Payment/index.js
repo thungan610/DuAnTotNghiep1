@@ -143,7 +143,6 @@ const Payment = ({ route, navigation }) => {
                 axiosInstance.delete(`/carts/deleteCart/${id}`)
             );
             await Promise.all(deletePromises);
-            console.log('Deleted all cart items successfully');
         } catch (error) {
             console.error('Error deleting cart items:', error.response?.data || error.message);
         }
@@ -256,7 +255,6 @@ const Payment = ({ route, navigation }) => {
             console.log('orderData', orderData);
 
             const response = await axiosInstance.post('/oder/addOrder', orderData)
-            console.log('response...................................', response);
             if (response && response.data) {
                 const idorder = response.data._id;
                 console.log('Order ID:', idorder);

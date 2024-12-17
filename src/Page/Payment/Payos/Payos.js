@@ -44,7 +44,6 @@ const Payos = ({ route }) => {
         axiosInstance.delete(`/carts/deleteCart/${id}`)
       );
       await Promise.all(deletePromises);
-      console.log('Deleted all cart items successfully');
       Toast.show({
         type: 'success',
         text1: 'Giỏ hàng đã được xóa thành công!',
@@ -63,7 +62,6 @@ const Payos = ({ route }) => {
       const response = await axiosInstance.post(`/oder/${idorder}/updateOrder`, {
         status: status,
       });
-      console.log('Cập nhật trạng thái đơn hàng thành công:', response);
       return response;
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -82,6 +80,7 @@ const Payos = ({ route }) => {
       Alert.alert('Thành công', 'Bạn đã thanh toán thành công');
       deleteItemsFromCart(cartIds);
       navigation.navigate('Order');
+      
     } else if (url.includes('/payment/cancel')) {
       console.log('Navigation detected cancel URL');
       Alert.alert('Thất bại', 'Đã hủy thanh toán.');
