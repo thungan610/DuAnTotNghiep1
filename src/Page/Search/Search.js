@@ -4,6 +4,7 @@ import AxiosInstanceSP from "../api/AxiosInstanceSP";
 import { useSelector } from 'react-redux';  // Redux selector
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../api/AxiosInstance';
+import HomeStyle from '../HomeScreen/style';
 import axios from 'axios';
 
 const SearchScreen = ({ navigation }) => {
@@ -151,10 +152,11 @@ const SearchScreen = ({ navigation }) => {
           {item.discount && (
             <View style={SearchStyle.textdiscount}>
               <Text style={SearchStyle.label}>
-                Giảm: {item.discount} đ
+                Giảm: {item?.discount?.toLocaleString('vi-VN')} đ
               </Text>
             </View>
           )}
+
 
           <Image style={{ width: 100, height: 80 }} source={{ uri: imageUri }} />
           <Text style={SearchStyle.productTitle} numberOfLines={1}>{item.name || 'Không có tên'}</Text>
@@ -287,13 +289,16 @@ const SearchStyle = StyleSheet.create({
   },
   productContainer: {
     borderColor: '#2CA9C0',
-    borderRadius: 10,
-    borderWidth: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    height: height * 0.22,
-    width: width * 0.43,
-    margin: 7,
+        borderRadius: width * 0.02,
+        borderWidth: 1,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        height: height * 0.26,
+        marginHorizontal: width * 0.015,
+        width: width * 0.44,
+        marginTop: height * 0.02,
+        marginRight: width * 0.03,
+        position:'relative',
   },
   productDetails: {
     alignItems: 'center',
