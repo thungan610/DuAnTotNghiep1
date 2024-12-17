@@ -101,7 +101,7 @@ const Order = ({ navigation, route }) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedTabs, userid]);  
+  }, [selectedTabs, userid,previousOrders]);  
 
   useFocusEffect(
     useCallback(() => {
